@@ -6,337 +6,403 @@
 <title>Make My Mandir — Content Studio</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap');
-:root{
-  --o:#E87722;--dark:#1A1010;--mid:#6B5B52;--light:#FAF7F2;--bdr:#EDE8E0;
-  --g:#0F6E56;--gbg:#E6F5F0;--glite:#C8EEE3;
-  --r:#A32D2D;--rbg:#FDF0F0;
-  --am:#854F0B;--ambg:#FEF5E7;
-  --b:#185FA5;--bbg:#EAF2FB;
-  --pu:#5D3FD3;--w:#fff;
-}
+:root{--o:#E87722;--dark:#1A1010;--mid:#6B5B52;--light:#FAF7F2;--bdr:#EDE8E0;--g:#0F6E56;--gbg:#E6F5F0;--r:#A32D2D;--rbg:#FDF0F0;--am:#854F0B;--ambg:#FEF5E7;--b:#185FA5;--bbg:#EAF2FB;--pu:#5D3FD3;--w:#fff;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:'Inter',sans-serif;background:var(--light);color:var(--dark);}
 
-/* ═══ LOGIN ═══ */
-.login-page{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);background-image:radial-gradient(circle at 20% 50%, rgba(232,119,34,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(232,119,34,0.05) 0%, transparent 40%);}
-.login-card{background:var(--w);border-radius:20px;padding:44px 48px;width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.35);}
-.lc-logo{font-family:"Cormorant Garamond",serif;font-size:30px;color:var(--o);margin-bottom:4px;letter-spacing:0.5px;}
-.lc-sub{font-size:11px;color:var(--mid);letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;}
-.lc-label{font-size:11px;font-weight:600;color:var(--mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
-.lc-input{width:100%;border:1.5px solid var(--bdr);border-radius:10px;padding:13px 16px;font-size:14px;font-family:'Inter',sans-serif;color:var(--dark);outline:none;margin-bottom:16px;transition:border-color .15s;}
-.lc-input:focus{border-color:var(--o);}
-.lc-btn{width:100%;background:var(--o);color:#fff;font-size:14px;font-weight:600;padding:14px;border-radius:10px;border:none;cursor:pointer;transition:opacity .15s;letter-spacing:.3px;}
-.lc-btn:hover{opacity:.9;}
-.lc-err{font-size:12px;color:var(--r);margin-top:10px;text-align:center;min-height:20px;}
-.lc-divider{display:flex;align-items:center;gap:12px;margin:20px 0 0;}
-.lc-divider::before,.lc-divider::after{content:'';flex:1;height:1px;background:var(--bdr);}
-.lc-divider span{font-size:11px;color:var(--mid);}
-.lc-contact{text-align:center;font-size:12px;color:var(--mid);margin-top:12px;line-height:1.6;}
-.lc-contact a{color:var(--o);font-weight:600;text-decoration:none;}
+/* LOGIN */
+.login-page{height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dark);}
+.lbox{background:var(--w);border-radius:20px;padding:42px 46px;width:420px;box-shadow:0 32px 80px rgba(0,0,0,.35);}
+.l-logo{font-family:"Cormorant Garamond",serif;font-size:30px;color:var(--o);margin-bottom:4px;}
+.l-sub{font-size:11px;color:var(--mid);letter-spacing:2px;text-transform:uppercase;margin-bottom:28px;}
+.lbl{font-size:11px;font-weight:600;color:var(--mid);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
+.linp{width:100%;border:1.5px solid var(--bdr);border-radius:10px;padding:12px 15px;font-size:14px;font-family:'Inter',sans-serif;color:var(--dark);outline:none;margin-bottom:14px;}
+.linp:focus{border-color:var(--o);}
+.lbtn{width:100%;background:var(--o);color:#fff;font-size:14px;font-weight:600;padding:13px;border-radius:10px;border:none;cursor:pointer;}
+.lerr{font-size:12px;color:var(--r);margin-top:8px;text-align:center;min-height:18px;}
+.l-contact{text-align:center;font-size:12px;color:var(--mid);margin-top:14px;}
+.l-contact a{color:var(--o);font-weight:600;text-decoration:none;}
+.l-divider{display:flex;align-items:center;gap:10px;margin:16px 0 0;}
+.l-divider::before,.l-divider::after{content:'';flex:1;height:1px;background:var(--bdr);}
+.l-divider span{font-size:11px;color:var(--mid);}
 
-/* ═══ APP SHELL ═══ */
+/* APP */
 .app-shell{display:none;height:100vh;flex-direction:row;}
 .app-shell.active{display:flex;}
 
 /* SIDEBAR */
-.sidebar{width:230px;background:var(--dark);height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;}
-.sb-brand{padding:22px 22px 16px;border-bottom:1px solid rgba(255,255,255,0.07);}
-.sb-logo{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--o);}
-.sb-tagline{font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
-.sb-user-card{padding:14px 22px 12px;border-bottom:1px solid rgba(255,255,255,0.07);}
-.sb-username{font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;}
-.sb-role-text{font-size:10px;color:rgba(255,255,255,0.4);}
-.role-pill{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 9px;border-radius:99px;margin-top:5px;letter-spacing:.5px;}
-.rp-admin{background:var(--o);color:#fff;}
-.rp-team{background:var(--b);color:#fff;}
-.sb-nav{flex:1;padding:10px 14px;overflow-y:auto;}
-.nav-section{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.2);padding:12px 8px 5px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);cursor:pointer;margin-bottom:1px;transition:all .15s;position:relative;}
-.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85);}
-.nav-item.active{background:rgba(232,119,34,0.18);color:var(--o);}
-.nav-icon{font-size:15px;width:18px;text-align:center;}
-.nav-count{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);}
-.nav-count.green{background:rgba(15,110,86,0.4);color:#4ADE80;}
-.nav-count.amber{background:rgba(133,79,11,0.4);color:#FFA657;}
-.nav-count.red{background:rgba(163,45,45,0.4);color:#FC8585;}
-.sb-bottom{padding:14px 22px;border-top:1px solid rgba(255,255,255,0.07);}
-.sb-sync{font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
-.sync-indicator{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);}
-.logout-btn{width:100%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.45);font-size:11px;font-weight:500;padding:10px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;}
-.logout-btn:hover{background:rgba(255,255,255,0.1);color:#fff;}
+.sidebar{width:228px;background:var(--dark);height:100vh;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0;}
+.sb-brand{padding:20px 20px 13px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{font-family:"Cormorant Garamond",serif;font-size:21px;color:var(--o);}
+.sb-tagline{font-size:9px;color:rgba(255,255,255,.22);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.sb-user{padding:11px 20px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-name{font-size:13px;font-weight:600;color:#fff;}
+.sb-roletxt{font-size:10px;color:rgba(255,255,255,.38);margin-top:1px;}
+.rpill{display:inline-flex;font-size:9px;font-weight:700;padding:3px 9px;border-radius:99px;margin-top:4px;letter-spacing:.5px;}
+.rp-a{background:var(--o);color:#fff;}
+.rp-t{background:var(--b);color:#fff;}
+
+/* SYNC STATUS PILL */
+.sync-pill{display:flex;align-items:center;gap:5px;font-size:10px;padding:4px 10px;border-radius:99px;margin-top:6px;width:fit-content;}
+.sync-pill.synced{background:rgba(15,110,86,.25);color:#4ADE80;}
+.sync-pill.syncing{background:rgba(232,119,34,.2);color:#FFA657;}
+.sync-pill.offline{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);}
+.sync-pill.error{background:rgba(163,45,45,.25);color:#FC8585;}
+.sp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot-g{background:#4ADE80;}
+.dot-am{background:#FFA657;animation:blink 1s infinite;}
+.dot-off{background:rgba(255,255,255,.2);}
+.dot-r{background:#FC8585;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.sb-nav{flex:1;padding:8px 13px;overflow-y:auto;}
+.nav-s{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.18);padding:10px 8px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;font-size:12px;font-weight:500;color:rgba(255,255,255,.48);cursor:pointer;margin-bottom:1px;transition:all .15s;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85);}
+.nav-item.active{background:rgba(232,119,34,.18);color:var(--o);}
+.nav-icon{font-size:14px;width:18px;text-align:center;}
+.nav-cnt{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;background:rgba(255,255,255,.09);}
+.nav-cnt.g{background:rgba(15,110,86,.4);color:#4ADE80;}
+.nav-cnt.am{background:rgba(133,79,11,.4);color:#FFA657;}
+.nav-cnt.r{background:rgba(163,45,45,.4);color:#FC8585;}
+.nav-cnt.pu{background:rgba(93,63,211,.4);color:#C4B5FD;}
+.sb-bottom{padding:11px 20px;border-top:1px solid rgba(255,255,255,.07);}
+.logout-btn{width:100%;background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);font-size:11px;font-weight:500;padding:9px;border-radius:8px;border:none;cursor:pointer;}
+.logout-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
 
 /* MAIN */
 .main-area{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-.topbar{background:var(--w);border-bottom:1px solid var(--bdr);padding:0 26px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0;}
-.tb-left{display:flex;align-items:center;gap:12px;}
+.topbar{background:var(--w);border-bottom:1px solid var(--bdr);padding:0 22px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.tb-left{display:flex;align-items:center;gap:10px;}
 .tb-title{font-size:15px;font-weight:600;}
-.tb-count{font-size:12px;color:var(--mid);font-weight:400;}
-.tb-right{display:flex;align-items:center;gap:8px;}
-.tb-btn{padding:8px 16px;font-size:11px;font-weight:600;border-radius:8px;border:1px solid var(--bdr);background:var(--w);color:var(--dark);cursor:pointer;transition:all .12s;}
-.tb-btn:hover{background:var(--light);border-color:var(--mid);}
+.tb-count{font-size:12px;color:var(--mid);}
+.tb-right{display:flex;align-items:center;gap:6px;}
+.tb-btn{padding:7px 13px;font-size:11px;font-weight:600;border-radius:8px;border:1px solid var(--bdr);background:var(--w);color:var(--dark);cursor:pointer;}
+.tb-btn:hover{background:var(--light);}
 .tb-btn.primary{background:var(--o);color:#fff;border-color:var(--o);}
-.tb-btn.primary:hover{opacity:.9;}
+.tb-btn.green{background:var(--g);color:#fff;border-color:var(--g);}
+.content{padding:18px 22px 60px;flex:1;}
 
-/* CONTENT AREA */
-.content{padding:22px 26px 60px;flex:1;}
+/* SETUP BANNER */
+.setup-banner{background:linear-gradient(135deg,#1A1010,#2A1A10);border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px;border:1px solid rgba(232,119,34,.3);}
+.setup-icon{font-size:28px;}
+.setup-info{flex:1;}
+.setup-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;}
+.setup-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;}
+.setup-cta{background:var(--o);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;}
 
-/* STATS ROW */
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;}
-.stat-card{background:var(--w);border:1px solid var(--bdr);border-radius:11px;padding:14px 16px;cursor:pointer;transition:all .12s;}
-.stat-card:hover{border-color:var(--o);box-shadow:0 2px 8px rgba(232,119,34,0.1);}
-.sc-n{font-size:24px;font-weight:700;line-height:1;margin-bottom:4px;}
-.sc-l{font-size:10px;color:var(--mid);font-weight:500;}
+/* TODAY BANNER */
+.today-banner{background:linear-gradient(135deg,var(--o),#C85C0A);border-radius:11px;padding:13px 17px;margin-bottom:16px;display:flex;align-items:center;gap:12px;color:#fff;}
+.tb-icon{font-size:22px;}
+.tb-info-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.tb-info-sub{font-size:11px;opacity:.8;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;margin-bottom:14px;}
+.sc{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:11px 13px;cursor:pointer;}
+.sc:hover{border-color:var(--o);}
+.sc-n{font-size:20px;font-weight:700;line-height:1;margin-bottom:2px;}
+.sc-l{font-size:9px;color:var(--mid);font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
 .sc-all .sc-n{color:var(--dark);}
 .sc-pend .sc-n{color:var(--am);}
 .sc-app .sc-n{color:var(--g);}
 .sc-rev .sc-n{color:var(--b);}
 .sc-rej .sc-n{color:var(--r);}
+.sc-pub .sc-n{color:var(--pu);}
 
 /* PROGRESS */
-.prog-row{background:var(--w);border:1px solid var(--bdr);border-radius:11px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:18px;}
-.prog-details{flex:1;}
-.prog-title{font-size:12px;font-weight:600;margin-bottom:6px;}
-.prog-bar{height:6px;background:var(--bdr);border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),#16a37a);border-radius:3px;transition:width .6s ease;}
-.prog-pct{font-size:16px;font-weight:700;color:var(--g);}
+.prog-row{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:11px 15px;margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+.prog-info{flex:1;}
+.prog-lbl{font-size:11px;font-weight:600;margin-bottom:5px;}
+.prog-bar{height:5px;background:var(--bdr);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),#16a37a);border-radius:3px;transition:width .6s;}
+.prog-pct{font-size:14px;font-weight:700;color:var(--g);}
 
 /* FILTERS */
-.filter-bar{display:flex;align-items:center;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
-.fb-label{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.5px;margin-right:2px;}
-.filter-btn{padding:5px 13px;font-size:11px;font-weight:500;border:1px solid var(--bdr);border-radius:99px;background:var(--w);color:var(--mid);cursor:pointer;transition:all .12s;}
-.filter-btn.on{background:var(--dark);color:#fff;border-color:var(--dark);}
-.filter-btn:hover:not(.on){border-color:var(--mid);color:var(--dark);}
-.type-filter{background:var(--light);}
-.search-inp{margin-left:auto;padding:6px 14px;font-size:12px;border:1px solid var(--bdr);border-radius:99px;outline:none;font-family:'Inter',sans-serif;width:190px;transition:border-color .15s;}
-.search-inp:focus{border-color:var(--o);}
+.fbar{display:flex;align-items:center;gap:5px;margin-bottom:13px;flex-wrap:wrap;}
+.fb-lbl{font-size:10px;font-weight:700;color:var(--mid);letter-spacing:.5px;}
+.fbtn{padding:5px 11px;font-size:11px;font-weight:500;border:1px solid var(--bdr);border-radius:99px;background:var(--w);color:var(--mid);cursor:pointer;}
+.fbtn.on{background:var(--dark);color:#fff;border-color:var(--dark);}
+.fbtn:hover:not(.on){border-color:var(--mid);color:var(--dark);}
+.fsearch{margin-left:auto;padding:6px 13px;font-size:12px;border:1px solid var(--bdr);border-radius:99px;outline:none;font-family:'Inter',sans-serif;width:175px;}
+.fsearch:focus{border-color:var(--o);}
 
-/* POST GRID */
-.week-group{margin-bottom:26px;}
-.week-hdr{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--bdr);}
-.post-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+/* GRID */
+.wgrp{margin-bottom:22px;}
+.wlbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--bdr);}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
 
-/* POST CARD */
-.post-card{background:var(--w);border:1px solid var(--bdr);border-radius:13px;overflow:hidden;transition:box-shadow .15s,transform .15s;}
-.post-card:hover{box-shadow:0 6px 20px rgba(0,0,0,0.08);transform:translateY(-1px);}
+/* CARD */
+.pc{background:var(--w);border:1px solid var(--bdr);border-radius:13px;overflow:hidden;transition:box-shadow .15s,transform .15s;}
+.pc:hover{box-shadow:0 6px 20px rgba(0,0,0,.07);transform:translateY(-1px);}
 .pc-approved{border-top:3px solid var(--g);}
 .pc-rejected{border-top:3px solid var(--r);opacity:.75;}
 .pc-revision{border-top:3px solid var(--am);}
 .pc-pending{border-top:3px solid var(--bdr);}
 .pc-published{border-top:3px solid var(--pu);}
+.pc.today-post{box-shadow:0 0 0 2px var(--o);}
 
-/* THUMBNAIL */
-.thumb-area{position:relative;overflow:hidden;background:#F0EBE3;aspect-ratio:1;}
-.thumb-area img,.thumb-area video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;}
-.thumb-area:hover img,.thumb-area:hover video{transform:scale(1.04);}
-.thumb-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;}
-.thumb-area:hover .thumb-overlay{background:rgba(0,0,0,0.52);}
-.to-btn{font-size:10px;font-weight:700;color:#fff;letter-spacing:1px;opacity:0;transition:opacity .2s;padding:7px 16px;border-radius:99px;border:1.5px solid rgba(255,255,255,0.65);cursor:pointer;background:transparent;}
-.thumb-area:hover .to-btn{opacity:1;}
+/* THUMB */
+.tw{position:relative;overflow:hidden;background:#F0EBE3;aspect-ratio:1;}
+.tw img,.tw video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s;}
+.tw:hover img,.tw:hover video{transform:scale(1.04);}
+.tov{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;transition:background .2s;}
+.tw:hover .tov{background:rgba(0,0,0,.52);}
+.to-btn{font-size:10px;font-weight:700;color:#fff;letter-spacing:1px;opacity:0;transition:opacity .2s;padding:7px 16px;border-radius:99px;border:1.5px solid rgba(255,255,255,.65);cursor:pointer;background:transparent;}
+.tw:hover .to-btn{opacity:1;}
 .badge-type{position:absolute;top:8px;left:8px;font-size:9px;font-weight:700;letter-spacing:1.5px;padding:3px 9px;border-radius:99px;color:#fff;}
-.bt-reel{background:rgba(93,63,211,0.88);}
-.bt-carousel{background:rgba(24,95,165,0.88);}
-.bt-static{background:rgba(44,44,42,0.82);}
+.bt-reel{background:rgba(93,63,211,.88);}
+.bt-carousel{background:rgba(24,95,165,.88);}
+.bt-static{background:rgba(44,44,42,.82);}
 .badge-status{position:absolute;top:8px;right:8px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:99px;color:#fff;}
-.bs-pending{background:rgba(133,79,11,0.82);}
-.bs-approved{background:rgba(15,110,86,0.88);}
-.bs-rejected{background:rgba(163,45,45,0.88);}
-.bs-revision{background:rgba(133,79,11,0.88);}
-.bs-published{background:rgba(93,63,211,0.88);}
-.badge-media{position:absolute;bottom:8px;left:8px;background:var(--o);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.bs-pending{background:rgba(133,79,11,.82);}
+.bs-approved{background:rgba(15,110,86,.9);}
+.bs-rejected{background:rgba(163,45,45,.9);}
+.bs-revision{background:rgba(133,79,11,.9);}
+.bs-published{background:rgba(93,63,211,.9);}
+.badge-team{position:absolute;bottom:8px;left:8px;background:var(--g);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.badge-today{position:absolute;bottom:8px;right:8px;background:var(--o);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;}
+.slide-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:4px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);}
+.sdot.on{background:#fff;}
 
-/* REJECTION BANNER on card */
-.reject-banner{background:var(--rbg);border-top:1px solid rgba(163,45,45,0.2);padding:7px 11px;display:flex;align-items:flex-start;gap:6px;}
-.rb-icon{font-size:12px;flex-shrink:0;margin-top:1px;}
+/* BANNERS */
+.rej-banner{background:var(--rbg);border-top:1px solid rgba(163,45,45,.2);padding:7px 11px;display:flex;gap:6px;}
 .rb-text{font-size:10px;color:var(--r);line-height:1.5;flex:1;}
-.rb-reason{font-weight:500;}
-
-/* REVISION BANNER */
-.revision-banner{background:var(--ambg);border-top:1px solid rgba(133,79,11,0.2);padding:7px 11px;display:flex;align-items:flex-start;gap:6px;}
-.rvb-icon{font-size:12px;flex-shrink:0;margin-top:1px;}
+.rev-banner{background:var(--ambg);border-top:1px solid rgba(133,79,11,.2);padding:7px 11px;display:flex;gap:6px;}
 .rvb-text{font-size:10px;color:var(--am);line-height:1.5;flex:1;}
 
-/* CARD INFO */
-.card-info{padding:10px 12px 0;}
+/* CARD INFO & ACTIONS */
+.ci{padding:9px 11px 0;}
 .ci-date{font-size:10px;color:var(--mid);margin-bottom:2px;}
 .ci-title{font-size:12px;font-weight:600;line-height:1.3;margin-bottom:3px;}
 .ci-hook{font-size:11px;color:var(--o);font-style:italic;font-family:"Cormorant Garamond",serif;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ca{padding:7px 9px 9px;display:flex;gap:4px;border-top:1px solid var(--bdr);margin-top:7px;flex-wrap:wrap;}
+.ab{flex:1;min-width:44px;padding:6px 0;font-size:10px;font-weight:600;border-radius:7px;border:1px solid var(--bdr);background:transparent;cursor:pointer;text-align:center;font-family:'Inter',sans-serif;transition:all .12s;}
+.ab-app{border-color:var(--g);color:var(--g);}
+.ab-app:hover,.ab-app.on{background:var(--g);color:#fff;}
+.ab-pub{border-color:var(--pu);color:var(--pu);}
+.ab-pub:hover,.ab-pub.on{background:var(--pu);color:#fff;}
+.ab-rev{border-color:var(--b);color:var(--b);}
+.ab-rev:hover{background:var(--bbg);}
+.ab-rej{border-color:var(--r);color:var(--r);}
+.ab-rej:hover{background:var(--rbg);}
+.ab-copy{border-color:var(--mid);color:var(--mid);}
+.ab-copy:hover{background:var(--light);}
+.ab-dl{border-color:var(--o);color:var(--o);}
+.ab-dl:hover{background:#FFF3E8;}
 
-/* CARD ACTIONS */
-.card-actions{padding:8px 10px 10px;display:flex;gap:4px;border-top:1px solid var(--bdr);margin-top:8px;flex-wrap:wrap;}
-.ca-btn{flex:1;min-width:46px;padding:6px 0;font-size:10px;font-weight:600;border-radius:7px;border:1px solid var(--bdr);background:transparent;cursor:pointer;text-align:center;font-family:'Inter',sans-serif;transition:all .12s;}
-.ca-approve{border-color:var(--g);color:var(--g);}
-.ca-approve:hover,.ca-approve.on{background:var(--g);color:#fff;border-color:var(--g);}
-.ca-revision{border-color:var(--am);color:var(--am);}
-.ca-revision:hover{background:var(--ambg);}
-.ca-reject{border-color:var(--r);color:var(--r);}
-.ca-reject:hover{background:var(--rbg);}
-.ca-review{border-color:var(--b);color:var(--b);}
-.ca-review:hover{background:var(--bbg);}
-.ca-copy{border-color:var(--mid);color:var(--mid);}
-.ca-copy:hover{background:var(--light);}
-.ca-btn:disabled{opacity:.3;cursor:not-allowed;}
-
-/* ═══ REVIEW MODAL ═══ */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:300;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.review-modal{background:var(--w);border-radius:16px;display:flex;width:1020px;max-height:92vh;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,0.3);}
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;align-items:center;justify-content:center;padding:16px;}
+.mbg.open{display:flex;}
+.rmodal{background:var(--w);border-radius:16px;display:flex;width:1040px;max-height:93vh;overflow:hidden;box-shadow:0 32px 100px rgba(0,0,0,.3);}
 
 /* MODAL LEFT */
-.modal-left{width:450px;flex-shrink:0;background:#EEEAE4;display:flex;flex-direction:column;position:relative;}
-.modal-media-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:400px;overflow:hidden;}
-.modal-img{max-width:100%;max-height:100%;object-fit:contain;}
-.modal-vid{max-width:100%;max-height:100%;background:#000;}
-.modal-upload-bar{background:rgba(26,16,16,0.88);padding:12px 16px;display:flex;gap:8px;justify-content:center;flex-shrink:0;}
-.mub-btn{font-size:11px;font-weight:600;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .15s;}
+.mleft{width:460px;flex-shrink:0;background:#1A1010;display:flex;flex-direction:column;}
+.media-viewer{flex:1;display:flex;align-items:center;justify-content:center;min-height:360px;position:relative;}
+.mv-img{max-width:100%;max-height:440px;object-fit:contain;}
+.mv-vid{max-width:100%;max-height:440px;background:#000;}
+
+/* CAROUSEL VIEWER */
+.cv{flex:1;display:flex;flex-direction:column;}
+.cv-main{flex:1;display:flex;align-items:center;justify-content:center;min-height:340px;position:relative;}
+.cv-slide{width:100%;padding:18px;display:none;flex-direction:column;align-items:center;justify-content:center;}
+.cv-slide.on{display:flex;}
+.cv-slide img{max-width:100%;max-height:260px;object-fit:contain;border-radius:8px;margin-bottom:10px;}
+.cv-slide-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.cv-slide-txt{font-size:14px;font-weight:600;color:#fff;text-align:center;line-height:1.4;}
+.cv-slide-hint{font-size:11px;color:rgba(255,255,255,.3);margin-top:10px;text-align:center;}
+.cv-nav{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(0,0,0,.4);}
+.cv-arr{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.cv-arr:hover{background:rgba(255,255,255,.25);}
+.cv-dots-wrap{display:flex;gap:6px;}
+.cv-d{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;}
+.cv-d.on{background:var(--o);}
+.cv-ctr{font-size:11px;color:rgba(255,255,255,.4);}
+.slide-ups{background:rgba(0,0,0,.35);padding:9px 13px;display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.su-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);letter-spacing:1px;}
+.su-btn{font-size:10px;font-weight:600;padding:4px 9px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;}
+.su-btn:hover{border-color:var(--o);color:var(--o);}
+.su-btn.has{background:rgba(15,110,86,.3);border-color:var(--g);color:#4ADE80;}
+
+/* MEDIA UPLOAD BAR */
+.mub{background:rgba(26,16,16,.9);padding:10px 13px;display:flex;gap:7px;justify-content:center;flex-shrink:0;}
+.mub-btn{font-size:11px;font-weight:600;padding:8px 13px;border-radius:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;}
 .mub-img{background:var(--o);color:#fff;}
 .mub-vid{background:var(--pu);color:#fff;}
-.mub-rst{background:rgba(255,255,255,0.15);color:#fff;}
-.mub-btn:hover{opacity:.85;}
+.mub-rst{background:rgba(255,255,255,.1);color:#fff;}
+.mub-btn.saving{opacity:.6;cursor:wait;}
 
 /* MODAL RIGHT */
-.modal-right{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
-.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--w);z-index:5;flex-shrink:0;}
-.mh-title{font-size:15px;font-weight:700;margin-bottom:3px;}
+.mright{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.mhdr{padding:15px 19px 11px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--w);z-index:5;flex-shrink:0;}
+.mh-title{font-size:14px;font-weight:700;margin-bottom:3px;}
 .mh-meta{font-size:11px;color:var(--mid);}
-.mh-status{display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:6px;color:#fff;}
-.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--mid);padding:4px 8px;flex-shrink:0;line-height:1;}
-.modal-close:hover{color:var(--dark);}
-.modal-body{padding:16px 22px;flex:1;}
-.field-group{margin-bottom:14px;}
-.field-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:5px;display:block;}
-.field-input{width:100%;font-family:'Inter',sans-serif;font-size:13px;border:1.5px solid var(--bdr);border-radius:9px;padding:10px 12px;color:var(--dark);background:var(--w);resize:vertical;outline:none;line-height:1.6;transition:border-color .15s;}
-.field-input:focus{border-color:var(--o);}
-textarea.field-input{min-height:90px;}
-.copy-caption-btn{margin-top:7px;font-size:11px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid var(--bdr);background:var(--w);cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s;}
-.copy-caption-btn:hover{background:var(--light);}
-.copy-caption-btn.copied{background:var(--g);color:#fff;border-color:var(--g);}
+.mh-status{display:inline-block;font-size:9px;font-weight:700;padding:3px 10px;border-radius:99px;margin-top:5px;color:#fff;}
+.mx{background:none;border:none;font-size:22px;cursor:pointer;color:var(--mid);}
+.mbody{padding:13px 19px;flex:1;}
+.fg{margin-bottom:12px;}
+.fl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
+.fl-cnt{font-size:10px;font-weight:600;}
+.fl-cnt.ok{color:var(--g);}
+.fl-cnt.warn{color:var(--am);}
+.fl-cnt.over{color:var(--r);}
+.fi{width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1.5px solid var(--bdr);border-radius:9px;padding:9px 11px;color:var(--dark);background:var(--w);resize:vertical;outline:none;line-height:1.6;}
+.fi:focus{border-color:var(--o);}
+textarea.fi{min-height:82px;}
+.cap-stats{display:flex;gap:10px;margin-top:5px;flex-wrap:wrap;}
+.cs-item{font-size:10px;color:var(--mid);display:flex;align-items:center;gap:4px;}
+.cs-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;background:var(--light);}
+.cs-badge.ok{background:var(--gbg);color:var(--g);}
+.cs-badge.warn{background:var(--ambg);color:var(--am);}
+.cs-badge.over{background:var(--rbg);color:var(--r);}
+.copy-cap-btn{margin-top:6px;font-size:11px;font-weight:600;padding:7px 13px;border-radius:7px;border:1px solid var(--bdr);background:var(--w);cursor:pointer;font-family:'Inter',sans-serif;}
+.copy-cap-btn:hover{background:var(--light);}
+.copy-cap-btn.copied{background:var(--g);color:#fff;border-color:var(--g);}
 
-/* REJECTION REASON IN MODAL */
-.reject-reason-box{background:var(--rbg);border-radius:9px;padding:12px 14px;border:1px solid rgba(163,45,45,0.2);}
-.rrb-title{font-size:10px;font-weight:700;color:var(--r);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;}
-textarea.rrb-input{width:100%;font-family:'Inter',sans-serif;font-size:12px;border:1.5px solid rgba(163,45,45,0.25);border-radius:7px;padding:9px 11px;outline:none;background:var(--w);resize:vertical;min-height:70px;line-height:1.6;}
-textarea.rrb-input:focus{border-color:var(--r);}
+/* NOTES */
+.notes-wrap{background:var(--light);border-radius:9px;padding:10px 12px;margin-top:8px;border:1px solid var(--bdr);}
+.notes-title{font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.notes-list{max-height:110px;overflow-y:auto;margin-bottom:7px;}
+.note-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--bdr);}
+.note-item:last-child{border-bottom:none;}
+.ni-user{font-size:10px;font-weight:700;color:var(--o);flex-shrink:0;}
+.ni-text{font-size:11px;color:var(--dark);flex:1;line-height:1.5;}
+.ni-time{font-size:9px;color:var(--mid);}
+.notes-row{display:flex;gap:5px;}
+.notes-inp{flex:1;border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.notes-inp:focus{border-color:var(--o);}
+.notes-send{background:var(--o);color:#fff;border:none;border-radius:7px;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;}
 
-.revision-reason-box{background:var(--ambg);border-radius:9px;padding:12px 14px;border:1px solid rgba(133,79,11,0.2);}
-.vrb-title{font-size:10px;font-weight:700;color:var(--am);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;}
-
-.schedule-box{background:var(--light);border-radius:9px;padding:12px 14px;border:1px solid var(--bdr);}
-.sb-title{font-size:11px;font-weight:600;margin-bottom:5px;}
-.sb-steps{font-size:11px;color:var(--mid);line-height:1.8;}
-.mbs-btn{display:block;width:100%;background:#1877F2;color:#fff;font-size:12px;font-weight:600;padding:10px;border-radius:8px;border:none;cursor:pointer;margin-top:8px;transition:opacity .15s;}
-.mbs-btn:hover{opacity:.9;}
+/* STATUS BOXES */
+.rej-box{background:var(--rbg);border-radius:9px;padding:10px 12px;border:1px solid rgba(163,45,45,.2);}
+.rej-box-t{font-size:10px;font-weight:700;color:var(--r);margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;}
+.rev-box{background:var(--ambg);border-radius:9px;padding:10px 12px;border:1px solid rgba(133,79,11,.2);}
+.rev-box-t{font-size:10px;font-weight:700;color:var(--am);margin-bottom:5px;text-transform:uppercase;letter-spacing:1px;}
+.sched-box{background:var(--light);border-radius:9px;padding:10px 12px;border:1px solid var(--bdr);margin-top:8px;}
+.sched-box-t{font-size:11px;font-weight:600;margin-bottom:5px;}
+.sched-steps{font-size:11px;color:var(--mid);line-height:1.8;}
+.mbs-btn{display:block;width:100%;background:#1877F2;color:#fff;font-size:12px;font-weight:600;padding:9px;border-radius:7px;border:none;cursor:pointer;margin-top:7px;}
 
 /* MODAL FOOTER */
-.modal-footer{padding:12px 22px 18px;border-top:1px solid var(--bdr);display:flex;gap:7px;flex-wrap:wrap;flex-shrink:0;}
-.mf-btn{flex:1;min-width:90px;padding:10px 0;font-size:11px;font-weight:600;border-radius:9px;border:1px solid var(--bdr);cursor:pointer;font-family:'Inter',sans-serif;transition:all .12s;text-align:center;}
-.mf-close{background:var(--w);color:var(--mid);}
-.mf-close:hover{background:var(--light);}
-.mf-save{background:var(--bbg);color:var(--b);border-color:var(--b);}
-.mf-save:hover{background:var(--b);color:#fff;}
-.mf-approve{background:var(--g);color:#fff;border-color:var(--g);}
-.mf-approve:hover{opacity:.88;}
-.mf-revision{background:var(--ambg);color:var(--am);border-color:var(--am);}
-.mf-revision:hover{background:var(--am);color:#fff;}
-.mf-reject{background:var(--rbg);color:var(--r);border-color:var(--r);}
-.mf-reject:hover{background:var(--r);color:#fff;}
-.mf-btn:disabled{opacity:.3;cursor:not-allowed;}
+.mfoot{padding:9px 19px 15px;border-top:1px solid var(--bdr);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0;}
+.mfb{flex:1;min-width:78px;padding:9px 0;font-size:11px;font-weight:600;border-radius:9px;border:1px solid var(--bdr);cursor:pointer;font-family:'Inter',sans-serif;text-align:center;}
+.mfb-close{background:var(--w);color:var(--mid);}
+.mfb-save{background:var(--bbg);color:var(--b);border-color:var(--b);}
+.mfb-approve{background:var(--g);color:#fff;border-color:var(--g);}
+.mfb-pub{background:var(--pu);color:#fff;border-color:var(--pu);}
+.mfb-rev{background:var(--ambg);color:var(--am);border-color:var(--am);}
+.mfb-rej{background:var(--rbg);color:var(--r);border-color:var(--r);}
 
-/* REJECT MODAL */
-.reject-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:400;align-items:center;justify-content:center;}
-.reject-modal-overlay.open{display:flex;}
-.reject-modal-box{background:var(--w);border-radius:14px;padding:32px 36px;width:460px;box-shadow:0 24px 60px rgba(0,0,0,0.2);}
-.rmb-title{font-size:16px;font-weight:700;color:var(--r);margin-bottom:4px;}
-.rmb-sub{font-size:12px;color:var(--mid);margin-bottom:18px;line-height:1.6;}
-.rmb-inp{width:100%;font-family:'Inter',sans-serif;font-size:13px;border:1.5px solid rgba(163,45,45,0.3);border-radius:9px;padding:12px 14px;outline:none;resize:vertical;min-height:100px;line-height:1.6;}
-.rmb-inp:focus{border-color:var(--r);}
-.rmb-btns{display:flex;gap:8px;margin-top:16px;}
-.rmb-cancel{flex:1;padding:11px;font-size:12px;font-weight:600;border-radius:8px;border:1px solid var(--bdr);background:var(--w);color:var(--mid);cursor:pointer;}
-.rmb-cancel:hover{background:var(--light);}
-.rmb-confirm{flex:1;padding:11px;font-size:12px;font-weight:600;border-radius:8px;border:none;background:var(--r);color:#fff;cursor:pointer;}
-.rmb-confirm:hover{opacity:.88;}
+/* REJECT OVERLAY */
+.rov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;align-items:center;justify-content:center;}
+.rov.open{display:flex;}
+.rbox{background:var(--w);border-radius:14px;padding:26px 30px;width:450px;}
+.rbox-t{font-size:15px;font-weight:700;color:var(--r);margin-bottom:4px;}
+.rbox-s{font-size:12px;color:var(--mid);margin-bottom:14px;line-height:1.6;}
+.ri{width:100%;font-family:'Inter',sans-serif;font-size:13px;border:1.5px solid rgba(163,45,45,.3);border-radius:9px;padding:11px;outline:none;resize:vertical;min-height:85px;line-height:1.6;}
+.ri:focus{border-color:var(--r);}
+.rbtns{display:flex;gap:7px;margin-top:12px;}
+.rc{flex:1;padding:10px;font-size:12px;font-weight:600;border-radius:8px;border:1px solid var(--bdr);background:var(--w);color:var(--mid);cursor:pointer;}
+.rconf{flex:1;padding:10px;font-size:12px;font-weight:600;border-radius:8px;border:none;background:var(--r);color:#fff;cursor:pointer;}
 
-/* ACTIVITY LOG */
-.activity-wrap{background:var(--w);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;}
-.activity-head{padding:14px 18px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:600;}
-.activity-list{max-height:500px;overflow-y:auto;}
-.al-item{display:flex;align-items:flex-start;gap:12px;padding:11px 18px;border-bottom:0.5px solid var(--bdr);}
-.al-item:last-child{border-bottom:none;}
-.al-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.al-text{font-size:12px;flex:1;line-height:1.5;}
-.al-bold{font-weight:600;}
-.al-time{font-size:10px;color:var(--mid);flex-shrink:0;white-space:nowrap;}
-.al-empty{padding:28px;text-align:center;font-size:12px;color:var(--mid);}
+/* SETUP MODAL */
+.setup-modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.setup-modal-bg.open{display:flex;}
+.setup-modal{background:var(--w);border-radius:16px;width:580px;max-height:90vh;overflow-y:auto;padding:30px 34px;}
+.sm-title{font-size:18px;font-weight:700;margin-bottom:5px;}
+.sm-sub{font-size:13px;color:var(--mid);margin-bottom:22px;line-height:1.6;}
+.sm-step{display:flex;gap:13px;padding:12px 0;border-bottom:1px solid var(--bdr);}
+.sm-step:last-of-type{border-bottom:none;}
+.sm-n{width:26px;height:26px;border-radius:50%;background:var(--o);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sm-t{font-size:13px;line-height:1.6;flex:1;}
+.sm-t strong{font-weight:600;color:var(--o);}
+.sm-t code{font-family:monospace;background:var(--light);padding:1px 6px;border-radius:4px;font-size:12px;}
+.sm-inp{width:100%;font-family:monospace;font-size:13px;border:1.5px solid var(--bdr);border-radius:9px;padding:10px 12px;outline:none;margin-top:8px;}
+.sm-inp:focus{border-color:var(--o);}
+.sm-save-btn{width:100%;background:var(--o);color:#fff;font-size:14px;font-weight:600;padding:13px;border-radius:10px;border:none;cursor:pointer;margin-top:20px;}
+.sm-skip{width:100%;background:transparent;color:var(--mid);font-size:12px;padding:9px;border-radius:10px;border:1px solid var(--bdr);cursor:pointer;margin-top:8px;}
 
-/* EMPTY STATE */
-.empty-state{text-align:center;padding:70px 20px;color:var(--mid);}
-.empty-state .es-icon{font-size:40px;margin-bottom:12px;}
-.empty-state .es-text{font-size:14px;}
+/* ACTIVITY */
+.aw{background:var(--w);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;}
+.ah{padding:12px 16px;border-bottom:1px solid var(--bdr);font-size:13px;font-weight:600;}
+.alist{max-height:500px;overflow-y:auto;}
+.ai{display:flex;align-items:flex-start;gap:10px;padding:10px 16px;border-bottom:.5px solid var(--bdr);}
+.ai:last-child{border-bottom:none;}
+.ai-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ai-text{font-size:12px;flex:1;line-height:1.5;}
+.ai-bold{font-weight:600;}
+.ai-time{font-size:10px;color:var(--mid);}
+.a-empty{padding:24px;text-align:center;font-size:12px;color:var(--mid);}
+.empty-state{text-align:center;padding:60px;color:var(--mid);}
 
 /* TOAST */
-.toast-wrap{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:600;pointer-events:none;}
-.toast{background:var(--dark);color:#fff;font-size:12px;font-weight:500;padding:11px 24px;border-radius:99px;opacity:0;transition:opacity .25s,transform .25s;transform:translateY(6px);white-space:nowrap;}
+.toast-wrap{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:600;pointer-events:none;}
+.toast{background:var(--dark);color:#fff;font-size:12px;font-weight:500;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity .25s,transform .25s;transform:translateY(6px);}
 .toast.show{opacity:1;transform:translateY(0);}
-.toast.success{background:var(--g);}
-.toast.error{background:var(--r);}
-.toast.warning{background:var(--am);}
+.toast.ok{background:var(--g);}
+.toast.err{background:var(--r);}
+.toast.warn{background:var(--am);}
+.toast.info{background:var(--b);}
 
-/* HIDDEN */
 input[type=file]{display:none;}
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .pgrid{grid-template-columns:repeat(2,1fr);}
+  .rmodal{flex-direction:column;width:100%;max-height:95vh;}
+  .mleft{width:100%;max-height:300px;}
+  .stats-row{grid-template-columns:repeat(3,1fr);}
+}
 </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN PAGE ═══ -->
+<!-- LOGIN -->
 <div class="login-page" id="loginPage">
-  <div class="login-card">
-    <div class="lc-logo">make my mandir</div>
-    <div class="lc-sub">Content Studio</div>
-    <span class="lc-label">Username</span>
-    <input class="lc-input" id="liUser" placeholder="Enter your username" autocomplete="username">
-    <span class="lc-label">Password</span>
-    <input class="lc-input" id="liPass" type="password" placeholder="Enter your password" autocomplete="current-password">
-    <button class="lc-btn" onclick="doLogin()">Sign In</button>
-    <div class="lc-err" id="loginErr"></div>
-    <div class="lc-divider"><span>Access restricted to authorised team members</span></div>
-    <div class="lc-contact">Forgot your credentials? Contact <a href="https://wa.me/917767962441">Nilesh · 7767962441</a></div>
+  <div class="lbox">
+    <div class="l-logo">make my mandir</div>
+    <div class="l-sub">Content Studio</div>
+    <span class="lbl">Username</span>
+    <input class="linp" id="liUser" placeholder="Enter username" autocomplete="username">
+    <span class="lbl">Password</span>
+    <input class="linp" id="liPass" type="password" placeholder="Enter password">
+    <button class="lbtn" onclick="doLogin()">Sign In</button>
+    <div class="lerr" id="loginErr"></div>
+    <div class="l-divider"><span>Restricted to authorised members</span></div>
+    <div class="l-contact">Forgot credentials? <a href="https://wa.me/917767962441">Contact Nilesh · 7767962441</a></div>
   </div>
 </div>
 
-<!-- ═══ APP SHELL ═══ -->
+<!-- APP -->
 <div class="app-shell" id="appShell">
   <div class="sidebar">
-    <div class="sb-brand">
-      <div class="sb-logo">make my mandir</div>
-      <div class="sb-tagline">Content Studio · May 2026</div>
-    </div>
-    <div class="sb-user-card">
-      <div class="sb-username" id="sbUsername">—</div>
-      <div class="sb-role-text" id="sbRoleText">—</div>
-      <div class="role-pill" id="sbRolePill"></div>
+    <div class="sb-brand"><div class="sb-logo">make my mandir</div><div class="sb-tagline">Content Studio · May 2026</div></div>
+    <div class="sb-user">
+      <div class="sb-name" id="sbName">—</div>
+      <div class="sb-roletxt" id="sbRoleTxt">—</div>
+      <div class="rpill" id="sbRolePill"></div>
+      <div class="sync-pill offline" id="syncPill"><div class="sp-dot dot-off"></div><span id="syncPillTxt">Not connected</span></div>
     </div>
     <div class="sb-nav">
-      <div class="nav-section">Posts</div>
-      <div class="nav-item active" onclick="navTo('all',this)"><span class="nav-icon">📋</span>All Posts<span class="nav-count" id="nc-all">27</span></div>
-      <div class="nav-item" onclick="navTo('pending',this)"><span class="nav-icon">⏳</span>Pending<span class="nav-count amber" id="nc-pend">27</span></div>
-      <div class="nav-item" onclick="navTo('approved',this)"><span class="nav-icon">✅</span>Approved<span class="nav-count green" id="nc-app">0</span></div>
-      <div class="nav-item" onclick="navTo('revision',this)"><span class="nav-icon">🔄</span>Needs Revision<span class="nav-count amber" id="nc-rev">0</span></div>
-      <div class="nav-item" onclick="navTo('rejected',this)"><span class="nav-icon">❌</span>Rejected<span class="nav-count red" id="nc-rej">0</span></div>
-      <div class="nav-section">Other</div>
+      <div class="nav-s">Posts</div>
+      <div class="nav-item active" onclick="navTo('all',this)"><span class="nav-icon">📋</span>All Posts<span class="nav-cnt" id="nc-all">27</span></div>
+      <div class="nav-item" onclick="navTo('pending',this)"><span class="nav-icon">⏳</span>Pending<span class="nav-cnt am" id="nc-pend">27</span></div>
+      <div class="nav-item" onclick="navTo('approved',this)"><span class="nav-icon">✅</span>Approved<span class="nav-cnt g" id="nc-app">0</span></div>
+      <div class="nav-item" onclick="navTo('revision',this)"><span class="nav-icon">🔄</span>Revision<span class="nav-cnt am" id="nc-rev">0</span></div>
+      <div class="nav-item" onclick="navTo('rejected',this)"><span class="nav-icon">❌</span>Rejected<span class="nav-cnt r" id="nc-rej">0</span></div>
+      <div class="nav-item" onclick="navTo('published',this)"><span class="nav-icon">🚀</span>Published<span class="nav-cnt pu" id="nc-pub">0</span></div>
+      <div class="nav-s">Tools</div>
       <div class="nav-item" onclick="navTo('activity',this)"><span class="nav-icon">📜</span>Activity Log</div>
+      <div class="nav-item" onclick="openSetupModal()"><span class="nav-icon">⚙️</span>Sync Settings</div>
     </div>
-    <div class="sb-bottom">
-      <div class="sb-sync" id="sbSync"><div class="sync-indicator"></div>Saved on this device</div>
-      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
-    </div>
+    <div class="sb-bottom"><button class="logout-btn" onclick="doLogout()">Sign Out</button></div>
   </div>
 
   <div class="main-area">
     <div class="topbar">
-      <div class="tb-left">
-        <div class="tb-title" id="tbTitle">All Posts</div>
-        <div class="tb-count" id="tbCount"></div>
-      </div>
+      <div class="tb-left"><div class="tb-title" id="tbTitle">All Posts</div><div class="tb-count" id="tbCount"></div></div>
       <div class="tb-right">
+        <button class="tb-btn" onclick="manualSync()" id="syncBtn">⟳ Sync now</button>
         <button class="tb-btn primary" onclick="window.open('https://business.facebook.com/','_blank')">Meta Business Suite →</button>
       </div>
     </div>
@@ -344,50 +410,68 @@ input[type=file]{display:none;}
   </div>
 </div>
 
-<!-- ═══ REVIEW MODAL ═══ -->
-<div class="modal-overlay" id="revOverlay">
-  <div class="review-modal">
-    <div class="modal-left">
-      <div class="modal-media-wrap">
-        <img class="modal-img" id="mImg" src="">
-        <video class="modal-vid" id="mVid" controls style="display:none;"></video>
-      </div>
-      <div class="modal-upload-bar">
-        <button class="mub-btn mub-img" onclick="trigUpload('img')">📷 Upload Photo</button>
-        <button class="mub-btn mub-vid" onclick="trigUpload('vid')">🎬 Upload Video</button>
-        <button class="mub-btn mub-rst" onclick="resetMedia()" id="mReset" style="display:none;">↺ Reset template</button>
-      </div>
-    </div>
-    <div class="modal-right">
-      <div class="modal-header">
+<!-- REVIEW MODAL -->
+<div class="mbg" id="revBg">
+  <div class="rmodal">
+    <div class="mleft" id="modalLeft"></div>
+    <div class="mright">
+      <div class="mhdr">
         <div>
           <div class="mh-title" id="mTitle"></div>
           <div class="mh-meta" id="mMeta"></div>
           <div class="mh-status" id="mStatus"></div>
         </div>
-        <button class="modal-close" onclick="closeModal()">×</button>
+        <button class="mx" onclick="closeModal()">×</button>
       </div>
-      <div class="modal-body" id="mBody"></div>
-      <div class="modal-footer" id="mFooter"></div>
+      <div class="mbody" id="mBody"></div>
+      <div class="mfoot" id="mFoot"></div>
     </div>
   </div>
 </div>
 
-<!-- ═══ REJECT REASON MODAL ═══ -->
-<div class="reject-modal-overlay" id="rejectOverlay">
-  <div class="reject-modal-box">
-    <div class="rmb-title">Reject this post</div>
-    <div class="rmb-sub">Tell the team exactly what needs to change. They will see this message on their dashboard.</div>
-    <textarea class="rmb-inp" id="rejectReason" placeholder="e.g. The caption is too long. Please shorten to under 150 words and remove 3 hashtags. Also the hook needs to be stronger..."></textarea>
-    <div class="rmb-btns">
-      <button class="rmb-cancel" onclick="closeRejectModal()">Cancel</button>
-      <button class="rmb-confirm" onclick="confirmReject()">Reject & Notify Team</button>
+<!-- REJECT OVERLAY -->
+<div class="rov" id="rejOv">
+  <div class="rbox">
+    <div class="rbox-t">Reject this post</div>
+    <div class="rbox-s">Enter your reason below. The team will see this message immediately on their dashboard.</div>
+    <textarea class="ri" id="rejReason" placeholder="e.g. Caption is too long. Hook needs to be stronger. Please use an actual product photo instead of a graphic..."></textarea>
+    <div class="rbtns">
+      <button class="rc" onclick="closeRejOv()">Cancel</button>
+      <button class="rconf" onclick="confirmReject()">Reject & Notify Team</button>
     </div>
+  </div>
+</div>
+
+<!-- SETUP MODAL -->
+<div class="setup-modal-bg" id="setupModalBg">
+  <div class="setup-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+      <div class="sm-title">⚙️ Sync Settings — GitHub Auto-Sync</div>
+      <button onclick="closeSetupModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">×</button>
+    </div>
+    <div class="sm-sub">Connect your GitHub repo once. After that, all approvals, rejections, notes and uploads sync automatically between you and your team — no manual steps.</div>
+    <div class="sm-step">
+      <div class="sm-n">1</div>
+      <div class="sm-t">Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate new token (classic)</div>
+    </div>
+    <div class="sm-step">
+      <div class="sm-n">2</div>
+      <div class="sm-t">Give it a name like <code>mmm-dashboard</code> → tick <strong>repo</strong> (full repo access) → click <strong>Generate token</strong> → copy the token immediately</div>
+    </div>
+    <div class="sm-step">
+      <div class="sm-n">3</div>
+      <div class="sm-t">Paste your GitHub token below:</div>
+    </div>
+    <input class="sm-inp" id="ghTokenInp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" type="password">
+    <div style="font-size:11px;color:var(--mid);margin-top:6px;line-height:1.6;">Your token is stored only in your browser. It is never sent anywhere except directly to GitHub to save your dashboard data.</div>
+    <button class="sm-save-btn" onclick="saveGithubToken()">Save & Connect — Start Auto-Sync</button>
+    <button class="sm-skip" onclick="closeSetupModal()">Skip for now — use this device only</button>
   </div>
 </div>
 
 <input type="file" id="imgInp" accept="image/*" onchange="handleUpload(this,'img')">
 <input type="file" id="vidInp" accept="video/*" onchange="handleUpload(this,'vid')">
+<input type="file" id="slideInp" accept="image/*" onchange="handleSlideUpload(this)">
 <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
 <script>
@@ -422,66 +506,205 @@ const THUMBS={
 };
 
 
-/* ═══ DATA ═══ */
+/* ══ CONFIG ══ */
+const GH_OWNER = "Makemymandir";
+const GH_REPO = "mmm-dashboards";
+const GH_DATA_PATH = "data/sync.json";
+const GH_IMG_PATH = "data/images";
+const SYNC_INTERVAL = 30000; // Auto-sync every 30 seconds
+
 const POSTS=[
-  {id:1,w:1,d:"May 1",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: apartment mandir reveal",hook:"She sent us a plain wall. We sent back this...",caption:"The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",brief:"30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal. Trending devotional audio.",cta:"DM / WhatsApp space photo for free consultation"},
-  {id:2,w:1,d:"May 2",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Corian vs Wood vs Marble: which lasts?",hook:"Choosing your mandir material? Here's what nobody tells you.",caption:"Not all mandir materials are equal. Here's an honest breakdown so you choose right the first time.\n\nSwipe to see which material suits your home, budget, and lifestyle.\n\n#mandirmaterial #corianmandir #woodenmandir #homemandirdesign #makemymandir",brief:"5 slides: Hook, Corian pros/cons, Wood pros/cons, Marble pros/cons, CTA",cta:"DM for material recommendation"},
-  {id:3,w:2,d:"May 4",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Wall-mounted mandir — product spotlight",hook:"No dedicated pooja room? No problem.",caption:"Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",brief:"Clean product photo of wall-mounted Corian mandir with LED.",cta:"WhatsApp/DM to see designs"},
-  {id:4,w:2,d:"May 5",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Vastu guide: the right wall for your mandir",hook:"Is your mandir in the wrong spot? Here's how to fix it.",caption:"A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",brief:"6 slides: Hook, East wall, North wall, avoid South, Height guide, CTA",cta:"DM floor plan for free Vastu assessment"},
-  {id:5,w:2,d:"May 6",day:"Wed",type:"Reel",plat:"IG",time:"7:30 PM",title:"BTS: how a Corian mandir is made",hook:"Ever wondered how a premium Corian mandir is actually built?",caption:"From raw Corian sheet to sacred centrepiece.\n\nDM us or WhatsApp to start your design conversation.\n\n#corianmandir #mandirmaking #behindthescenes #custommandir #makemymandir",brief:"45-sec BTS reel: Corian sheet → CNC cutting → carving → assembly → LED → final glow.",cta:"DM to start your design"},
-  {id:6,w:2,d:"May 7",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Narasimha Jayanti — festive greeting",hook:"Jai Shri Narasimha. May the divine protector guard your home today.",caption:"Jai Shri Narasimha on this blessed Jayanti. 🙏\n\n#NarasimhaJayanti #JaiShriNarasimha #makemymandir",brief:"Devotional graphic in gold and deep maroon.",cta:"None"},
-  {id:7,w:2,d:"May 8",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:00 PM",title:"Client testimonial: cabinet mandir",hook:"He wanted a mandir with hidden storage. Here's what we built.",caption:"Mr. Amit Jain wanted a mandir that doesn't look like one when guests come over.\n\nDM us your requirement.\n\n#clienttestimonial #cabinetmandir #custommandir #makemymandir",brief:"10s B-roll → 15s client speaking → reveal shot. Add subtitles.",cta:"DM your requirement"},
-  {id:8,w:2,d:"May 9",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"3 mandir packages — what they cost",hook:"Thinking of a mandir? Here's what budget you actually need.",caption:"Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",brief:"5 slides: Hook, Essential ₹30k–50k, Premium ₹60k–1.2L, Signature ₹1.5L+, CTA",cta:"DM budget + space for custom quote"},
-  {id:9,w:2,d:"May 10",day:"Sun",type:"Static",plat:"IG+FB",time:"10:00 AM",title:"Mother's Day — gift her a sacred space",hook:"The best gift for a mother who prays every day.",caption:"She wakes up early for pooja. She lights the diya before anyone else.\n\nThis Mother's Day, gift her the sacred corner she deserves. 🙏\n\n#MothersDay #GiftForMom #Mandir #makemymandir",brief:"Warm graphic: mother at lit mandir. Soft gold tones.",cta:"DM to gift a mandir this Mother's Day"},
-  {id:10,w:3,d:"May 11",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"DM us your space challenge",hook:"Send us a photo of your pooja corner. We'll redesign it — free.",caption:"DM or WhatsApp us a photo of your current pooja corner. Our designer sends back a concept — no cost.\n\nTag someone whose mandir needs an upgrade. 👇\n\n#FreeDesign #CustomMandir #MandirMakeover #makemymandir",brief:"Bold typographic post.",cta:"DM/WhatsApp your space photo"},
-  {id:11,w:3,d:"May 12",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"5 pooja room mistakes people always make",hook:"If your pooja room never feels right, one of these might be why.",caption:"These are the 5 most common pooja room mistakes.\n\nSave this if you're planning a renovation.\n\n#PoojaRoomDesign #MandirDesign #VastuTips #makemymandir",brief:"7 slides: Hook, 5 mistakes, CTA",cta:"DM to plan your space right"},
-  {id:12,w:3,d:"May 13",day:"Wed",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: office mandir installation",hook:"They wanted the divine in their workspace. Here's what we did.",caption:"When this Pune IT company needed a sacred space, they came to us.\n\nWe build for homes, offices, and commercial spaces. DM us. 🙏\n\n#OfficeMandir #CorporateMandir #CorianMandir #makemymandir",brief:"40-sec reel: plain office wall → Corian mandir installed → glowing final product.",cta:"DM for office/commercial mandirs"},
-  {id:13,w:3,d:"May 14",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Cabinet mandir with hidden storage",hook:"A mandir that stores everything — and shows nothing.",caption:"Full mandir setup inside a furniture piece. Doors open for prayers. Doors closed for guests.\n\nStarting at ₹65,000. DM us.\n\n#CabinetMandir #HiddenMandir #ApartmentLiving #makemymandir",brief:"Two-shot: closed cabinet → open to reveal lit mandir. Price: From ₹65,000.",cta:"DM to see cabinet mandir options"},
-  {id:14,w:3,d:"May 15",day:"Fri",type:"Reel",plat:"IG",time:"7:00 PM",title:"Trending audio: transformation montage",hook:"3 mandirs. 3 spaces. 1 craftsman.",caption:"Every home we enter is different. Every mandir we build is different.\n\nWhich style speaks to you? Tell us in the comments. 👇\n\n#MandirTransformation #CustomMandir #makemymandir",brief:"30-sec montage to trending spiritual audio. 3 different mandir installations.",cta:"Comment your favourite style"},
-  {id:15,w:3,d:"May 16",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Top 5 FAQs — answered honestly",hook:"You asked. We answered — honestly.",caption:"Before you DM us, here are the 5 questions we get asked most.\n\n#CustomMandir #MandirFAQ #MakeMyMandir #PuneInteriors",brief:"7 slides: Intro, 5 Q&As, CTA",cta:"Drop your question in comments or DM"},
-  {id:16,w:4,d:"May 18",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Our process: brief to installation",hook:"Wondering what it's like to work with us? Here's the full journey.",caption:"Getting a custom mandir is simpler than you think. Most clients have their mandir ready in 12–18 days.\n\nDM us today. 🙏\n\n#CustomMandir #OurProcess #CorianMandir #makemymandir",brief:"Clean 4-step process infographic.",cta:"DM/WhatsApp to start the process"},
-  {id:17,w:4,d:"May 19",day:"Tue",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Client testimonial: full pooja room reveal",hook:"They gave us an entire room. We turned it into a sanctuary.",caption:"Mr. & Mrs. Kulkarni handed us their empty pooja room and said: Make it divine.\n\nFull pooja room designs starting at ₹1.5L. DM/WhatsApp for a free site visit. 🙏\n\n#PoojaRoomDesign #LuxuryMandir #makemymandir",brief:"50-sec reel: empty room → 3D render → fabrication → cinematic final reveal.",cta:"DM/WhatsApp for free site visit"},
-  {id:18,w:4,d:"May 20",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Planning a mandir in a new flat",hook:"Moving into a new flat? Plan your mandir before the walls are done.",caption:"This is the time to plan your mandir — before walls are plastered.\n\nDM us your floor plan. We advise for free.\n\n#NewFlat #PoojaRoomPlanning #HomeRenovation #makemymandir",brief:"6 slides: Hook, wall selection, electrical planning, clearance, type decision, CTA",cta:"DM floor plan for free advice"},
-  {id:19,w:4,d:"May 21",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"LED Corian mandir — product spotlight",hook:"The glow you see here isn't a filter. It's Corian + LED done right.",caption:"Floor-standing Corian mandir with integrated LED, carved arches, and storage base.\n\nStarting at ₹75,000. DM/WhatsApp to see the full portfolio.\n\n#LEDMandir #CorianMandir #LuxuryMandir #makemymandir",brief:"Hero product shot showing dramatic LED glow.",cta:"DM to see full portfolio"},
-  {id:20,w:4,d:"May 22",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: 1BHK compact mandir",hook:"Small flat. Big devotion. Here's how we solved it.",caption:"2.5ft wall. No dedicated room. But full devotion.\n\nStarting at ₹30,000. DM us. 🙏\n\n#CompactMandir #1BHKDesign #SmallSpaceMandir #makemymandir",brief:"35-sec reel: tiny corner → compact wall-mount installed → happy client.",cta:"DM for compact mandir options"},
-  {id:21,w:4,d:"May 23",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Trending mandir styles of 2026",hook:"Which mandir style is dominating homes in 2026? Swipe to see.",caption:"Mandir design in India has evolved. Here are the 5 dominant styles we're seeing in 2026.\n\nWhich one speaks to your aesthetic? Tell us in the comments.\n\n#MandirDesign2026 #HomeTemple #InteriorTrends #makemymandir",brief:"6 slides: Hook, 5 styles, CTA",cta:"Comment your style"},
-  {id:22,w:5,d:"May 25",day:"Mon",type:"Carousel",plat:"IG+FB",time:"8:00 AM",title:"Why clients choose Corian over marble and wood",hook:"Why do 80% of our clients choose Corian over marble and wood?",caption:"Corian: maintenance-free, termite-proof, and beautiful in any interior.\n\nDM us to explore Corian designs. 🙏\n\n#CorianMandir #WhyCorian #MandirMaterial #makemymandir",brief:"5 slides: Hook, Seamless, Hygienic, Durable, Customisable, CTA",cta:"DM to explore Corian options"},
-  {id:23,w:5,d:"May 26",day:"Tue",type:"Reel",plat:"IG",time:"7:30 PM",title:"Satisfying workshop reel",hook:"There's something meditative about watching this.",caption:"Sometimes the most sacred thing isn't the finished piece — it's the care that went into making it.\n\n#MandirMaking #Craftsmanship #CorianArt #makemymandir",brief:"25-sec ASMR-style: Corian cut → sanding → LED fitted → polish → final glow.",cta:"None"},
-  {id:24,w:5,d:"May 27",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Home renovation season: plan your mandir first",hook:"If you're renovating this summer, don't leave your mandir as an afterthought.",caption:"Summer is peak renovation season in Pune. Don't let the mandir be an afterthought.\n\nDM us your floor plan and timeline.\n\n#HomeRenovation #PuneRenovation #MandirPlanning #makemymandir",brief:"5 slides: Hook, mistake, why plan first, timeline, CTA",cta:"DM floor plan + renovation timeline"},
-  {id:25,w:5,d:"May 28",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"We deliver across Maharashtra",hook:"Pune, Mumbai, Nashik, Aurangabad — we come to you.",caption:"Pune: free site visit. Mumbai, Nashik, Aurangabad, Kolhapur: video consultation + delivery + installation.\n\nDM us with your city. 🙏\n\n#MandirDelivery #MaharashtraInteriors #CorianMandir #makemymandir",brief:"Map-style graphic with delivery cities.",cta:"DM with your city for delivery info"},
-  {id:26,w:5,d:"May 29",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: luxury pooja room end-to-end",hook:"Empty 10×10 room. 18 days. This is how it ended.",caption:"Full pooja room: Corian mandir, 3D wall panels, LED architecture, marble flooring. 18 days.\n\nDM us or WhatsApp to talk about your space. 🙏\n\n#PoojaRoomReveal #LuxuryMandir #HomeTransformation #makemymandir",brief:"60-sec cinematic: empty room → 3D render → fabrication → dramatic final reveal.",cta:"DM/WhatsApp for full pooja room quote"},
-  {id:27,w:5,d:"May 30",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"May highlights: our best work this month",hook:"May in pictures — here's what we built.",caption:"May was full of beautiful projects. June slots are filling up.\n\nDM us to book yours. 🙏\n\n#MayHighlights #MandirBuilds #CustomMandir #CorianMandir #makemymandir",brief:"8 slides: Intro, 6 best installation photos, final CTA slide.",cta:"DM to book a June slot"},
+  {id:1,w:1,d:"May 1",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: apartment mandir reveal",hook:"She sent us a plain wall. We sent back this...",caption:"The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",brief:"30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal.",cta:"DM your space photo",slides:null},
+  {id:2,w:1,d:"May 2",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Corian vs Wood vs Marble: which lasts?",hook:"Choosing your mandir material? Here's what nobody tells you.",caption:"Not all mandir materials are equal. Here's an honest breakdown so you choose right the first time.\n\nSwipe to see which material suits your home, budget, and lifestyle.\n\n#mandirmaterial #corianmandir #woodenmandir #homemandirdesign #makemymandir",brief:"5 slides: Hook, Corian, Wood, Marble, CTA",cta:"DM for material recommendation",slides:["Hook: Choosing your mandir material?","Slide 2: Corian — Pros & Cons","Slide 3: Wood — Pros & Cons","Slide 4: Marble — Pros & Cons","Slide 5: Our Recommendation + CTA"]},
+  {id:3,w:2,d:"May 4",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Wall-mounted mandir — product spotlight",hook:"No dedicated pooja room? No problem.",caption:"Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",brief:"Product photo of wall-mounted Corian mandir with LED.",cta:"WhatsApp/DM to see designs",slides:null},
+  {id:4,w:2,d:"May 5",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Vastu guide: the right wall for your mandir",hook:"Is your mandir in the wrong spot? Here's how to fix it.",caption:"A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",brief:"6 slides: Hook, East wall, North, avoid South, Height, CTA",cta:"DM floor plan",slides:["Hook: Is your mandir in the wrong spot?","Slide 2: East Wall — Most Auspicious","Slide 3: North Wall — Acceptable","Slide 4: Avoid South & West","Slide 5: Height Guidelines","Slide 6: CTA — DM your floor plan"]},
+  {id:5,w:2,d:"May 6",day:"Wed",type:"Reel",plat:"IG",time:"7:30 PM",title:"BTS: how a Corian mandir is made",hook:"Ever wondered how a premium Corian mandir is actually built?",caption:"From raw Corian sheet to sacred centrepiece.\n\nDM us or WhatsApp to start your design conversation.\n\n#corianmandir #mandirmaking #behindthescenes #custommandir #makemymandir",brief:"45-sec BTS: Corian → CNC cutting → assembly → LED → final glow.",cta:"DM to start your design",slides:null},
+  {id:6,w:2,d:"May 7",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Narasimha Jayanti — festive greeting",hook:"Jai Shri Narasimha. May the divine protector guard your home today.",caption:"Jai Shri Narasimha on this blessed Jayanti. 🙏\n\n#NarasimhaJayanti #JaiShriNarasimha #makemymandir",brief:"Devotional graphic in gold and maroon.",cta:"None",slides:null},
+  {id:7,w:2,d:"May 8",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:00 PM",title:"Client testimonial: cabinet mandir",hook:"He wanted a mandir with hidden storage. Here's what we built.",caption:"Mr. Amit Jain wanted a mandir that doesn't look like one when guests come over.\n\nDM us your requirement.\n\n#clienttestimonial #cabinetmandir #custommandir #makemymandir",brief:"10s B-roll → 15s client speaking → reveal shot.",cta:"DM your requirement",slides:null},
+  {id:8,w:2,d:"May 9",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"3 mandir packages — what they cost",hook:"Thinking of a mandir? Here's what budget you actually need.",caption:"Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",brief:"5 slides: Hook, Essential, Premium, Signature, CTA",cta:"DM budget + space for quote",slides:["Hook: What budget do you actually need?","Slide 2: Essential — ₹30,000–50,000","Slide 3: Premium — ₹60,000–1,20,000","Slide 4: Signature — ₹1,50,000+","Slide 5: CTA — DM your budget"]},
+  {id:9,w:2,d:"May 10",day:"Sun",type:"Static",plat:"IG+FB",time:"10:00 AM",title:"Mother's Day — gift her a sacred space",hook:"The best gift for a mother who prays every day.",caption:"She wakes up early for pooja. She lights the diya before anyone else.\n\nThis Mother's Day, gift her the sacred corner she deserves. 🙏\n\n#MothersDay #GiftForMom #Mandir #makemymandir",brief:"Warm graphic: mother at lit mandir. Soft gold tones.",cta:"DM to gift a mandir",slides:null},
+  {id:10,w:3,d:"May 11",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"DM us your space challenge",hook:"Send us a photo of your pooja corner. We'll redesign it — free.",caption:"DM or WhatsApp us a photo of your current pooja corner. Our designer sends back a concept — no cost.\n\nTag someone whose mandir needs an upgrade. 👇\n\n#FreeDesign #CustomMandir #MandirMakeover #makemymandir",brief:"Bold typographic post.",cta:"DM your space photo",slides:null},
+  {id:11,w:3,d:"May 12",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"5 pooja room mistakes people always make",hook:"If your pooja room never feels right, one of these might be why.",caption:"These are the 5 most common pooja room mistakes.\n\nSave this if you're planning a renovation.\n\n#PoojaRoomDesign #MandirDesign #VastuTips #makemymandir",brief:"7 slides: Hook, 5 mistakes, CTA",cta:"DM to plan your space right",slides:["Hook: If your pooja room never feels right...","Mistake 1: Wrong wall placement","Mistake 2: Incorrect idol height","Mistake 3: Poor lighting","Mistake 4: No storage solution","Mistake 5: Wrong materials","Slide 7: CTA — DM us"]},
+  {id:12,w:3,d:"May 13",day:"Wed",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: office mandir installation",hook:"They wanted the divine in their workspace. Here's what we did.",caption:"When this Pune IT company needed a sacred space, they came to us.\n\nWe build for homes, offices, and commercial spaces. DM us. 🙏\n\n#OfficeMandir #CorporateMandir #CorianMandir #makemymandir",brief:"40-sec: plain wall → mandir installed → glowing result.",cta:"DM for office mandirs",slides:null},
+  {id:13,w:3,d:"May 14",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Cabinet mandir with hidden storage",hook:"A mandir that stores everything — and shows nothing.",caption:"Full mandir setup inside a furniture piece. Doors open for prayers. Doors closed for guests.\n\nStarting at ₹65,000. DM us.\n\n#CabinetMandir #HiddenMandir #ApartmentLiving #makemymandir",brief:"Two-shot: closed cabinet → open reveal. Price: From ₹65,000.",cta:"DM to see cabinet mandir options",slides:null},
+  {id:14,w:3,d:"May 15",day:"Fri",type:"Reel",plat:"IG",time:"7:00 PM",title:"Trending audio: transformation montage",hook:"3 mandirs. 3 spaces. 1 craftsman.",caption:"Every home we enter is different. Every mandir we build is different.\n\nWhich style speaks to you? Tell us in the comments. 👇\n\n#MandirTransformation #CustomMandir #makemymandir",brief:"30-sec montage to trending spiritual audio.",cta:"Comment your favourite style",slides:null},
+  {id:15,w:3,d:"May 16",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Top 5 FAQs — answered honestly",hook:"You asked. We answered — honestly.",caption:"Before you DM us, here are the 5 questions we get asked most.\n\n#CustomMandir #MandirFAQ #MakeMyMandir #PuneInteriors",brief:"7 slides: Intro, 5 Q&As, CTA",cta:"DM us your question",slides:["Slide 1: You asked. We answered honestly.","FAQ 1: How long does it take?","FAQ 2: What is Corian?","FAQ 3: Do you deliver outside Pune?","FAQ 4: What's the minimum budget?","FAQ 5: Can you do custom designs?","Slide 7: CTA — DM us"]},
+  {id:16,w:4,d:"May 18",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Our process: brief to installation",hook:"Wondering what it's like to work with us? Here's the full journey.",caption:"Getting a custom mandir is simpler than you think. Most clients have their mandir ready in 12–18 days.\n\nDM us today. 🙏\n\n#CustomMandir #OurProcess #CorianMandir #makemymandir",brief:"4-step process infographic.",cta:"DM to start the process",slides:null},
+  {id:17,w:4,d:"May 19",day:"Tue",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Client testimonial: full pooja room reveal",hook:"They gave us an entire room. We turned it into a sanctuary.",caption:"Mr. & Mrs. Kulkarni handed us their empty pooja room and said: Make it divine.\n\nFull pooja room designs starting at ₹1.5L. DM/WhatsApp for a free site visit. 🙏\n\n#PoojaRoomDesign #LuxuryMandir #makemymandir",brief:"50-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for free site visit",slides:null},
+  {id:18,w:4,d:"May 20",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Planning a mandir in a new flat",hook:"Moving into a new flat? Plan your mandir before the walls are done.",caption:"This is the time to plan your mandir — before walls are plastered.\n\nDM us your floor plan. We advise for free.\n\n#NewFlat #PoojaRoomPlanning #HomeRenovation #makemymandir",brief:"6 slides: Hook, wall selection, electrical, clearance, type, CTA",cta:"DM floor plan",slides:["Hook: Plan mandir before walls are done","Slide 2: Choosing the right wall","Slide 3: Electrical planning for LED","Slide 4: Space clearance requirements","Slide 5: Which type suits your flat?","Slide 6: CTA — DM your floor plan"]},
+  {id:19,w:4,d:"May 21",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"LED Corian mandir — product spotlight",hook:"The glow you see here isn't a filter. It's Corian + LED done right.",caption:"Floor-standing Corian mandir with integrated LED, carved arches, and storage base.\n\nStarting at ₹75,000. DM/WhatsApp to see the full portfolio.\n\n#LEDMandir #CorianMandir #LuxuryMandir #makemymandir",brief:"Hero product shot: dramatic LED glow.",cta:"DM to see full portfolio",slides:null},
+  {id:20,w:4,d:"May 22",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: 1BHK compact mandir",hook:"Small flat. Big devotion. Here's how we solved it.",caption:"2.5ft wall. No dedicated room. But full devotion.\n\nStarting at ₹30,000. DM us. 🙏\n\n#CompactMandir #1BHKDesign #SmallSpaceMandir #makemymandir",brief:"35-sec: tiny corner → compact wall-mount → happy client.",cta:"DM for compact mandir options",slides:null},
+  {id:21,w:4,d:"May 23",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Trending mandir styles of 2026",hook:"Which mandir style is dominating homes in 2026? Swipe to see.",caption:"Mandir design in India has evolved. Here are the 5 dominant styles we're seeing in 2026.\n\nWhich one speaks to your aesthetic? Tell us in the comments.\n\n#MandirDesign2026 #HomeTemple #InteriorTrends #makemymandir",brief:"6 slides: Hook, 5 styles, CTA",cta:"Comment your style",slides:["Hook: Which style is dominating 2026?","Style 1: Corian Minimalist","Style 2: Wood Classic","Style 3: Marble Luxury","Style 4: Wall-Mount Compact","Style 5: Full Pooja Room"]},
+  {id:22,w:5,d:"May 25",day:"Mon",type:"Carousel",plat:"IG+FB",time:"8:00 AM",title:"Why clients choose Corian",hook:"Why do 80% of our clients choose Corian over marble and wood?",caption:"Corian: maintenance-free, termite-proof, and beautiful in any interior.\n\nDM us to explore Corian designs. 🙏\n\n#CorianMandir #WhyCorian #MandirMaterial #makemymandir",brief:"6 slides: Hook, Seamless, Hygienic, Durable, Customisable, CTA",cta:"DM to explore Corian",slides:["Hook: Why 80% choose Corian?","Benefit 1: Seamless","Benefit 2: Hygienic","Benefit 3: Durable — termite proof","Benefit 4: Customisable","Slide 6: CTA"]},
+  {id:23,w:5,d:"May 26",day:"Tue",type:"Reel",plat:"IG",time:"7:30 PM",title:"Satisfying workshop reel",hook:"There's something meditative about watching this.",caption:"Sometimes the most sacred thing isn't the finished piece — it's the care that went into making it.\n\n#MandirMaking #Craftsmanship #CorianArt #makemymandir",brief:"25-sec ASMR: Corian cut → sanding → LED → polish → glow.",cta:"None",slides:null},
+  {id:24,w:5,d:"May 27",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Home renovation: plan mandir first",hook:"If you're renovating this summer, don't leave your mandir as an afterthought.",caption:"Summer is peak renovation season in Pune. Don't let the mandir be an afterthought.\n\nDM us your floor plan and timeline.\n\n#HomeRenovation #PuneRenovation #MandirPlanning #makemymandir",brief:"5 slides: Hook, mistake, why first, timeline, CTA",cta:"DM floor plan + timeline",slides:["Hook: Don't make this renovation mistake","Slide 2: Why mandir planning comes first","Slide 3: Electrical & plumbing coordination","Slide 4: Ideal renovation timeline","Slide 5: CTA — DM your timeline"]},
+  {id:25,w:5,d:"May 28",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"We deliver across Maharashtra",hook:"Pune, Mumbai, Nashik, Aurangabad — we come to you.",caption:"Pune: free site visit. Mumbai, Nashik, Aurangabad, Kolhapur: video consultation + delivery + installation.\n\nDM us with your city. 🙏\n\n#MandirDelivery #MaharashtraInteriors #CorianMandir #makemymandir",brief:"Map-style graphic with delivery cities.",cta:"DM with your city",slides:null},
+  {id:26,w:5,d:"May 29",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: luxury pooja room",hook:"Empty 10×10 room. 18 days. This is how it ended.",caption:"Full pooja room: Corian mandir, 3D wall panels, LED architecture, marble flooring. 18 days.\n\nDM us or WhatsApp to talk about your space. 🙏\n\n#PoojaRoomReveal #LuxuryMandir #HomeTransformation #makemymandir",brief:"60-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for full pooja room quote",slides:null},
+  {id:27,w:5,d:"May 30",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"May highlights: our best work",hook:"May in pictures — here's what we built.",caption:"May was full of beautiful projects. June slots are filling up.\n\nDM us to book yours. 🙏\n\n#MayHighlights #MandirBuilds #CustomMandir #CorianMandir #makemymandir",brief:"8 slides: Intro, 6 installations, CTA",cta:"DM to book June slot",slides:["Slide 1: May in pictures","Project 1: Apartment mandir — Pune","Project 2: Office installation","Project 3: Cabinet mandir","Project 4: Full pooja room","Project 5: Wall-mount mandir","Project 6: LED Corian","Slide 8: June slots filling — DM now"]},
 ];
 
 const USERS={admin:{pass:"mmm2026",role:"admin",name:"Nilesh K Mehta"},team:{pass:"team2026",role:"team",name:"Team Member"}};
 const WLBLS={1:"Week 1 — May 1–3",2:"Week 2 — May 4–10",3:"Week 3 — May 11–17",4:"Week 4 — May 18–24",5:"Week 5 — May 25–31"};
 const ST_COLORS={pending:"#854F0B",approved:"#0F6E56",rejected:"#A32D2D",revision:"#854F0B",published:"#5D3FD3"};
-const ST_LABELS={pending:"Pending",approved:"Approved ✓",rejected:"Rejected",revision:"Needs Revision",published:"Published"};
+const ST_LABELS={pending:"Pending",approved:"Approved ✓",rejected:"Rejected",revision:"Needs Revision",published:"Published 🚀"};
+const MONTHS={"Jan":0,"Feb":1,"Mar":2,"Apr":3,"May":4,"Jun":5,"Jul":6,"Aug":7,"Sep":8,"Oct":9,"Nov":10,"Dec":11};
 
-let user=null, curPage="all", revId=null, rejectTargetId=null;
+let user=null,curPage="all",revId=null,rejectTargetId=null,curSlide=0,uploadSlideIdx=null;
+let ghToken=null,syncInterval=null,lastSyncTime=null,isSyncing=false;
 
-/* STORAGE */
-function sto(k,v){try{localStorage.setItem("mmm3-"+k,JSON.stringify(v));}catch(e){}}
-function stg(k){try{const v=localStorage.getItem("mmm3-"+k);return v?JSON.parse(v):null;}catch(e){return null;}}
+/* ══ LOCAL STORAGE ══ */
+function sto(k,v){try{localStorage.setItem("mmm5-"+k,JSON.stringify(v));}catch(e){}}
+function stg(k){try{const v=localStorage.getItem("mmm5-"+k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function gs(id){return stg("st-"+id)||"pending";}
 function ge(id){return stg("ed-"+id)||{};}
 function gm(id){return stg("md-"+id);}
 function gr(id){return stg("rn-"+id)||"";}
+function gsl(id){return stg("slides-"+id)||{};}
+function gNotes(id){return stg("notes-"+id)||[];}
 function gp(id){const b=POSTS.find(p=>p.id===id),e=ge(id);return Object.keys(e).length?{...b,...e}:b;}
-function getActivity(){return stg("activity")||[];}
+function getActs(){return stg("acts")||[];}
+function logAct(a){const acts=getActs();acts.unshift(a);if(acts.length>200)acts.splice(200);sto("acts",acts);}
 
-async function setSt(id,st,reason=""){
-  sto("st-"+id,st);
-  if(reason) sto("rn-"+id,reason);
-  logAct({action:st,postId:id,reason,user:user?.name,time:new Date().toISOString()});
-  render();
+/* ══ GITHUB SYNC ══ */
+function getGhToken(){return localStorage.getItem("mmm5-gh-token");}
+function saveGithubToken(){
+  const tok=document.getElementById("ghTokenInp").value.trim();
+  if(!tok){toast("Please enter a GitHub token","err");return;}
+  localStorage.setItem("mmm5-gh-token",tok);
+  ghToken=tok;
+  closeSetupModal();
+  toast("GitHub connected — syncing now...","info");
+  startSync();
+  pushToGitHub();
 }
-function setEd(id,ed){sto("ed-"+id,ed);}
-function setMd(id,data){try{sto("md-"+id,data);}catch(e){toast("File too large for browser storage","error");return false;}return true;}
-function delMd(id){localStorage.removeItem("mmm3-md-"+id);}
-function logAct(entry){const a=getActivity();a.unshift(entry);if(a.length>200)a.splice(200);sto("activity",a);}
 
-/* AUTH */
+function buildSyncPayload(){
+  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs()};
+  POSTS.forEach(p=>{
+    const st=gs(p.id);
+    if(st!=="pending")data.statuses[p.id]=st;
+    const ed=ge(p.id);
+    if(Object.keys(ed).length)data.edits[p.id]=ed;
+    const rn=gr(p.id);
+    if(rn)data.rejections[p.id]=rn;
+    const notes=gNotes(p.id);
+    if(notes.length)data.notes[p.id]=notes;
+  });
+  return data;
+}
+
+function applySyncPayload(data){
+  if(!data)return;
+  if(data.statuses)Object.keys(data.statuses).forEach(id=>{sto("st-"+id,data.statuses[id]);});
+  if(data.edits)Object.keys(data.edits).forEach(id=>{sto("ed-"+id,data.edits[id]);});
+  if(data.rejections)Object.keys(data.rejections).forEach(id=>{sto("rn-"+id,data.rejections[id]);});
+  if(data.notes)Object.keys(data.notes).forEach(id=>{
+    const existing=gNotes(id);
+    const remote=data.notes[id];
+    // Merge notes by timestamp
+    const merged=[...existing,...remote.filter(n=>!existing.find(e=>e.time===n.time))];
+    merged.sort((a,b)=>new Date(a.time)-new Date(b.time));
+    sto("notes-"+id,merged);
+  });
+  if(data.activity&&data.activity.length){
+    const local=getActs();
+    const remote=data.activity;
+    const merged=[...local,...remote.filter(n=>!local.find(e=>e.time===n.time&&e.action===n.action))];
+    merged.sort((a,b)=>new Date(b.time)-new Date(a.time));
+    sto("acts",merged.slice(0,200));
+  }
+}
+
+async function getGitHubFileSHA(){
+  const tok=getGhToken();if(!tok)return null;
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}`,{
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"}
+    });
+    if(res.status===404)return null;
+    const data=await res.json();
+    return data.sha||null;
+  }catch(e){return null;}
+}
+
+async function pullFromGitHub(){
+  const tok=getGhToken();if(!tok)return;
+  setSyncStatus("syncing","Syncing...");
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}?t=${Date.now()}`,{
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"}
+    });
+    if(res.status===404){setSyncStatus("synced","Ready");return;}
+    if(!res.ok){setSyncStatus("error","Sync error");return;}
+    const fileData=await res.json();
+    const content=JSON.parse(atob(fileData.content.replace(/
+/g,"")));
+    applySyncPayload(content);
+    lastSyncTime=new Date();
+    setSyncStatus("synced","Synced "+relTime(lastSyncTime.toISOString()));
+    render();
+  }catch(e){
+    setSyncStatus("error","Sync failed");
+    console.error("Pull error:",e);
+  }
+}
+
+async function pushToGitHub(){
+  const tok=getGhToken();if(!tok)return;
+  if(isSyncing)return;
+  isSyncing=true;
+  setSyncStatus("syncing","Saving...");
+  try{
+    const payload=buildSyncPayload();
+    const content=btoa(JSON.stringify(payload,null,2));
+    const sha=await getGitHubFileSHA();
+    const body={message:"Dashboard sync — "+new Date().toISOString(),content};
+    if(sha)body.sha=sha;
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}`,{
+      method:"PUT",
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    });
+    if(res.ok){
+      lastSyncTime=new Date();
+      setSyncStatus("synced","Synced just now");
+    }else{
+      const err=await res.json();
+      console.error("Push error:",err);
+      setSyncStatus("error","Save failed");
+    }
+  }catch(e){
+    setSyncStatus("error","No connection");
+    console.error("Push error:",e);
+  }finally{isSyncing=false;}
+}
+
+async function manualSync(){
+  await pullFromGitHub();
+  await pushToGitHub();
+  toast("Sync complete","ok");
+}
+
+function startSync(){
+  const tok=getGhToken();if(!tok)return;
+  ghToken=tok;
+  setSyncStatus("syncing","Connecting...");
+  pullFromGitHub();
+  if(syncInterval)clearInterval(syncInterval);
+  syncInterval=setInterval(()=>{pullFromGitHub();},SYNC_INTERVAL);
+}
+
+function setSyncStatus(state,text){
+  const pill=document.getElementById("syncPill");
+  const dot=pill?.querySelector(".sp-dot");
+  const txt=document.getElementById("syncPillTxt");
+  if(!pill)return;
+  pill.className="sync-pill "+state;
+  if(dot)dot.className="sp-dot "+(state==="synced"?"dot-g":state==="syncing"?"dot-am":state==="error"?"dot-r":"dot-off");
+  if(txt)txt.textContent=text;
+}
+
+/* ══ AUTH ══ */
 function doLogin(){
   const u=document.getElementById("liUser").value.trim();
   const p=document.getElementById("liPass").value;
@@ -489,51 +712,62 @@ function doLogin(){
     user={...USERS[u],username:u};
     document.getElementById("loginPage").style.display="none";
     document.getElementById("appShell").classList.add("active");
-    document.getElementById("sbUsername").textContent=user.name;
-    document.getElementById("sbRoleText").textContent=user.role==="admin"?"Administrator · Full access":"Team Member · Review & upload";
+    document.getElementById("sbName").textContent=user.name;
+    document.getElementById("sbRoleTxt").textContent=user.role==="admin"?"Administrator · Full access":"Team Member · Review & upload";
     const pill=document.getElementById("sbRolePill");
     pill.textContent=user.role==="admin"?"Admin":"Team";
-    pill.className="role-pill "+(user.role==="admin"?"rp-admin":"rp-team");
+    pill.className="rpill "+(user.role==="admin"?"rp-a":"rp-t");
+    const tok=getGhToken();
+    if(tok){startSync();}else{setSyncStatus("offline","Not connected — setup sync");setTimeout(()=>openSetupModal(),1500);}
     navTo("all",document.querySelector(".nav-item"));
-  } else {
-    const err=document.getElementById("loginErr");
-    err.textContent="Incorrect username or password. Please try again.";
-    setTimeout(()=>err.textContent="",3000);
+  }else{
+    const e=document.getElementById("loginErr");
+    e.textContent="Incorrect username or password";
+    setTimeout(()=>e.textContent="",3000);
   }
 }
 document.getElementById("liPass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 function doLogout(){
-  user=null;
+  user=null;if(syncInterval)clearInterval(syncInterval);
   document.getElementById("loginPage").style.display="flex";
   document.getElementById("appShell").classList.remove("active");
-  document.getElementById("liPass").value="";
-  document.getElementById("liUser").value="";
+  document.getElementById("liPass").value="";document.getElementById("liUser").value="";
 }
 
-/* NAVIGATION */
+/* ══ MODALS ══ */
+function openSetupModal(){document.getElementById("setupModalBg").classList.add("open");}
+function closeSetupModal(){document.getElementById("setupModalBg").classList.remove("open");}
+
+/* ══ NAV ══ */
 function navTo(page,el){
   curPage=page;
   document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active"));
   if(el)el.classList.add("active");
-  const titles={all:"All Posts",pending:"Pending Posts",approved:"Approved Posts",revision:"Needs Revision",rejected:"Rejected Posts",activity:"Activity Log"};
+  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log"};
   document.getElementById("tbTitle").textContent=titles[page]||"Posts";
-  if(page==="activity")renderActivity();
-  else render();
+  if(page==="activity")renderActivity();else render();
 }
 
-/* COUNTS */
+/* ══ COUNTS ══ */
 function updateCounts(){
-  const c={pending:0,approved:0,revision:0,rejected:0};
+  const c={pending:0,approved:0,revision:0,rejected:0,published:0};
   POSTS.forEach(p=>{const s=gs(p.id);c[s]=(c[s]||0)+1;});
   document.getElementById("nc-all").textContent=27;
-  document.getElementById("nc-pend").textContent=c.pending||0;
-  document.getElementById("nc-app").textContent=c.approved||0;
-  document.getElementById("nc-rev").textContent=c.revision||0;
-  document.getElementById("nc-rej").textContent=c.rejected||0;
+  [["pend","pending"],["app","approved"],["rev","revision"],["rej","rejected"],["pub","published"]].forEach(([k,v])=>{document.getElementById("nc-"+k).textContent=c[v]||0;});
   return c;
 }
 
-/* MAIN RENDER */
+/* ══ TODAY ══ */
+function getTodayPosts(){
+  const now=new Date();
+  return POSTS.filter(p=>{
+    const parts=p.d.split(" ");
+    const m=MONTHS[parts[1]];const d=parseInt(parts[0]);
+    return now.getMonth()===m&&now.getDate()===d;
+  });
+}
+
+/* ══ RENDER ══ */
 function render(){
   const isAdmin=user?.role==="admin";
   const counts=updateCounts();
@@ -541,291 +775,388 @@ function render(){
   const searchQ=(document.getElementById("searchQ")||{}).value||"";
   let posts=POSTS.filter(p=>{
     if(curPage!=="all"&&gs(p.id)!==curPage)return false;
-    if(searchQ){const q=searchQ.toLowerCase();const pp=gp(p.id);return pp.title.toLowerCase().includes(q)||pp.hook.toLowerCase().includes(q)||pp.caption.toLowerCase().includes(q);}
+    if(searchQ){const q=searchQ.toLowerCase();const pp=gp(p.id);return pp.title.toLowerCase().includes(q)||pp.hook.toLowerCase().includes(q);}
     return true;
   });
   document.getElementById("tbCount").textContent=posts.length+" posts";
+  const todayPosts=getTodayPosts().filter(p=>gs(p.id)!=="published");
+  const hasTok=!!getGhToken();
 
-  let html=`
-  <div class="stats-row">
-    <div class="stat-card sc-all" onclick="navTo('all',null)"><div class="sc-n">27</div><div class="sc-l">Total Posts</div></div>
-    <div class="stat-card sc-pend" onclick="navTo('pending',null)"><div class="sc-n">${counts.pending||0}</div><div class="sc-l">Pending</div></div>
-    <div class="stat-card sc-app" onclick="navTo('approved',null)"><div class="sc-n">${appCnt}</div><div class="sc-l">Approved</div></div>
-    <div class="stat-card sc-rev" onclick="navTo('revision',null)"><div class="sc-n">${counts.revision||0}</div><div class="sc-l">Needs Revision</div></div>
-    <div class="stat-card sc-rej" onclick="navTo('rejected',null)"><div class="sc-n">${counts.rejected||0}</div><div class="sc-l">Rejected</div></div>
+  let html="";
+
+  // Setup banner if no token
+  if(!hasTok){
+    html+=`<div class="setup-banner"><div class="setup-icon">⚠️</div>
+      <div class="setup-info">
+        <div class="setup-title">Auto-Sync not set up — team uploads won't be visible to Admin</div>
+        <div class="setup-sub">Set up GitHub sync once (2 minutes) → all uploads, approvals, notes sync automatically between all devices. No manual steps ever.</div>
+      </div>
+      <button class="setup-cta" onclick="openSetupModal()">Set Up Auto-Sync →</button>
+    </div>`;
+  }
+
+  // Today banner
+  if(todayPosts.length){
+    html+=`<div class="today-banner"><div class="tb-icon">📅</div>
+      <div><div class="tb-info-title">${todayPosts.length} post${todayPosts.length>1?"s":""} scheduled for today</div>
+      <div class="tb-info-sub">${todayPosts.map(p=>`${p.type}: ${p.title.substring(0,28)}...`).join(" · ")}</div></div>
+    </div>`;
+  }
+
+  html+=`<div class="stats-row">
+    <div class="sc sc-all" onclick="navTo('all',null)"><div class="sc-n">27</div><div class="sc-l">Total</div></div>
+    <div class="sc sc-pend" onclick="navTo('pending',null)"><div class="sc-n">${counts.pending||0}</div><div class="sc-l">Pending</div></div>
+    <div class="sc sc-app" onclick="navTo('approved',null)"><div class="sc-n">${appCnt}</div><div class="sc-l">Approved</div></div>
+    <div class="sc sc-rev" onclick="navTo('revision',null)"><div class="sc-n">${counts.revision||0}</div><div class="sc-l">Revision</div></div>
+    <div class="sc sc-rej" onclick="navTo('rejected',null)"><div class="sc-n">${counts.rejected||0}</div><div class="sc-l">Rejected</div></div>
+    <div class="sc sc-pub" onclick="navTo('published',null)"><div class="sc-n">${counts.published||0}</div><div class="sc-l">Published</div></div>
   </div>
   <div class="prog-row">
-    <div class="prog-details">
-      <div class="prog-title">Approval Progress — May 2026</div>
-      <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(appCnt/27*100)}%"></div></div>
-    </div>
+    <div class="prog-info"><div class="prog-lbl">May 2026 — Approval Progress</div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${Math.round(appCnt/27*100)}%"></div></div></div>
     <div class="prog-pct">${Math.round(appCnt/27*100)}%</div>
   </div>
-  <div class="filter-bar">
-    <span class="fb-label">Filter:</span>
-    <button class="filter-btn ${curPage==="all"?"on":""}" onclick="navTo('all',null)">All</button>
-    <button class="filter-btn ${curPage==="pending"?"on":""}" onclick="navTo('pending',null)">Pending</button>
-    <button class="filter-btn ${curPage==="approved"?"on":""}" onclick="navTo('approved',null)">Approved</button>
-    <button class="filter-btn ${curPage==="revision"?"on":""}" onclick="navTo('revision',null)">Revision</button>
-    <button class="filter-btn ${curPage==="rejected"?"on":""}" onclick="navTo('rejected',null)">Rejected</button>
-    <input class="search-inp" id="searchQ" placeholder="Search posts..." oninput="render()">
+  <div class="fbar">
+    <span class="fb-lbl">Filter:</span>
+    <button class="fbtn ${curPage==="all"?"on":""}" onclick="navTo('all',null)">All</button>
+    <button class="fbtn ${curPage==="pending"?"on":""}" onclick="navTo('pending',null)">Pending</button>
+    <button class="fbtn ${curPage==="approved"?"on":""}" onclick="navTo('approved',null)">Approved</button>
+    <button class="fbtn ${curPage==="revision"?"on":""}" onclick="navTo('revision',null)">Revision</button>
+    <button class="fbtn ${curPage==="rejected"?"on":""}" onclick="navTo('rejected',null)">Rejected</button>
+    <button class="fbtn ${curPage==="published"?"on":""}" onclick="navTo('published',null)">Published</button>
+    <input class="fsearch" id="searchQ" placeholder="Search..." oninput="render()">
   </div>`;
 
-  if(!posts.length){
-    html+=`<div class="empty-state"><div class="es-icon">📭</div><div class="es-text">No posts match this filter</div></div>`;
-    document.getElementById("mainContent").innerHTML=html;return;
-  }
+  if(!posts.length){html+='<div class="empty-state">No posts match this filter</div>';document.getElementById("mainContent").innerHTML=html;return;}
   const byW={};posts.forEach(p=>{if(!byW[p.w])byW[p.w]=[];byW[p.w].push(p);});
-  html+=Object.keys(byW).sort().map(w=>`<div class="week-group"><div class="week-hdr">${WLBLS[w]}</div><div class="post-grid">${byW[w].map(p=>renderCard(p,isAdmin)).join("")}</div></div>`).join("");
+  html+=Object.keys(byW).sort().map(w=>`<div class="wgrp"><div class="wlbl">${WLBLS[w]}</div><div class="pgrid">${byW[w].map(p=>renderCard(p,isAdmin)).join("")}</div></div>`).join("");
   document.getElementById("mainContent").innerHTML=html;
 }
 
 function renderCard(p,isAdmin){
   const pp=gp(p.id),st=gs(p.id),m=gm(p.id),reason=gr(p.id);
   const isVid=m&&m.type==="video";
+  const isToday=getTodayPosts().find(x=>x.id===p.id)&&st!=="published";
   const imgSrc=m?m.data:THUMBS[p.id];
   const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[p.type];
-  const scls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
+  const stcls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
   const sbcls={"pending":"bs-pending","approved":"bs-approved","rejected":"bs-rejected","revision":"bs-revision","published":"bs-published"}[st];
+  const slides=p.slides;
+  const ups=gsl(p.id);
+  const upCnt=Object.keys(ups).length;
 
   let rejBanner="";
-  if(st==="rejected"&&reason){
-    rejBanner=`<div class="reject-banner"><div class="rb-icon">❌</div><div class="rb-text"><span class="rb-reason">Rejected:</span> ${reason.substring(0,80)}${reason.length>80?"...":""}</div></div>`;
-  }
-  if(st==="revision"&&reason){
-    rejBanner=`<div class="revision-banner"><div class="rvb-icon">🔄</div><div class="rvb-text">${reason.substring(0,80)}${reason.length>80?"...":""}</div></div>`;
-  }
+  if(st==="rejected"&&reason)rejBanner=`<div class="rej-banner"><div class="rb-text">❌ ${reason.substring(0,90)}${reason.length>90?"...":""}</div></div>`;
+  if(st==="revision"&&reason)rejBanner=`<div class="rev-banner"><div class="rvb-text">🔄 ${reason.substring(0,90)}${reason.length>90?"...":""}</div></div>`;
 
-  const appOn=st==="approved"?"on":"";
-  return `<div class="post-card ${scls}">
-    <div class="thumb-area">
+  const slideDots=slides?`<div class="slide-dots">${slides.map((_,i)=>`<div class="sdot${i===0?" on":""}"></div>`).join("")}</div>`:"";
+  let mediaBadge="";
+  if(p.type==="Carousel"&&slides)mediaBadge=upCnt?`<span class="badge-team">${upCnt}/${slides.length} slides ✓</span>`:"";
+  else if(m)mediaBadge=`<span class="badge-team">${isVid?"🎬 Video":"📷 Photo"} uploaded</span>`;
+
+  let actions=`<button class="ab ab-rev" onclick="openReview(${p.id})">Review</button>`;
+  if(isAdmin){
+    if(st!=="approved"&&st!=="published")actions=`<button class="ab ab-app" onclick="quickSt(${p.id},'approved')">${st==="approved"?"Approved ✓":"Approve"}</button>`+actions;
+    if(st==="approved")actions+=`<button class="ab ab-pub" onclick="quickSt(${p.id},'published')">Published</button>`;
+    actions+=`<button class="ab ab-rej" onclick="openRejOv(${p.id})">Reject</button>`;
+  }
+  actions+=`<button class="ab ab-copy" onclick="quickCopy(${p.id},this)">Copy</button>`;
+  if(m)actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
+
+  return `<div class="pc ${stcls}${isToday?" today-post":""}">
+    <div class="tw">
       ${isVid?`<video src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;"></video>`:`<img src="${imgSrc}" loading="lazy">`}
-      <div class="thumb-overlay"><button class="to-btn" onclick="openReview(${p.id})">REVIEW POST</button></div>
+      <div class="tov"><button class="to-btn" onclick="openReview(${p.id})">REVIEW POST</button></div>
       <span class="badge-type ${tcls}">${p.type.toUpperCase()}</span>
       <span class="badge-status ${sbcls}">${ST_LABELS[st]}</span>
-      ${m?`<span class="badge-media">${isVid?"🎬 Video uploaded":"📷 Photo uploaded"}</span>`:""}
+      ${mediaBadge}${slideDots}
+      ${isToday?'<span class="badge-today">TODAY</span>':""}
     </div>
     ${rejBanner}
-    <div class="card-info">
+    <div class="ci">
       <div class="ci-date">${p.day} ${p.d} · ${p.time} · ${p.plat}</div>
       <div class="ci-title">${pp.title}</div>
       <div class="ci-hook">"${pp.hook}"</div>
     </div>
-    <div class="card-actions">
-      ${isAdmin?`<button class="ca-btn ca-approve ${appOn}" onclick="quickSt(${p.id},'approved')">Approve</button>`:""}
-      <button class="ca-btn ca-review" onclick="openReview(${p.id})">Review</button>
-      ${isAdmin?`<button class="ca-btn ca-revision" onclick="quickRevision(${p.id})">Revise</button>`:""}
-      ${isAdmin?`<button class="ca-btn ca-reject" onclick="openRejectModal(${p.id})">Reject</button>`:""}
-      <button class="ca-btn ca-copy" onclick="quickCopy(${p.id},this)">Copy</button>
-    </div>
+    <div class="ca">${actions}</div>
   </div>`;
 }
 
-/* QUICK ACTIONS */
 async function quickSt(id,st){
-  if(st==="approved"&&user?.role!=="admin"){toast("Only Admin can approve posts","error");return;}
-  await setSt(id,st);
-  toast(ST_LABELS[st]+(st==="approved"?" ✓":""),"success");
-}
-function quickRevision(id){
-  const reason=prompt("What changes does the team need to make?");
-  if(reason===null)return;
-  setSt(id,"revision",reason||"Please review and revise this post.");
-  toast("Sent for revision","warning");
+  if(st==="approved"&&user?.role!=="admin"){toast("Only Admin can approve","err");return;}
+  sto("st-"+id,st);
+  logAct({action:st,postId:id,user:user?.name,time:new Date().toISOString()});
+  render();
+  toast(ST_LABELS[st],"ok");
+  await pushToGitHub();
 }
 function quickCopy(id,btn){
-  const pp=gp(id);
-  navigator.clipboard.writeText(pp.caption).then(()=>{
-    const t=btn.textContent;btn.textContent="Copied!";btn.style.background="var(--g)";btn.style.color="#fff";
+  navigator.clipboard.writeText(gp(id).caption).then(()=>{
+    const t=btn.textContent;btn.textContent="✓";btn.style.background="var(--g)";btn.style.color="#fff";
     setTimeout(()=>{btn.textContent=t;btn.style.background="";btn.style.color="";},2000);
   });
 }
+function dlMedia(id){const m=gm(id);if(!m)return;const a=document.createElement("a");a.href=m.data;a.download=`post_${id}.${m.type==="video"?"mp4":"jpg"}`;a.click();}
 
-/* REJECT MODAL */
-function openRejectModal(id){
-  rejectTargetId=id;
-  document.getElementById("rejectReason").value="";
-  document.getElementById("rejectOverlay").classList.add("open");
-  setTimeout(()=>document.getElementById("rejectReason").focus(),100);
-}
-function closeRejectModal(){document.getElementById("rejectOverlay").classList.remove("open");rejectTargetId=null;}
-function confirmReject(){
-  const reason=document.getElementById("rejectReason").value.trim();
-  if(!reason){toast("Please enter a reason for rejection","error");return;}
-  setSt(rejectTargetId,"rejected",reason);
-  closeRejectModal();
-  if(revId===rejectTargetId)closeModal();
-  toast("Post rejected — team will see reason","error");
+/* ══ REJECT ══ */
+function openRejOv(id){rejectTargetId=id;document.getElementById("rejReason").value="";document.getElementById("rejOv").classList.add("open");setTimeout(()=>document.getElementById("rejReason").focus(),100);}
+function closeRejOv(){document.getElementById("rejOv").classList.remove("open");rejectTargetId=null;}
+async function confirmReject(){
+  const reason=document.getElementById("rejReason").value.trim();
+  if(!reason){toast("Enter a reason","err");return;}
+  sto("st-"+rejectTargetId,"rejected");
+  sto("rn-"+rejectTargetId,reason);
+  logAct({action:"rejected",postId:rejectTargetId,reason,user:user?.name,time:new Date().toISOString()});
+  closeRejOv();if(revId===rejectTargetId)closeModal();
+  render();toast("Rejected — team sees reason automatically","err");
+  await pushToGitHub();
 }
 
-/* REVIEW MODAL */
+/* ══ REVIEW MODAL ══ */
 function openReview(id){
-  revId=id;
-  const pp=gp(p=>p.id===id,true),p=POSTS.find(x=>x.id===id),st=gs(id),m=gm(id),reason=gr(id);
-  const pp2=gp(id);
+  revId=id;curSlide=0;
+  const pp=gp(id),p=POSTS.find(x=>x.id===id),st=gs(id),m=gm(id),reason=gr(p.id);
   const isAdmin=user?.role==="admin";
-  const isVid=m&&m.type==="video";
-  const mi=document.getElementById("mImg"),mv=document.getElementById("mVid");
-  if(isVid){mi.style.display="none";mv.style.display="block";mv.src=m.data;}
-  else{mv.style.display="none";mv.src="";mi.style.display="block";mi.src=m?m.data:THUMBS[id];}
-  document.getElementById("mReset").style.display=m?"inline-block":"none";
-  document.getElementById("mTitle").textContent=pp2.title;
+  document.getElementById("mTitle").textContent=pp.title;
   document.getElementById("mMeta").textContent=`${p.day} ${p.d} · ${p.type} · ${p.time} · ${p.plat}`;
-  const sp=document.getElementById("mStatus");
-  sp.textContent=ST_LABELS[st];sp.style.background=ST_COLORS[st];
+  const sp=document.getElementById("mStatus");sp.textContent=ST_LABELS[st];sp.style.background=ST_COLORS[st];
+  buildModalLeft(p,m);
 
-  let bodyHtml=`
-    <div class="field-group">
-      <span class="field-label">Hook</span>
-      <input class="field-input" id="fHook" value="${pp2.hook.replace(/"/g,"&quot;")}">
-    </div>
-    <div class="field-group">
-      <span class="field-label">Caption</span>
-      <textarea class="field-input" id="fCaption">${pp2.caption}</textarea>
-      <button class="copy-caption-btn" onclick="copyCaption(this)">📋 Copy caption for Meta Business Suite</button>
-    </div>
-    <div class="field-group">
-      <span class="field-label">Image / Video brief</span>
-      <textarea class="field-input" id="fBrief" style="min-height:60px;">${pp2.brief}</textarea>
-    </div>
-    <div class="field-group">
-      <span class="field-label">Call to action</span>
-      <input class="field-input" id="fCta" value="${pp2.cta.replace(/"/g,"&quot;")}">
-    </div>`;
+  const cap=pp.caption;
+  const chars=cap.length;
+  const hashes=(cap.match(/#\w+/g)||[]).length;
+  const cCls=chars>2200?"over":chars>1500?"warn":"ok";
+  const hCls=hashes>30?"over":hashes>25?"warn":"ok";
+  const notes=gNotes(id);
+  const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
 
-  if(st==="rejected"&&reason){
-    bodyHtml+=`<div class="field-group">
-      <span class="field-label">Rejection reason from Admin</span>
-      <div class="reject-reason-box">
-        <div class="rrb-title">❌ Why this was rejected</div>
-        <p style="font-size:13px;color:var(--r);line-height:1.7;">${reason}</p>
+  let body=`
+    <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${pp.hook.replace(/"/g,"&quot;")}"></div>
+    <div class="fg">
+      <span class="fl">Caption <span class="fl-cnt ${cCls}">${chars}/2200 chars · ${hashes} hashtags</span></span>
+      <textarea class="fi" id="fCaption" oninput="upCapStats(this)">${cap}</textarea>
+      <div class="cap-stats">
+        <div class="cs-item">Characters: <span class="cs-badge ${cCls}" id="capCB">${chars}</span></div>
+        <div class="cs-item">Hashtags: <span class="cs-badge ${hCls}" id="capHB">${hashes}</span><span style="font-size:10px;color:var(--mid);margin-left:3px;">(max 30)</span></div>
       </div>
-    </div>`;
-  }
-  if(st==="revision"&&reason){
-    bodyHtml+=`<div class="field-group">
-      <span class="field-label">Revision notes from Admin</span>
-      <div class="revision-reason-box">
-        <div class="vrb-title">🔄 What needs to change</div>
-        <p style="font-size:13px;color:var(--am);line-height:1.7;">${reason}</p>
-      </div>
-    </div>`;
-  }
+      <button class="copy-cap-btn" onclick="copyCaption(this)">📋 Copy caption for Meta Business Suite</button>
+    </div>
+    <div class="fg"><span class="fl">Image / Video brief</span><textarea class="fi" id="fBrief" style="min-height:58px;">${pp.brief}</textarea></div>
+    <div class="fg"><span class="fl">Call to action</span><input class="fi" id="fCta" value="${pp.cta.replace(/"/g,"&quot;")}"></div>`;
 
-  bodyHtml+=`<div class="field-group">
-    <span class="field-label">Scheduled for</span>
-    <div style="font-size:13px;color:var(--dark);background:var(--light);border-radius:9px;padding:10px 12px;">${p.plat} · ${p.d} at ${p.time}</div>
+  if(st==="rejected"&&reason)body+=`<div class="fg"><div class="rej-box"><div class="rej-box-t">❌ Rejection reason</div><p style="font-size:13px;color:var(--r);line-height:1.7;">${reason}</p></div></div>`;
+  if(st==="revision"&&reason)body+=`<div class="fg"><div class="rev-box"><div class="rev-box-t">🔄 Revision notes</div><p style="font-size:13px;color:var(--am);line-height:1.7;">${reason}</p></div></div>`;
+
+  body+=`<div class="fg"><div class="notes-wrap">
+    <div class="notes-title">💬 Team Notes</div>
+    <div class="notes-list" id="notesList">${notesHtml}</div>
+    <div class="notes-row">
+      <input class="notes-inp" id="noteInp" placeholder="Add note..." onkeydown="if(event.key==='Enter')addNote()">
+      <button class="notes-send" onclick="addNote()">Send</button>
+    </div>
+  </div></div>
+  <div class="fg"><span class="fl">Scheduled</span>
+    <div style="font-size:12px;color:var(--dark);background:var(--light);border-radius:9px;padding:9px 11px;">${p.plat} · ${p.d} at ${p.time}</div>
   </div>
-  <div class="field-group">
-    <div class="schedule-box">
-      <div class="sb-title">Schedule in Meta Business Suite</div>
-      <div class="sb-steps">1. Copy caption above&nbsp; → &nbsp;2. Upload your photo/video&nbsp; → &nbsp;3. Open Meta Business Suite&nbsp; → &nbsp;Create post&nbsp; → &nbsp;Set date: ${p.d} at ${p.time}&nbsp; → &nbsp;Schedule</div>
-      <button class="mbs-btn" onclick="window.open('https://business.facebook.com/','_blank')">Open Meta Business Suite →</button>
-    </div>
-  </div>`;
+  <div class="fg"><div class="sched-box">
+    <div class="sched-box-t">Schedule in Meta Business Suite</div>
+    <div class="sched-steps">1. Copy caption above → 2. Download image/video → 3. Open Meta Business Suite → Create post → Upload → Set date: ${p.d} at ${p.time} → Schedule</div>
+    <button class="mbs-btn" onclick="window.open('https://business.facebook.com/','_blank')">Open Meta Business Suite →</button>
+  </div></div>`;
 
-  document.getElementById("mBody").innerHTML=bodyHtml;
-
-  let footHtml=`<button class="mf-btn mf-close" onclick="closeModal()">Close</button>
-    <button class="mf-btn mf-save" onclick="saveEdits()">Save Edits</button>`;
+  document.getElementById("mBody").innerHTML=body;
+  let foot=`<button class="mfb mfb-close" onclick="closeModal()">Close</button><button class="mfb mfb-save" onclick="saveEdits()">Save</button>`;
   if(isAdmin){
-    footHtml+=`<button class="mf-btn mf-approve" onclick="modalAction('approved')">Approve ✓</button>
-      <button class="mf-btn mf-revision" onclick="modalRevision()">Needs Revision</button>
-      <button class="mf-btn mf-reject" onclick="openRejectModal(${id})">Reject</button>`;
+    foot+=`<button class="mfb mfb-approve" onclick="modalAct('approved')">Approve ✓</button>`;
+    if(st==="approved")foot+=`<button class="mfb mfb-pub" onclick="modalAct('published')">Published 🚀</button>`;
+    foot+=`<button class="mfb mfb-rev" onclick="modalRevision()">Needs Revision</button><button class="mfb mfb-rej" onclick="openRejOv(${id})">Reject</button>`;
   }
-  document.getElementById("mFooter").innerHTML=footHtml;
-  document.getElementById("revOverlay").classList.add("open");
+  document.getElementById("mFoot").innerHTML=foot;
+  document.getElementById("revBg").classList.add("open");
 }
 
-function closeModal(){document.getElementById("revOverlay").classList.remove("open");revId=null;}
+function buildModalLeft(p,m){
+  const left=document.getElementById("modalLeft");
+  const ups=gsl(p.id);
+  if(p.type==="Carousel"&&p.slides){
+    const count=p.slides.length;
+    const slidesHtml=p.slides.map((s,i)=>{
+      const up=ups[i];
+      return `<div class="cv-slide${i===0?" on":""}" id="cvS${i}">
+        ${up?`<img src="${up}"><div class="cv-slide-lbl">Slide ${i+1} of ${count}</div>`:`<div class="cv-slide-lbl">Slide ${i+1} of ${count}</div><div class="cv-slide-txt">${s}</div><div class="cv-slide-hint">Upload your design using the buttons below</div>`}
+      </div>`;
+    }).join("");
+    const dotsHtml=p.slides.map((_,i)=>`<div class="cv-d${i===0?" on":""}" onclick="goSlide(${i})"></div>`).join("");
+    const upBtns=p.slides.map((_,i)=>`<button class="su-btn${ups[i]?" has":""}" onclick="trigSUp(${i})" title="Upload slide ${i+1}">${ups[i]?"✓ ":""}S${i+1}</button>`).join("");
+    left.innerHTML=`<div class="cv"><div class="cv-main">${slidesHtml}</div>
+      <div class="cv-nav">
+        <button class="cv-arr" onclick="prevSlide()">‹</button>
+        <div class="cv-dots-wrap">${dotsHtml}</div>
+        <span class="cv-ctr" id="cvCtr">1 / ${count}</span>
+        <button class="cv-arr" onclick="nextSlide()">›</button>
+      </div>
+      <div class="slide-ups"><span class="su-lbl">Upload each slide:</span>${upBtns}</div>
+    </div>`;
+  }else{
+    const isVid=m&&m.type==="video";
+    const src=m?m.data:THUMBS[p.id];
+    left.innerHTML=`<div class="media-viewer">
+      ${isVid?`<video class="mv-vid" src="${src}" controls></video>`:`<img class="mv-img" src="${src}">`}
+    </div>
+    <div class="mub">
+      <button class="mub-btn mub-img" onclick="trigUp('img')">📷 Upload Photo</button>
+      ${p.type==="Reel"?'<button class="mub-btn mub-vid" onclick="trigUp('vid')">🎬 Upload Video</button>':""}
+      ${m?'<button class="mub-btn mub-rst" onclick="resetMedia()">↺ Reset</button>':""}
+    </div>`;
+  }
+}
+
+function goSlide(idx){
+  const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;
+  document.querySelectorAll(".cv-slide").forEach((s,i)=>s.classList.toggle("on",i===idx));
+  document.querySelectorAll(".cv-d").forEach((d,i)=>d.classList.toggle("on",i===idx));
+  const ctr=document.getElementById("cvCtr");if(ctr)ctr.textContent=`${idx+1} / ${p.slides.length}`;
+  curSlide=idx;
+}
+function nextSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;goSlide((curSlide+1)%p.slides.length);}
+function prevSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;goSlide((curSlide-1+p.slides.length)%p.slides.length);}
+
+function trigSUp(idx){uploadSlideIdx=idx;document.getElementById("slideInp").click();}
+function handleSlideUpload(inp){
+  const file=inp.files[0];if(!file)return;
+  // Compress slide image before storing
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img2=new Image();
+    img2.onload=async()=>{
+      const canvas=document.createElement("canvas");
+      const maxW=600;const scale=Math.min(1,maxW/img2.width);
+      canvas.width=img2.width*scale;canvas.height=img2.height*scale;
+      canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
+      const compressed=canvas.toDataURL("image/jpeg",0.75);
+      const ups=gsl(revId);ups[uploadSlideIdx]=compressed;
+      sto("slides-"+revId,ups);
+      buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
+      goSlide(uploadSlideIdx);
+      render();toast(`Slide ${uploadSlideIdx+1} uploaded ✓`,"ok");inp.value="";
+      await pushToGitHub();
+    };
+    img2.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+let _upType="img";
+function trigUp(type){_upType=type;document.getElementById(type==="img"?"imgInp":"vidInp").click();}
+function handleUpload(inp,type){
+  const file=inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    // Compress images
+    if(type==="img"){
+      const img2=new Image();
+      img2.onload=async()=>{
+        const canvas=document.createElement("canvas");
+        const maxW=800;const scale=Math.min(1,maxW/img2.width);
+        canvas.width=img2.width*scale;canvas.height=img2.height*scale;
+        canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
+        const compressed=canvas.toDataURL("image/jpeg",0.8);
+        try{sto("md-"+revId,{type:"img",data:compressed});}catch(ex){toast("Image too large","err");inp.value="";return;}
+        buildModalLeft(POSTS.find(x=>x.id===revId),{type:"img",data:compressed});
+        render();toast("Photo uploaded ✓","ok");inp.value="";
+        await pushToGitHub();
+      };
+      img2.src=e.target.result;
+    }else{
+      try{sto("md-"+revId,{type:"video",data:e.target.result});}catch(ex){toast("Video too large — try a shorter clip","err");inp.value="";return;}
+      buildModalLeft(POSTS.find(x=>x.id===revId),{type:"video",data:e.target.result});
+      render();toast("Video uploaded ✓","ok");inp.value="";
+      await pushToGitHub();
+    }
+  };
+  reader.readAsDataURL(file);
+}
+function resetMedia(){
+  localStorage.removeItem("mmm5-md-"+revId);
+  buildModalLeft(POSTS.find(x=>x.id===revId),null);
+  render();toast("Reset to template");
+  pushToGitHub();
+}
+
+function upCapStats(ta){
+  const chars=ta.value.length;const hashes=(ta.value.match(/#\w+/g)||[]).length;
+  const cb=document.getElementById("capCB");const hb=document.getElementById("capHB");
+  if(cb){cb.textContent=chars;cb.className="cs-badge "+(chars>2200?"over":chars>1500?"warn":"ok");}
+  if(hb){hb.textContent=hashes;hb.className="cs-badge "+(hashes>30?"over":hashes>25?"warn":"ok");}
+}
+
 function copyCaption(btn){
   navigator.clipboard.writeText(document.getElementById("fCaption").value).then(()=>{
     const t=btn.textContent;btn.textContent="✓ Copied!";btn.classList.add("copied");
     setTimeout(()=>{btn.textContent=t;btn.classList.remove("copied");},2500);
   });
 }
-function saveEdits(){
+
+async function addNote(){
+  const inp=document.getElementById("noteInp");
+  const text=inp.value.trim();if(!text)return;
+  const notes=gNotes(revId);
+  notes.push({user:user?.name,text,time:new Date().toISOString()});
+  sto("notes-"+revId,notes);
+  inp.value="";
+  const list=document.getElementById("notesList");
+  if(list)list.innerHTML=notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join("");
+  toast("Note added","ok");
+  await pushToGitHub();
+}
+
+async function saveEdits(){
   if(!revId)return;
-  setEd(revId,{hook:document.getElementById("fHook").value,caption:document.getElementById("fCaption").value,brief:document.getElementById("fBrief").value,cta:document.getElementById("fCta").value});
+  const ed={hook:document.getElementById("fHook")?.value,caption:document.getElementById("fCaption")?.value,brief:document.getElementById("fBrief")?.value,cta:document.getElementById("fCta")?.value};
+  sto("ed-"+revId,ed);
   logAct({action:"edited",postId:revId,user:user?.name,time:new Date().toISOString()});
-  closeModal();render();toast("Edits saved","success");
+  render();toast("Edits saved","ok");
+  await pushToGitHub();
 }
-function modalAction(st){
-  if(st==="approved"&&user?.role!=="admin"){toast("Only Admin can approve","error");return;}
-  saveEdits();setSt(revId,st);closeModal();toast(ST_LABELS[st]+(st==="approved"?" ✓":""),"success");
+function closeModal(){document.getElementById("revBg").classList.remove("open");revId=null;}
+async function modalAct(st){
+  if(st==="approved"&&user?.role!=="admin"){toast("Only Admin can approve","err");return;}
+  saveEdits();
+  sto("st-"+revId,st);
+  logAct({action:st,postId:revId,user:user?.name,time:new Date().toISOString()});
+  closeModal();render();toast(ST_LABELS[st],"ok");
+  await pushToGitHub();
 }
-function modalRevision(){
+async function modalRevision(){
   const reason=prompt("What changes does the team need to make?");
   if(reason===null)return;
-  setSt(revId,"revision",reason||"Please review and revise.");
-  closeModal();toast("Sent for revision","warning");
+  sto("st-"+revId,"revision");sto("rn-"+revId,reason||"Please review and revise.");
+  logAct({action:"revision",postId:revId,user:user?.name,time:new Date().toISOString()});
+  closeModal();render();toast("Sent for revision","warn");
+  await pushToGitHub();
 }
 
-/* UPLOAD */
-let _uploadType="img";
-function trigUpload(type){_uploadType=type;document.getElementById(type==="img"?"imgInp":"vidInp").click();}
-function handleUpload(inp,type){
-  const file=inp.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    const data={type,data:e.target.result,uploadedBy:user?.name,uploadedAt:new Date().toISOString()};
-    const ok=setMd(revId,data);
-    if(!ok){inp.value="";return;}
-    const mi=document.getElementById("mImg"),mv=document.getElementById("mVid");
-    if(type==="video"){mi.style.display="none";mv.style.display="block";mv.src=e.target.result;}
-    else{mv.style.display="none";mv.src="";mi.style.display="block";mi.src=e.target.result;}
-    document.getElementById("mReset").style.display="inline-block";
-    logAct({action:"uploaded",postId:revId,detail:`${type==="video"?"Video":"Photo"} uploaded`,user:user?.name,time:new Date().toISOString()});
-    render();toast(`${type==="video"?"Video":"Photo"} uploaded successfully ✓`,"success");inp.value="";
-  };
-  reader.readAsDataURL(file);
-}
-function resetMedia(){
-  delMd(revId);
-  const mi=document.getElementById("mImg"),mv=document.getElementById("mVid");
-  mv.style.display="none";mv.src="";mi.style.display="block";mi.src=THUMBS[revId];
-  document.getElementById("mReset").style.display="none";
-  render();toast("Reset to template design");
-}
-
-/* ACTIVITY LOG */
+/* ══ ACTIVITY ══ */
 function renderActivity(){
   updateCounts();
-  const acts=getActivity();
-  const dotColors={approved:"#0F6E56",rejected:"#A32D2D",revision:"#854F0B",edited:"#185FA5",uploaded:"#5D3FD3",pending:"#854F0B"};
-  let html=`<div class="activity-wrap">
-    <div class="activity-head">Activity Log — All team actions recorded here</div>
-    <div class="activity-list">`;
-  if(!acts.length){html+='<div class="al-empty">No activity recorded yet. Actions taken in the dashboard will appear here.</div>';}
-  else{
-    html+=acts.map(a=>{
-      const post=POSTS.find(p=>p.id===a.postId);
-      const color=dotColors[a.action]||"#6B5B52";
-      const actionText={approved:"approved",rejected:"rejected",revision:"sent for revision",edited:"edited",uploaded:"uploaded media for",pending:"reset"}[a.action]||a.action;
-      const time=new Date(a.time);
-      const timeStr=time.toLocaleDateString("en-IN",{day:"numeric",month:"short"})+", "+time.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
-      return `<div class="al-item">
-        <div class="al-dot" style="background:${color}"></div>
-        <div class="al-text"><span class="al-bold">${a.user||"System"}</span> ${actionText} post #${a.postId}: "${post?.title?.substring(0,40)||""}..."${a.reason?`<br><span style="font-size:11px;color:var(--mid);font-style:italic;">"${a.reason.substring(0,60)}${a.reason.length>60?"...":""}"</span>`:""}</div>
-        <div class="al-time">${timeStr}</div>
-      </div>`;
-    }).join("");
-  }
-  html+=`</div></div>`;
-  document.getElementById("mainContent").innerHTML=html;
+  const acts=getActs();
+  const dotC={approved:"var(--g)",rejected:"var(--r)",revision:"var(--am)",edited:"var(--b)",uploaded:"var(--pu)",published:"var(--pu)"};
+  let html=`<div class="aw"><div class="ah">Activity Log — All changes sync automatically</div><div class="alist">`;
+  if(!acts.length)html+='<div class="a-empty">No activity yet</div>';
+  else html+=acts.map(a=>{
+    const post=POSTS.find(p=>p.id===a.postId);
+    const t=new Date(a.time);
+    const ts=t.toLocaleDateString("en-IN",{day:"numeric",month:"short"})+", "+t.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+    return `<div class="ai"><div class="ai-dot" style="background:${dotC[a.action]||"var(--mid)"}"></div><div class="ai-text"><span class="ai-bold">${a.user||"?"}</span> ${a.action} post #${a.postId}: "${post?.title?.substring(0,35)||""}..."${a.reason?` — "${a.reason.substring(0,40)}..."`:""}</div><div class="ai-time">${ts}</div></div>`;
+  }).join("");
+  html+=`</div></div>`;document.getElementById("mainContent").innerHTML=html;
 }
 
-/* TOAST */
-function toast(msg,type=""){
-  const t=document.getElementById("toast");
-  t.textContent=msg;t.className="toast"+(type?" "+type:"");
-  t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2800);
-}
-
-/* CLOSE ON OVERLAY CLICK */
-document.getElementById("revOverlay").addEventListener("click",e=>{if(e.target===document.getElementById("revOverlay"))closeModal();});
-document.getElementById("rejectOverlay").addEventListener("click",e=>{if(e.target===document.getElementById("rejectOverlay"))closeRejectModal();});
+function relTime(iso){const d=Math.floor((Date.now()-new Date(iso))/1000);if(d<60)return "just now";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago";}
+function toast(msg,type=""){const t=document.getElementById("toast");t.textContent=msg;t.className="toast"+(type?" "+type:"");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800);}
+document.getElementById("revBg").addEventListener("click",e=>{if(e.target===document.getElementById("revBg"))closeModal();});
+document.getElementById("rejOv").addEventListener("click",e=>{if(e.target===document.getElementById("rejOv"))closeRejOv();});
+document.getElementById("setupModalBg").addEventListener("click",e=>{if(e.target===document.getElementById("setupModalBg"))closeSetupModal();});
 </script>
 </body>
 </html>
