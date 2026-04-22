@@ -637,8 +637,7 @@ async function pullFromGitHub(){
     if(res.status===404){setSyncStatus("synced","Ready");return;}
     if(!res.ok){setSyncStatus("error","Sync error");return;}
     const fileData=await res.json();
-    const content=JSON.parse(atob(fileData.content.replace(/
-/g,"")));
+    const content=JSON.parse(atob(fileData.content.replace(/\n/g,"")));
     applySyncPayload(content);
     lastSyncTime=new Date();
     setSyncStatus("synced","Synced "+relTime(lastSyncTime.toISOString()));
@@ -1004,8 +1003,8 @@ function buildModalLeft(p,m){
       ${isVid?`<video class="mv-vid" src="${src}" controls></video>`:`<img class="mv-img" src="${src}">`}
     </div>
     <div class="mub">
-      <button class="mub-btn mub-img" onclick="trigUp('img')">📷 Upload Photo</button>
-      ${p.type==="Reel"?'<button class="mub-btn mub-vid" onclick="trigUp('vid')">🎬 Upload Video</button>':""}
+      <button class="mub-btn mub-img" onclick="trigUp(\"img\")">📷 Upload Photo</button>
+      ${p.type==="Reel"?'<button class="mub-btn mub-vid" onclick="trigUp(\"vid\")">🎬 Upload Video</button>':""}
       ${m?'<button class="mub-btn mub-rst" onclick="resetMedia()">↺ Reset</button>':""}
     </div>`;
   }
