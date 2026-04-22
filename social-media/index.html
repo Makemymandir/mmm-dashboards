@@ -393,7 +393,7 @@ input[type=file]{display:none;}
       <div class="nav-item" onclick="navTo('published',this)"><span class="nav-icon">🚀</span>Published<span class="nav-cnt pu" id="nc-pub">0</span></div>
       <div class="nav-s">Tools</div>
       <div class="nav-item" onclick="navTo('activity',this)"><span class="nav-icon">📜</span>Activity Log</div>
-      <div class="nav-item" onclick="openSetupModal()"><span class="nav-icon">⚙️</span>Sync Settings</div>
+      <div class="nav-item" id="syncSettingsNav" onclick="openSetupModal()" style="display:none"><span class="nav-icon">⚙️</span>Sync Settings</div>
     </div>
     <div class="sb-bottom"><button class="logout-btn" onclick="doLogout()">Sign Out</button></div>
   </div>
@@ -717,8 +717,14 @@ function doLogin(){
     pill.textContent=user.role==="admin"?"Admin":"Team";
     pill.className="rpill "+(user.role==="admin"?"rp-a":"rp-t");
     const tok=getGhToken();
-    if(tok){startSync();}else{setSyncStatus("offline","Not connected — setup sync");setTimeout(()=>openSetupModal(),1500);}
+    if(tok){startSync();}else{
+      setSyncStatus("offline","Not connected");
+      if(user.role==="admin"){setTimeout(()=>openSetupModal(),1500);}
+    }
     navTo("all",document.querySelector(".nav-item"));
+    // Show sync settings only to admin
+    const ssnav=document.getElementById("syncSettingsNav");
+    if(ssnav&&user.role==="admin")ssnav.style.display="flex";
   }else{
     const e=document.getElementById("loginErr");
     e.textContent="Incorrect username or password";
@@ -784,7 +790,7 @@ function render(){
   let html="";
 
   // Setup banner if no token
-  if(!hasTok){
+  if(!hasTok&&isAdmin){
     html+=`<div class="setup-banner"><div class="setup-icon">⚠️</div>
       <div class="setup-info">
         <div class="setup-title">Auto-Sync not set up — team uploads won't be visible to Admin</div>
