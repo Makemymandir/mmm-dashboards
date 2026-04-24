@@ -83,13 +83,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--light);col
 .tb-btn.green{background:var(--g);color:#fff;border-color:var(--g);}
 .content{padding:18px 22px 60px;flex:1;}
 
-/* SETUP BANNER */
-.setup-banner{background:linear-gradient(135deg,#1A1010,#2A1A10);border-radius:12px;padding:18px 22px;margin-bottom:18px;display:flex;align-items:center;gap:14px;border:1px solid rgba(232,119,34,.3);}
-.setup-icon{font-size:28px;}
-.setup-info{flex:1;}
-.setup-title{font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;}
-.setup-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;}
-.setup-cta{background:var(--o);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;}
+
 
 /* TODAY BANNER */
 .today-banner{background:linear-gradient(135deg,var(--o),#C85C0A);border-radius:11px;padding:13px 17px;margin-bottom:16px;display:flex;align-items:center;gap:12px;color:#fff;}
@@ -700,6 +694,7 @@ function setSyncStatus(state,text){
   if(!pill)return;
   pill.className="sync-pill "+state;
   if(dot)dot.className="sp-dot "+(state==="synced"?"dot-g":state==="syncing"?"dot-am":state==="error"?"dot-r":"dot-off");
+  if(user&&user.role==="team"&&!getGhToken()){pill.className="sync-pill synced";if(dot)dot.className="sp-dot dot-g";if(txt)txt.textContent="Ready";return;}
   if(txt)txt.textContent=text;
 }
 
@@ -719,12 +714,13 @@ function doLogin(){
     const tok=getGhToken();
     if(tok){startSync();}else{
       setSyncStatus("offline","Not connected");
-      if(user.role==="admin"){setTimeout(()=>openSetupModal(),1500);}
     }
     navTo("all",document.querySelector(".nav-item"));
     // Show sync settings only to admin
     const ssnav=document.getElementById("syncSettingsNav");
     if(ssnav&&user.role==="admin")ssnav.style.display="flex";
+    // Save session so refresh doesn't log out
+    localStorage.setItem("mmm5-session", JSON.stringify({username:u, ts:Date.now()}));
   }else{
     const e=document.getElementById("loginErr");
     e.textContent="Incorrect username or password";
@@ -734,6 +730,7 @@ function doLogin(){
 document.getElementById("liPass").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 function doLogout(){
   user=null;if(syncInterval)clearInterval(syncInterval);
+  localStorage.removeItem("mmm5-session");
   document.getElementById("loginPage").style.display="flex";
   document.getElementById("appShell").classList.remove("active");
   document.getElementById("liPass").value="";document.getElementById("liUser").value="";
@@ -789,18 +786,7 @@ function render(){
 
   let html="";
 
-  // Setup banner if no token
-  if(!hasTok&&isAdmin){
-    html+=`<div class="setup-banner"><div class="setup-icon">⚠️</div>
-      <div class="setup-info">
-        <div class="setup-title">Auto-Sync not set up — team uploads won't be visible to Admin</div>
-        <div class="setup-sub">Set up GitHub sync once (2 minutes) → all uploads, approvals, notes sync automatically between all devices. No manual steps ever.</div>
-      </div>
-      <button class="setup-cta" onclick="openSetupModal()">Set Up Auto-Sync →</button>
-    </div>`;
-  }
-
-  // Today banner
+    // Today banner
   if(todayPosts.length){
     html+=`<div class="today-banner"><div class="tb-icon">📅</div>
       <div><div class="tb-info-title">${todayPosts.length} post${todayPosts.length>1?"s":""} scheduled for today</div>
@@ -843,7 +829,7 @@ function renderCard(p,isAdmin){
   const isVid=m&&m.type==="video";
   const isToday=getTodayPosts().find(x=>x.id===p.id)&&st!=="published";
   const imgSrc=m?m.data:THUMBS[p.id];
-  const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[p.type];
+  const editedType=ge(p.id).type||p.type;const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[editedType];
   const stcls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
   const sbcls={"pending":"bs-pending","approved":"bs-approved","rejected":"bs-rejected","revision":"bs-revision","published":"bs-published"}[st];
   const slides=p.slides;
@@ -872,7 +858,7 @@ function renderCard(p,isAdmin){
     <div class="tw">
       ${isVid?`<video src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;"></video>`:`<img src="${imgSrc}" loading="lazy">`}
       <div class="tov"><button class="to-btn" onclick="openReview(${p.id})">REVIEW POST</button></div>
-      <span class="badge-type ${tcls}">${p.type.toUpperCase()}</span>
+      <span class="badge-type ${tcls}">${editedType.toUpperCase()}</span>
       <span class="badge-status ${sbcls}">${ST_LABELS[st]}</span>
       ${mediaBadge}${slideDots}
       ${isToday?'<span class="badge-today">TODAY</span>':""}
@@ -936,6 +922,7 @@ function openReview(id){
   const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
 
   let body=`
+    <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
     <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${pp.hook.replace(/"/g,"&quot;")}"></div>
     <div class="fg">
       <span class="fl">Caption <span class="fl-cnt ${cCls}">${chars}/2200 chars · ${hashes} hashtags</span></span>
@@ -1122,7 +1109,7 @@ async function addNote(){
 
 async function saveEdits(){
   if(!revId)return;
-  const ed={hook:document.getElementById("fHook")?.value,caption:document.getElementById("fCaption")?.value,brief:document.getElementById("fBrief")?.value,cta:document.getElementById("fCta")?.value};
+  const _t=document.getElementById("fTitle"),_ty=document.getElementById("fType");const ed={title:_t?_t.value:gp(revId).title,type:_ty?_ty.value:gp(revId).type,hook:document.getElementById("fHook")?.value,caption:document.getElementById("fCaption")?.value,brief:document.getElementById("fBrief")?.value,cta:document.getElementById("fCta")?.value};
   sto("ed-"+revId,ed);
   logAct({action:"edited",postId:revId,user:user?.name,time:new Date().toISOString()});
   render();toast("Edits saved","ok");
@@ -1167,6 +1154,35 @@ function toast(msg,type=""){const t=document.getElementById("toast");t.textConte
 document.getElementById("revBg").addEventListener("click",e=>{if(e.target===document.getElementById("revBg"))closeModal();});
 document.getElementById("rejOv").addEventListener("click",e=>{if(e.target===document.getElementById("rejOv"))closeRejOv();});
 document.getElementById("setupModalBg").addEventListener("click",e=>{if(e.target===document.getElementById("setupModalBg"))closeSetupModal();});
+
+// Auto-restore session on page load / refresh
+(function(){
+  try{
+    const saved = localStorage.getItem("mmm5-session");
+    if(!saved) return;
+    const session = JSON.parse(saved);
+    // Session expires after 7 days
+    if(Date.now() - session.ts > 7*24*60*60*1000){
+      localStorage.removeItem("mmm5-session");
+      return;
+    }
+    const u = session.username;
+    if(!USERS[u]) return;
+    user = {...USERS[u], username:u};
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("appShell").classList.add("active");
+    document.getElementById("sbName").textContent = user.name;
+    document.getElementById("sbRoleTxt").textContent = user.role==="admin"?"Administrator · Full access":"Team Member · Review & upload";
+    const pill = document.getElementById("sbRolePill");
+    pill.textContent = user.role==="admin"?"Admin":"Team";
+    pill.className = "rpill "+(user.role==="admin"?"rp-a":"rp-t");
+    const ssnav = document.getElementById("syncSettingsNav");
+    if(ssnav && user.role==="admin") ssnav.style.display="flex";
+    const tok = getGhToken();
+    if(tok){startSync();}else{setSyncStatus("offline","Set up in Sync Settings");}
+    navTo("all", document.querySelector(".nav-item"));
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
