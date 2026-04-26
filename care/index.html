@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Care & Maintenance — Make My Mandir</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #E87826;
+    --orange-light: #F5A623;
+    --brown-dark: #3B1F0A;
+    --brown-mid: #7C4A1E;
+    --cream: #FFF8F0;
+    --cream-dark: #F5EAD8;
+    --stone: #A8947A;
+    --text-body: #4A3728;
+    --text-light: #8A7060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-body);
+    line-height: 1.7;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--brown-dark);
+    padding: 72px 24px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,120,38,0.18) 0%, transparent 70%);
+  }
+  .hero-shri {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    color: var(--orange);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+  .hero-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 300;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    color: var(--orange);
+    font-style: italic;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+    max-width: 520px;
+    margin: 0 auto 32px;
+    font-weight: 300;
+  }
+  .hero-materials {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .hero-materials span {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(232,120,38,0.3);
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── GOLDEN RULE ── */
+  .golden-rule {
+    background: var(--orange);
+    padding: 20px 32px;
+    text-align: center;
+  }
+  .golden-rule p {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .golden-rule p span {
+    font-size: 17px;
+    margin-right: 6px;
+  }
+
+  /* ── CONTAINER ── */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    padding: 56px 0 32px;
+    text-align: center;
+  }
+  .section-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 400;
+    color: var(--brown-dark);
+    margin-bottom: 8px;
+  }
+  .section-header p {
+    color: var(--text-light);
+    font-size: 14px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .divider {
+    width: 48px;
+    height: 2px;
+    background: var(--orange);
+    margin: 12px auto 0;
+    border-radius: 2px;
+  }
+
+  /* ── MATERIAL TABLE ── */
+  .material-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    padding-bottom: 48px;
+  }
+  .material-card {
+    background: #fff;
+    border: 1px solid var(--cream-dark);
+    border-radius: 16px;
+    padding: 24px 20px;
+    border-top: 3px solid var(--orange);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .material-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(59,31,10,0.08);
+  }
+  .material-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    color: var(--brown-dark);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .material-card .character {
+    font-size: 12px;
+    color: var(--orange);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .material-card p {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  /* ── DAILY CARE ── */
+  .daily-care-bg {
+    background: var(--brown-dark);
+    margin: 0 -20px;
+    padding: 56px 20px;
+  }
+  .daily-care-bg .section-header h2 { color: #fff; }
+  .daily-care-bg .section-header p { color: rgba(255,255,255,0.5); }
+  .daily-care-bg .divider { background: var(--orange); }
+
+  .timing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding-bottom: 16px;
+  }
+  .timing-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(232,120,38,0.2);
+    border-radius: 16px;
+    padding: 24px 22px;
+  }
+  .timing-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--orange);
+    margin-bottom: 14px;
+  }
+  .timing-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .timing-card ul li {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.8);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .timing-card ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+    font-weight: 700;
+  }
+
+  /* ── MATERIAL SECTIONS ── */
+  .material-section {
+    background: #fff;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid var(--cream-dark);
+  }
+  .material-section-header {
+    background: var(--cream-dark);
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .material-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .material-section-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--brown-dark);
+    flex: 1;
+  }
+  .material-section-header .tagline {
+    font-size: 12px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+  .toggle-icon {
+    font-size: 20px;
+    color: var(--orange);
+    transition: transform 0.3s;
+  }
+  .material-section.open .toggle-icon { transform: rotate(180deg); }
+
+  .material-section-body {
+    display: none;
+    padding: 28px;
+  }
+  .material-section.open .material-section-body { display: block; }
+
+  .care-block {
+    margin-bottom: 24px;
+  }
+  .care-block h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+  .care-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .care-list li {
+    font-size: 13.5px;
+    color: var(--text-body);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .care-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #22c55e;
+    font-weight: 700;
+  }
+  .warn-list li::before {
+    content: '✗';
+    color: #ef4444;
+  }
+  .warn-list li {
+    color: #7f1d1d;
+  }
+
+  /* ── STAIN TABLE ── */
+  .stain-section { padding: 0 0 48px; }
+  .stain-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--cream-dark);
+  }
+  .stain-table thead {
+    background: var(--brown-dark);
+    color: #fff;
+  }
+  .stain-table thead th {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+  .stain-table tbody tr:nth-child(even) { background: var(--cream); }
+  .stain-table tbody td {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--cream-dark);
+    color: var(--text-body);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  .stain-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--brown-dark);
+    white-space: nowrap;
+  }
+
+  /* ── DO / DON'T ── */
+  .dos-donts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding-bottom: 48px;
+  }
+  @media (max-width: 600px) { .dos-donts { grid-template-columns: 1fr; } }
+  .dos-card, .donts-card {
+    border-radius: 16px;
+    padding: 28px 24px;
+  }
+  .dos-card { background: #f0fdf4; border: 1px solid #86efac; }
+  .donts-card { background: #fef2f2; border: 1px solid #fca5a5; }
+  .dos-card h3, .donts-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+  .dos-card h3 { color: #166534; }
+  .donts-card h3 { color: #991b1b; }
+  .dos-donts ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .dos-donts ul li {
+    font-size: 13.5px;
+    padding-left: 22px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .dos-card ul li { color: #166534; }
+  .dos-card ul li::before { content: '✓'; position: absolute; left: 0; font-weight: 700; }
+  .donts-card ul li { color: #991b1b; }
+  .donts-card ul li::before { content: '✗'; position: absolute; left: 0; font-weight: 700; }
+
+  /* ── SEASONAL ── */
+  .seasonal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    padding-bottom: 48px;
+  }
+  @media (max-width: 600px) { .seasonal-grid { grid-template-columns: 1fr; } }
+  .season-card {
+    background: #fff;
+    border: 1px solid var(--cream-dark);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .season-emoji { font-size: 32px; margin-bottom: 10px; }
+  .season-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    color: var(--brown-dark);
+    margin-bottom: 8px;
+  }
+  .season-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+
+  /* ── CALL US ── */
+  .call-us {
+    background: var(--brown-dark);
+    border-radius: 20px;
+    padding: 40px 32px;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+  .call-us h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    color: #fff;
+    font-weight: 300;
+    margin-bottom: 8px;
+  }
+  .call-us p { color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 24px; }
+  .call-us .triggers {
+    background: rgba(232,120,38,0.1);
+    border: 1px solid rgba(232,120,38,0.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: left;
+    margin-bottom: 28px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .call-us .triggers ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .call-us .triggers ul li {
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.8);
+    padding-left: 18px;
+    position: relative;
+  }
+  .call-us .triggers ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+  }
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #d4691a; transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.7); transform: translateY(-2px); }
+
+  /* ── FOOTER ── */
+  .page-footer {
+    text-align: center;
+    padding: 32px 20px;
+    border-top: 1px solid var(--cream-dark);
+  }
+  .page-footer p {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    color: var(--text-light);
+    font-style: italic;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    background: #fff;
+    border-bottom: 1px solid var(--cream-dark);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 20px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    padding: 14px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-light);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    text-decoration: none;
+  }
+  .nav-tab:hover, .nav-tab.active {
+    color: var(--orange);
+    border-bottom-color: var(--orange);
+  }
+
+  /* ── TIP BOX ── */
+  .tip-box {
+    background: linear-gradient(135deg, #FFF8F0, #FFF1E0);
+    border: 1px solid var(--orange);
+    border-left: 4px solid var(--orange);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 13.5px;
+    color: var(--brown-dark);
+    line-height: 1.6;
+  }
+  .tip-box strong { color: var(--orange); }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <p class="hero-shri">॥ श्री ॥</p>
+    <p class="hero-logo">Make My Mandir · Handcrafted Sacred Spaces</p>
+    <h1>Care & Maintenance<br><em>for Your Mandir</em></h1>
+    <p class="hero-sub">A handcrafted mandir, built to last generations — with a little care from you.</p>
+    <div class="hero-materials">
+      <span>Marble</span>
+      <span>Solid Surface</span>
+      <span>Solid Wood</span>
+      <span>HDHMR + DUCO</span>
+      <span>Acrylic + Prelam</span>
+    </div>
+  </div>
+</div>
+
+<!-- GOLDEN RULE -->
+<div class="golden-rule">
+  <p><span>⚡</span> The One Rule: Wipe spills the moment they happen. Ghee, oil, milk, kumkum, and haldi are the enemies of every material. Keep a dry cotton cloth inside the mandir niche — always within reach.</p>
+</div>
+
+<!-- NAV TABS -->
+<nav class="nav-tabs">
+  <a href="#daily" class="nav-tab">Daily Care</a>
+  <a href="#materials" class="nav-tab">By Material</a>
+  <a href="#stains" class="nav-tab">Stain Guide</a>
+  <a href="#dos-donts" class="nav-tab">Do's & Don'ts</a>
+  <a href="#seasonal" class="nav-tab">Seasonal</a>
+  <a href="#moving" class="nav-tab">Moving</a>
+  <a href="#call-us" class="nav-tab">Call Us</a>
+</nav>
+
+<div class="container">
+
+  <!-- KNOW YOUR MATERIAL -->
+  <div class="section-header">
+    <h2>Know Your Material</h2>
+    <p>Each material has its own character — find yours below</p>
+    <div class="divider"></div>
+  </div>
+  <div class="material-grid">
+    <div class="material-card">
+      <div class="character">Natural Stone</div>
+      <h3>Marble</h3>
+      <p>Porous, acid-sensitive, develops patina. Timeless heirloom quality for traditional mandirs.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">Non-porous Composite</div>
+      <h3>Solid Surface</h3>
+      <p>Seamless, stain-resistant, modern look. Low-maintenance — ideal for busy households.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">Natural Wood</div>
+      <h3>Solid Wood</h3>
+      <p>Warm, living, sensitive to moisture and sun. Classic Indian interiors, rich aesthetic.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">Engineered + Automotive Paint</div>
+      <h3>HDHMR + DUCO</h3>
+      <p>High-gloss finish, contemporary look, vibrant colours. Every fingerprint shows — worth it for the shine.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">Laminated Board</div>
+      <h3>Acrylic + Prelam</h3>
+      <p>Glossy acrylic top layer. Affordable premium look, easy to clean — but never dry-wipe.</p>
+    </div>
+  </div>
+
+  <!-- DAILY CARE -->
+  <div id="daily"></div>
+</div>
+
+<div class="daily-care-bg">
+  <div class="container">
+    <div class="section-header">
+      <h2>Daily Care — For All Mandirs</h2>
+      <p>Two minutes a day prevents almost every problem</p>
+      <div class="divider"></div>
+    </div>
+    <div class="timing-grid">
+      <div class="timing-card">
+        <div class="timing-label">🌅 Before Puja</div>
+        <ul>
+          <li>Dust gently with a clean, soft, dry cotton cloth — shelves, murtis, carvings, base</li>
+          <li>Check that yesterday's flowers, prasad, and diya residue have been cleared</li>
+        </ul>
+      </div>
+      <div class="timing-card">
+        <div class="timing-label">🪔 During Puja</div>
+        <ul>
+          <li>Always place a steel or silver thali under diyas, incense, and any vessel with ghee or water</li>
+          <li>Use drip-proof diya plates or deeper oil vessels</li>
+          <li>Keep a dedicated dry cloth inside the mandir — not used elsewhere</li>
+          <li>Never place a hot camphor plate or burning diya directly on any surface — use a metal coaster</li>
+        </ul>
+      </div>
+      <div class="timing-card">
+        <div class="timing-label">🌙 After Puja</div>
+        <ul>
+          <li>Remove flowers and leftover prasad — sugar and moisture damage every material</li>
+          <li>Wipe any visible drips of ghee, oil, milk, or water with a dry cloth first</li>
+          <li>Let any damp surface air-dry fully before replacing items</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tip-box" style="background:rgba(255,255,255,0.06);border-color:rgba(232,120,38,0.4);color:rgba(255,255,255,0.8);">
+      <strong>Home Practice:</strong> Keep a small stack of cut cotton cloths (old soft cotton kurtas work beautifully) in a drawer near the mandir. Use a fresh piece every week.
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- MATERIAL SECTIONS -->
+  <div id="materials" class="section-header">
+    <h2>Care by Material</h2>
+    <p>Click your material to expand the full care guide</p>
+    <div class="divider"></div>
+  </div>
+
+  <!-- MARBLE -->
+  <div class="material-section open" id="sec-marble">
+    <div class="material-section-header" onclick="toggleSection('sec-marble')">
+      <div class="material-icon">🪨</div>
+      <div>
+        <h3>Marble</h3>
+        <div class="tagline">Natural stone — timeless, porous, acid-sensitive</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="material-section-body">
+      <div class="care-block">
+        <h4>Cleaning Routine</h4>
+        <ul class="care-list">
+          <li><strong>Daily:</strong> dust with dry soft cotton cloth</li>
+          <li><strong>Weekly:</strong> damp wipe with plain water on a well-wrung cloth, then dry immediately</li>
+          <li><strong>Monthly:</strong> gently brush carvings with a soft dry toothbrush, then damp-wipe</li>
+          <li><strong>Occasional:</strong> a few drops of pH-neutral soap (Pril, baby shampoo) in warm water — always rinse with plain water afterwards</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Critical Warnings</h4>
+        <ul class="care-list warn-list">
+          <li>Never use lemon, vinegar, or any acidic cleaner — they etch marble permanently</li>
+          <li>Never use Harpic, Lizol, Colin, or bathroom/floor cleaners</li>
+          <li>Never use scouring pads, steel wool, or hard brushes</li>
+          <li>Never leave water, ghee, oil, or flowers sitting overnight — marble is porous and will absorb stains</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Common Stains</h4>
+        <ul class="care-list">
+          <li><strong>Ghee/oil:</strong> blot immediately, sprinkle talcum powder or multani mitti generously, leave 24 hours, brush off, wipe</li>
+          <li><strong>Haldi:</strong> blot, apply baking soda + water paste, wait 10 minutes, wipe</li>
+          <li><strong>Kumkum, milk, wax:</strong> see Stain Guide section below</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <strong>Signs it needs professional care:</strong> Dull patches after acidic spill, visible cracks, chips on prominent edges — call us for polish or repair.
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLID SURFACE -->
+  <div class="material-section" id="sec-solid">
+    <div class="material-section-header" onclick="toggleSection('sec-solid')">
+      <div class="material-icon">⬜</div>
+      <div>
+        <h3>Solid Surface (Corian)</h3>
+        <div class="tagline">Non-porous composite — modern, seamless, forgiving</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="material-section-body">
+      <div class="care-block">
+        <h4>Cleaning Routine</h4>
+        <ul class="care-list">
+          <li><strong>Daily:</strong> wipe with a damp soft cloth or microfibre</li>
+          <li><strong>Weekly:</strong> warm water with a few drops of mild dish soap, then wipe with damp cloth and dry</li>
+          <li>Most stains come off easily — no special techniques needed</li>
+          <li><strong>Matte finish:</strong> a melamine foam eraser (Magic Eraser) can be used gently on stubborn marks</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Critical Warnings</h4>
+        <ul class="care-list warn-list">
+          <li>Never place very hot items directly on the surface — use a metal or ceramic coaster</li>
+          <li>Avoid acetone, nail polish remover, paint thinner, or strong solvents</li>
+          <li>Avoid harsh abrasives on gloss finishes — they can leave fine scratches</li>
+          <li>Do not cut anything directly on the mandir surface</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Minor Scratches</h4>
+        <ul class="care-list">
+          <li><strong>Matte finish:</strong> buff out light scratches with a fine Scotch-Brite pad in a circular motion, then wipe clean</li>
+          <li><strong>Gloss finish:</strong> do not attempt — call us for professional buffing</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLID WOOD -->
+  <div class="material-section" id="sec-wood">
+    <div class="material-section-header" onclick="toggleSection('sec-wood')">
+      <div class="material-icon">🪵</div>
+      <div>
+        <h3>Solid Wood</h3>
+        <div class="tagline">Natural — warm, living, sensitive to water and sun</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="material-section-body">
+      <div class="care-block">
+        <h4>Cleaning Routine</h4>
+        <ul class="care-list">
+          <li><strong>Daily:</strong> dust with a clean dry soft cloth only</li>
+          <li><strong>Weekly:</strong> wipe with a barely damp cotton cloth (wring until it feels almost dry), then immediately go over with a dry cloth</li>
+          <li>Never allow water to sit on wood — even for a few minutes</li>
+          <li><strong>Every 6 months:</strong> apply a thin coat of teak oil or beeswax-based polish with a soft cloth, buff to a shine</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Critical Warnings</h4>
+        <ul class="care-list warn-list">
+          <li>Never use water-heavy cleaning — wood warps, swells, and cracks with moisture</li>
+          <li>Never place wet vessels, lotas, or flower bowls directly on wood — water rings are permanent</li>
+          <li>Never place hot items on wood — finish will bubble or discolour</li>
+          <li>Keep away from direct sunlight — wood fades and the finish yellows over years</li>
+          <li>Control humidity — avoid placing near AC vents, heaters, or damp walls</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <strong>Signs it needs professional care:</strong> Crack or split in the wood, finish peeling or bubbling, deep water damage — call us. We can often re-polish or patch invisibly.
+      </div>
+    </div>
+  </div>
+
+  <!-- HDHMR + DUCO -->
+  <div class="material-section" id="sec-duco">
+    <div class="material-section-header" onclick="toggleSection('sec-duco')">
+      <div class="material-icon">✨</div>
+      <div>
+        <h3>HDHMR + DUCO</h3>
+        <div class="tagline">Engineered board with high-gloss automotive PU paint</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="material-section-body">
+      <div class="care-block">
+        <h4>Cleaning Routine</h4>
+        <ul class="care-list">
+          <li><strong>Daily:</strong> wipe with a clean dry microfibre cloth — this finish shows every fingerprint</li>
+          <li><strong>Weekly:</strong> very lightly damp microfibre with plain water, then dry-buff with a clean microfibre</li>
+          <li><strong>Smudges:</strong> a drop of mild soap in water, applied with microfibre, then wiped clean</li>
+          <li><strong>Every 3-6 months:</strong> automotive-grade gloss polish (3M or Meguiar's) keeps the shine deep</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Critical Warnings</h4>
+        <ul class="care-list warn-list">
+          <li>NEVER use acetone, thinner, nail polish remover — DUCO paint will dissolve or discolour</li>
+          <li>Never use abrasives — any scouring pad will leave visible fine scratches on the gloss</li>
+          <li>Never use ammonia-based cleaners (Colin) — they dull the finish</li>
+          <li>No hot diyas or camphor plates directly on DUCO — heat causes white marks very difficult to remove</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <strong>Signs it needs professional care:</strong> Visible scratches, heat marks, chipped paint — DUCO can be professionally re-sprayed. Do not attempt touch-up paints yourself.
+      </div>
+    </div>
+  </div>
+
+  <!-- ACRYLIC + PRELAM -->
+  <div class="material-section" id="sec-acrylic">
+    <div class="material-section-header" onclick="toggleSection('sec-acrylic')">
+      <div class="material-icon">💎</div>
+      <div>
+        <h3>Acrylic + Prelam</h3>
+        <div class="tagline">Pre-laminated board with glossy acrylic top layer</div>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="material-section-body">
+      <div class="care-block">
+        <h4>Cleaning Routine</h4>
+        <ul class="care-list">
+          <li><strong>Daily:</strong> wipe with a soft <em>damp</em> microfibre — never dry-wipe acrylic, dry dust particles scratch the surface</li>
+          <li><strong>Always wet the cloth first,</strong> even for a quick wipe</li>
+          <li><strong>Weekly:</strong> a few drops of mild dish soap in warm water, then wipe with clean damp cloth, then dry-buff</li>
+        </ul>
+      </div>
+      <div class="care-block">
+        <h4>Critical Warnings</h4>
+        <ul class="care-list warn-list">
+          <li>NEVER dry-wipe — dust acts like sandpaper on acrylic and leaves fine scratches</li>
+          <li>Never use ammonia-based cleaners (Colin), alcohol-based cleaners, or glass cleaners — they cloud and craze acrylic</li>
+          <li>Keep away from direct heat — hot diyas, camphor, or heaters can warp acrylic</li>
+          <li>Prelam edges are sensitive to water seeping in — always dry edges carefully after cleaning</li>
+        </ul>
+      </div>
+      <div class="tip-box">
+        <strong>Signs it needs professional care:</strong> Clouding, fine scratch network, bubbling at the acrylic edge, prelam edge peeling or swelling — call us.
+      </div>
+    </div>
+  </div>
+
+  <!-- STAIN GUIDE -->
+  <div id="stains" class="section-header">
+    <h2>Stain Removal Guide</h2>
+    <p>Act quickly — a fresh spill is almost always recoverable</p>
+    <div class="divider"></div>
+  </div>
+  <div class="stain-section">
+    <table class="stain-table">
+      <thead>
+        <tr>
+          <th>Stain</th>
+          <th>Marble & Wood</th>
+          <th>Solid Surface, DUCO & Acrylic</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Ghee / Oil</td><td>Blot. Apply talcum / cornflour / multani mitti for 24 hrs. Brush off, wipe.</td><td>Mild soap + warm water on microfibre. Rinse, dry-buff.</td></tr>
+        <tr><td>Haldi</td><td>Blot. Baking soda + water paste for 10 min (marble only — not wood). Wipe.</td><td>Damp microfibre immediately. If set: mild soap only. Do not scrub.</td></tr>
+        <tr><td>Kumkum / Sindoor</td><td>Blot. Baking soda paste on marble. On wood: damp cloth only, call us if it sets.</td><td>Damp microfibre. Mild soap if needed. Never bleach.</td></tr>
+        <tr><td>Milk / Panchamrit</td><td>Wipe immediately. Mild soap + water if dried.</td><td>Mild soap + water. Wipe and dry.</td></tr>
+        <tr><td>Candle / Diya Wax</td><td>Ice cube to harden, lift with fingernail or plastic spatula. Never metal.</td><td>Same — ice cube + plastic spatula only.</td></tr>
+        <tr><td>Water Ring</td><td>Marble: baking soda paste. Wood: gentle buff with soft cloth + wood polish.</td><td>Usually wipes off with damp microfibre.</td></tr>
+        <tr><td>Incense Soot</td><td>Monthly soap-water wipe. Move diya position if one spot is affected.</td><td>Microfibre with mild soap. On DUCO, very light pressure only.</td></tr>
+        <tr><td>Flower Stains</td><td>Remove flowers daily. Baking soda paste on marble for set marks.</td><td>Damp microfibre; mild soap if needed.</td></tr>
+        <tr><td>Unknown Stubborn</td><td colspan="2" style="text-align:center;font-weight:600;color:#E87826;">Two attempts maximum. Then call us. Do not experiment further.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- DO'S & DON'TS -->
+  <div id="dos-donts" class="section-header">
+    <h2>Do's & Don'ts</h2>
+    <p>Keep this visible near your mandir. When in doubt, refer to it.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="dos-donts">
+    <div class="dos-card">
+      <h3>✓ Always Do</h3>
+      <ul>
+        <li>Wipe spills immediately</li>
+        <li>Use coasters under diyas and hot items</li>
+        <li>Dust / wipe daily as per your material</li>
+        <li>Use pH-neutral mild soap when needed</li>
+        <li>Keep mandir away from direct sunlight</li>
+        <li>Let wet surfaces air-dry fully</li>
+        <li>Handle with two hands when moving</li>
+        <li>Call us for anything you're unsure about</li>
+      </ul>
+    </div>
+    <div class="donts-card">
+      <h3>✗ Never Do</h3>
+      <ul>
+        <li>Use Harpic, Lizol, Colin, or harsh cleaners</li>
+        <li>Use lemon, vinegar, or acids on any material</li>
+        <li>Use scouring pads, steel wool, or hard brushes</li>
+        <li>Place hot diyas / camphor directly on any surface</li>
+        <li>Dry-wipe acrylic (always damp first)</li>
+        <li>Use acetone or thinner on DUCO</li>
+        <li>Leave water sitting on wood — ever</li>
+        <li>Apply polish or sealants without guidance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEASONAL -->
+  <div id="seasonal" class="section-header">
+    <h2>Seasonal Notes</h2>
+    <p>Each season brings different care needs</p>
+    <div class="divider"></div>
+  </div>
+  <div class="seasonal-grid">
+    <div class="season-card">
+      <div class="season-emoji">🌧️</div>
+      <h3>Monsoon</h3>
+      <p>Ventilate the puja room. Use silica gel moisture absorber inside closed mandirs. Extra attention to wood and prelam edges.</p>
+    </div>
+    <div class="season-card">
+      <div class="season-emoji">☀️</div>
+      <h3>Summer</h3>
+      <p>Keep away from sunlight to prevent fading of wood, DUCO, and acrylic. Move mandir if direct sun hits it for more than an hour.</p>
+    </div>
+    <div class="season-card">
+      <div class="season-emoji">❄️</div>
+      <h3>Winter</h3>
+      <p>Diya ghee thickens in the cold. Refill carefully to prevent overflow stains — especially on marble and wood.</p>
+    </div>
+  </div>
+
+  <!-- MOVING -->
+  <div id="moving" class="section-header">
+    <h2>Moving Your Mandir</h2>
+    <p>When in doubt, call us before you move it</p>
+    <div class="divider"></div>
+  </div>
+  <div class="material-grid" style="margin-bottom:48px;">
+    <div class="material-card">
+      <div class="character">Same Room</div>
+      <h3>Easy Move</h3>
+      <p>Empty completely, lift (never drag), minimum two adults. Place a blanket underneath if sliding on marble floor.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">Between Rooms / Floors</div>
+      <h3>Careful Move</h3>
+      <p>Disassemble where possible, wrap each piece in bubble wrap + blanket. Clear the path first.</p>
+    </div>
+    <div class="material-card">
+      <div class="character">New Home or City</div>
+      <h3>Call Us First</h3>
+      <p>We arrange professional pack-and-move through the same team that delivered. Don't risk it — call us on WhatsApp.</p>
+    </div>
+  </div>
+
+  <!-- CALL US -->
+  <div id="call-us" class="call-us">
+    <h2>We Are Always a Call Away 🙏</h2>
+    <p>WhatsApp us a photograph for quick diagnosis — we usually respond within the hour.</p>
+    <div class="triggers">
+      <ul>
+        <li>A visible crack or split in the material</li>
+        <li>A chip on a prominent edge or corner</li>
+        <li>A stain that did not respond after two home attempts</li>
+        <li>Looseness or wobble in joints between sections</li>
+        <li>Heat marks, scratches, or dulling on DUCO / acrylic / solid surface</li>
+        <li>Finish peeling, bubbling, or prelam edges swelling</li>
+        <li>Any damage from a fall, impact, or water exposure</li>
+      </ul>
+    </div>
+    <div class="cta-buttons">
+      <a href="mailto:info@makemymandir.com" class="btn-primary">✉ Email Us at info@makemymandir.com</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="page-footer">
+  <p>Handcrafted with devotion by Make My Mandir · ॥ सर्वे भवन्तु सुखिनः ॥</p>
+</div>
+
+<script>
+function toggleSection(id) {
+  const sec = document.getElementById(id);
+  sec.classList.toggle('open');
+}
+
+// Smooth scroll for nav tabs
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(tab.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.toggle('active', tab.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>
