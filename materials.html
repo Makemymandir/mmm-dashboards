@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Materials & Finishes — MakeMyMandir</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brown: #3B1F0E;
+    --orange: #C96A1F;
+    --amber: #E8A135;
+    --cream: #FAF6F0;
+    --warm-white: #FFF9F2;
+    --gray: #7A6A5A;
+    --light: #F0E8DC;
+    --border: #E2D5C3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--warm-white);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--brown);
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--brown);
+    padding: 60px 24px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,161,53,0.18) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 600;
+    color: #FFF9F2;
+    line-height: 1.15;
+    position: relative;
+  }
+  .hero h1 em {
+    color: var(--amber);
+    font-style: italic;
+  }
+  .hero-sub {
+    margin-top: 16px;
+    color: rgba(255,249,242,0.55);
+    font-size: 14px;
+    font-weight: 300;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+    position: relative;
+  }
+  .hero-divider {
+    width: 48px;
+    height: 2px;
+    background: var(--amber);
+    margin: 24px auto 0;
+    position: relative;
+  }
+
+  /* INTRO */
+  .intro {
+    padding: 40px 24px 16px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .intro p {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  /* MATERIAL CARDS */
+  .materials {
+    padding: 8px 16px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .material-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  .material-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .material-card:hover {
+    box-shadow: 0 8px 32px rgba(59,31,14,0.10);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 20px 20px 0;
+    gap: 16px;
+  }
+
+  .material-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .card-title-block { flex: 1; }
+
+  .material-name {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--brown);
+    line-height: 1.2;
+  }
+
+  .price-tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 2px 10px;
+    border-radius: 20px;
+  }
+
+  .card-body {
+    padding: 14px 20px 20px;
+  }
+
+  .material-desc {
+    font-size: 13.5px;
+    color: var(--gray);
+    line-height: 1.7;
+    font-weight: 300;
+    margin-bottom: 14px;
+  }
+
+  .material-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .grid-item {
+    background: var(--cream);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+  .grid-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+  .grid-value {
+    font-size: 12.5px;
+    color: var(--brown);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  .best-for {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--light);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .best-for-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--orange);
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+  .best-for-text {
+    font-size: 12.5px;
+    color: var(--brown);
+    line-height: 1.5;
+  }
+
+  /* TAG STYLES PER MATERIAL */
+  .tag-1 { background: #FFF3E8; color: #C96A1F; }
+  .tag-2 { background: #FFF0F0; color: #C0392B; }
+  .tag-3 { background: #FFF4E0; color: #B8860B; }
+  .tag-4 { background: #E8F5FF; color: #2980B9; }
+  .tag-5 { background: #F5F5F5; color: #555; }
+  .tag-6 { background: #F0F0E0; color: #7A7A3A; }
+
+  .icon-1 { background: #FFF3E8; }
+  .icon-2 { background: #FFF0F0; }
+  .icon-3 { background: #FFF8E8; }
+  .icon-4 { background: #E8F5FF; }
+  .icon-5 { background: #F5F5F5; }
+  .icon-6 { background: #F0EFE0; }
+
+  /* COMPARISON TABLE */
+  .comparison-section {
+    padding: 0 16px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--brown);
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--gray);
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    font-size: 12.5px;
+  }
+  .compare-table th {
+    background: var(--brown);
+    color: rgba(255,249,242,0.9);
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .compare-table th:first-child { text-align: left; padding-left: 14px; }
+  .compare-table td {
+    padding: 11px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    color: var(--brown);
+  }
+  .compare-table td:first-child {
+    text-align: left;
+    padding-left: 14px;
+    font-weight: 500;
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:hover td { background: var(--cream); }
+
+  /* CTA */
+  .cta-section {
+    background: var(--brown);
+    padding: 48px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(232,161,53,0.15) 0%, transparent 70%);
+  }
+  .cta-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 26px;
+    color: var(--warm-white);
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .cta-section p {
+    color: rgba(255,249,242,0.55);
+    font-size: 13.5px;
+    font-weight: 300;
+    margin-bottom: 28px;
+    position: relative;
+    line-height: 1.6;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: var(--amber);
+    color: var(--brown);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 14px 32px;
+    border-radius: 40px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    position: relative;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .cta-btn:hover { background: #F0B040; transform: scale(1.03); }
+
+  /* SCROLL ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">MakeMyMandir · Pune</div>
+  <h1>Materials &amp; <em>Finishes</em></h1>
+  <p class="hero-sub">Every mandir we craft begins with one choice — the material that will hold your faith for generations.</p>
+  <div class="hero-divider"></div>
+</div>
+
+<!-- INTRO -->
+<div class="intro">
+  <p>We offer six material categories, each with its own character, warmth, and investment level. Whether you prefer the warmth of solid wood, the timelessness of marble, or the modern precision of solid surface — we craft it to perfection.</p>
+</div>
+
+<!-- MATERIAL CARDS -->
+<div class="materials">
+
+  <!-- 1. Acrylic + Prelam -->
+  <div class="material-card" data-delay="0">
+    <div class="card-header">
+      <div class="material-icon icon-1">🪟</div>
+      <div class="card-title-block">
+        <div class="material-name">Acrylic + Prelam</div>
+        <span class="price-tag tag-1">₹ Entry Range</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">A glossy acrylic sheet bonded over a pre-laminated base board. Delivers a clean, premium-looking finish at an accessible price point. Available in a wide range of solid colours and soft textures.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Finish</div>
+          <div class="grid-value">High-gloss, mirror-like</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Durability</div>
+          <div class="grid-value">Good — scratch resistant</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Maintenance</div>
+          <div class="grid-value">Easy, wipe clean</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Weight</div>
+          <div class="grid-value">Light to medium</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Apartments, compact spaces, first-time buyers, and those wanting a modern look on a budget.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. HDHMR + Duco -->
+  <div class="material-card" data-delay="80">
+    <div class="card-header">
+      <div class="material-icon icon-2">🎨</div>
+      <div class="card-title-block">
+        <div class="material-name">HDHMR + Duco Paint</div>
+        <span class="price-tag tag-2">₹₹ Mid Range</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">High-Density High-Moisture Resistant board finished with automotive-grade Duco paint. Gives a seamless, furniture-grade surface with exceptional colour depth — popular in contemporary interiors.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Finish</div>
+          <div class="grid-value">Silky smooth, even coat</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Durability</div>
+          <div class="grid-value">Excellent — moisture safe</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Maintenance</div>
+          <div class="grid-value">Easy, minimal upkeep</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Customisation</div>
+          <div class="grid-value">Any RAL / Pantone colour</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Modern homes, bungalows, and customers wanting a premium painted look with clean lines.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Solid Wood -->
+  <div class="material-card" data-delay="160">
+    <div class="card-header">
+      <div class="material-icon icon-3">🪵</div>
+      <div class="card-title-block">
+        <div class="material-name">Solid Wood</div>
+        <span class="price-tag tag-3">₹₹₹ Premium</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">Crafted from natural teak, sheesham, or sagwan — solid wood mandirs carry the warmth and grain of real timber. Each piece is unique. Ages beautifully and can be passed down through generations.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Wood Types</div>
+          <div class="grid-value">Teak · Sheesham · Sagwan</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Durability</div>
+          <div class="grid-value">Heirloom — 50+ years</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Finish Options</div>
+          <div class="grid-value">Natural oil, walnut stain, polish</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Carving</div>
+          <div class="grid-value">Hand-carved or CNC available</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Traditional homes, pooja rooms, customers wanting the natural warmth and sacred feel of real wood.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Solid Surface -->
+  <div class="material-card" data-delay="240">
+    <div class="card-header">
+      <div class="material-icon icon-4">💎</div>
+      <div class="card-title-block">
+        <div class="material-name">Solid Surface</div>
+        <span class="price-tag tag-4">₹₹₹ Premium</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">An engineered composite material (like Corian or HI-MACS) that is non-porous, seamless, and highly workable. Allows complex curved forms and intricate CNC detailing while remaining stain and water resistant.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Appearance</div>
+          <div class="grid-value">Stone-like, seamless</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Durability</div>
+          <div class="grid-value">Very high — renewable surface</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Maintenance</div>
+          <div class="grid-value">Very easy — stain proof</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Design Freedom</div>
+          <div class="grid-value">Curves, arches, inlays</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Contemporary fusion designs, bungalow entrances, customers wanting a stone look with modern functionality.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Marble -->
+  <div class="material-card" data-delay="320">
+    <div class="card-header">
+      <div class="material-icon icon-5">🏛️</div>
+      <div class="card-title-block">
+        <div class="material-name">Marble</div>
+        <span class="price-tag tag-5">₹₹₹₹ Luxury</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">The most sacred and timeless choice. We source Makrana white marble (the same marble used in the Taj Mahal), Vietnam white, and Italian Statuario. Each slab is hand-selected and carved by master craftsmen from Rajasthan.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Marble Types</div>
+          <div class="grid-value">Makrana · Vietnam · Statuario</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Durability</div>
+          <div class="grid-value">Generational —100+ years</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Carving</div>
+          <div class="grid-value">Hand-carved by artisans</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Sourcing</div>
+          <div class="grid-value">Directly from Rajasthan</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Dedicated pooja rooms, bungalows, heirloom mandirs, and those who want the finest sacred space possible.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Real Silver -->
+  <div class="material-card" data-delay="400">
+    <div class="card-header">
+      <div class="material-icon icon-6">✨</div>
+      <div class="card-title-block">
+        <div class="material-name">Real Silver</div>
+        <span class="price-tag tag-6">★ Ultra Luxury</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="material-desc">A real silver coating applied as the finish on the mandir — the entire exterior is adorned in genuine silver, giving the mandir a divine, temple-like presence. This is not a plating but a true silver finish, handcrafted by specialist artisans. Pricing is fully custom based on size and design complexity.</p>
+      <div class="material-grid">
+        <div class="grid-item">
+          <div class="grid-label">Finish Type</div>
+          <div class="grid-value">Real silver coating</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Craftsmanship</div>
+          <div class="grid-value">Handcrafted by artisans</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Appearance</div>
+          <div class="grid-value">Divine, temple-like glow</div>
+        </div>
+        <div class="grid-item">
+          <div class="grid-label">Pricing</div>
+          <div class="grid-value">Custom — on consultation</div>
+        </div>
+      </div>
+      <div class="best-for">
+        <span class="best-for-label">Best For</span>
+        <span class="best-for-text">Those who want their mandir to look and feel like a sacred temple — with a genuine silver finish that radiates divinity.</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="comparison-section">
+  <div class="section-title">Quick Comparison</div>
+  <div class="section-sub">Choose what matters most to you</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Material</th>
+        <th>Budget</th>
+        <th>Durability</th>
+        <th>Maintenance</th>
+        <th>Best Fit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Acrylic + Prelam</td>
+        <td>₹</td>
+        <td>⭐⭐⭐</td>
+        <td>Easy</td>
+        <td>Apartments</td>
+      </tr>
+      <tr>
+        <td>HDHMR + Duco</td>
+        <td>₹₹</td>
+        <td>⭐⭐⭐⭐</td>
+        <td>Easy</td>
+        <td>Modern homes</td>
+      </tr>
+      <tr>
+        <td>Solid Wood</td>
+        <td>₹₹₹</td>
+        <td>⭐⭐⭐⭐⭐</td>
+        <td>Medium</td>
+        <td>Traditional</td>
+      </tr>
+      <tr>
+        <td>Solid Surface</td>
+        <td>₹₹₹</td>
+        <td>⭐⭐⭐⭐⭐</td>
+        <td>Very Easy</td>
+        <td>Contemporary</td>
+      </tr>
+      <tr>
+        <td>Marble</td>
+        <td>₹₹₹₹</td>
+        <td>⭐⭐⭐⭐⭐</td>
+        <td>Low</td>
+        <td>Luxury / Heirloom</td>
+      </tr>
+      <tr>
+        <td>Real Silver</td>
+        <td>★ Custom</td>
+        <td>⭐⭐⭐⭐⭐</td>
+        <td>Polish reqd.</td>
+        <td>Temple-feel home</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Not sure which material to choose?</h2>
+  <p>Use our free Design Configurator to explore each material<br>with dimensions, style, and features — and get a custom quote.</p>
+  <a href="https://makemymandir.github.io/mmm-dashboards/" class="cta-btn" target="_blank">🛕 Design Your Mandir →</a>
+</div>
+
+<script>
+  // Intersection Observer for scroll animations
+  const cards = document.querySelectorAll('.material-card');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = entry.target.dataset.delay || 0;
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, parseInt(delay));
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  cards.forEach(card => observer.observe(card));
+</script>
+</body>
+</html>
