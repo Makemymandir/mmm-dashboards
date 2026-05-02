@@ -16,6 +16,14 @@
       "brief": "5 slides: Hook, Corian, Wood, Marble, CTA",
       "cta": "DM for material recommendation"
     },
+    "3": {
+      "title": "Wall-mounted mandir — product spotlight",
+      "type": "Static",
+      "hook": "No dedicated pooja room? No problem.",
+      "caption": "Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",
+      "brief": "Product photo of wall-mounted Corian mandir with LED.",
+      "cta": "WhatsApp/DM to see designs"
+    },
     "4": {
       "title": "Vastu guide: the right wall for your mandir",
       "type": "Carousel",
@@ -28,6 +36,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 3,
+      "user": "Nilesh K Mehta",
+      "time": "2026-05-02T08:39:44.426Z"
+    },
     {
       "action": "edited",
       "postId": 2,
