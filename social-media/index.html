@@ -440,26 +440,30 @@ input[type=file]{display:none;}
 <div class="setup-modal-bg" id="setupModalBg">
   <div class="setup-modal">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-      <div class="sm-title">⚙️ Sync Settings — GitHub Auto-Sync</div>
+      <div class="sm-title">⚙️ Connect GitHub — One-time Setup</div>
       <button onclick="closeSetupModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">×</button>
     </div>
-    <div class="sm-sub">Connect your GitHub repo once. After that, all approvals, rejections, notes and uploads sync automatically between you and your team — no manual steps.</div>
+    <div class="sm-sub" style="background:rgba(232,119,34,.12);border-left:3px solid #FFA657;padding:10px 12px;border-radius:6px;margin:8px 0 12px;">
+      <strong style="color:#FFA657;">Important:</strong> Without this step nothing actually saves. Your changes will appear to work but team members and admin will NOT see each other's updates.
+    </div>
+    <div class="sm-sub"><strong>If you are a team member:</strong> Ask Nilesh for the dashboard token (one token works for everyone). Paste it below — that's it. Skip steps 1 & 2.</div>
+    <div class="sm-sub" style="margin-top:8px;"><strong>If you are Nilesh (admin) setting this up the first time:</strong> follow steps 1 → 2 → 3 below to create the token, then share it with your team.</div>
     <div class="sm-step">
       <div class="sm-n">1</div>
-      <div class="sm-t">Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate new token (classic)</div>
+      <div class="sm-t">Go to <strong>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong> → Generate new token (classic). <strong>IMPORTANT:</strong> set Expiration to <strong>"No expiration"</strong> so it doesn't stop working in 90 days.</div>
     </div>
     <div class="sm-step">
       <div class="sm-n">2</div>
-      <div class="sm-t">Give it a name like <code>mmm-dashboard</code> → tick <strong>repo</strong> (full repo access) → click <strong>Generate token</strong> → copy the token immediately</div>
+      <div class="sm-t">Give it a name like <code>mmm-dashboard</code> → tick the <strong>repo</strong> checkbox (full repo access) → click <strong>Generate token</strong> → copy the token immediately. <strong>Save it somewhere safe</strong> — GitHub will not show it again.</div>
     </div>
     <div class="sm-step">
       <div class="sm-n">3</div>
-      <div class="sm-t">Paste your GitHub token below:</div>
+      <div class="sm-t">Paste the token below (starts with <code>ghp_</code>) and click Save. The app will check it with GitHub before saving — you'll see ✓ if it works.</div>
     </div>
     <input class="sm-inp" id="ghTokenInp" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" type="password">
-    <div style="font-size:11px;color:var(--mid);margin-top:6px;line-height:1.6;">Your token is stored only in your browser. It is never sent anywhere except directly to GitHub to save your dashboard data.</div>
+    <div style="font-size:11px;color:var(--mid);margin-top:6px;line-height:1.6;">Your token is stored only in this browser on this device. If you switch devices or use incognito mode, you'll need to paste it again.</div>
     <button class="sm-save-btn" onclick="saveGithubToken()">Save & Connect — Start Auto-Sync</button>
-    <button class="sm-skip" onclick="closeSetupModal()">Skip for now — use this device only</button>
+    <button class="sm-skip" onclick="closeSetupModal()">Skip — but nothing will sync until I do this</button>
   </div>
 </div>
 
@@ -561,15 +565,35 @@ function logAct(a){const acts=getActs();acts.unshift(a);if(acts.length>200)acts.
 
 /* ══ GITHUB SYNC ══ */
 function getGhToken(){return localStorage.getItem("mmm5-gh-token");}
-function saveGithubToken(){
+function clearGhToken(){localStorage.removeItem("mmm5-gh-token");ghToken=null;if(syncInterval)clearInterval(syncInterval);}
+
+async function validateToken(tok){
+  // Ping GitHub to make sure the token actually works for this repo before saving
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}?t=${Date.now()}`,{
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"},
+      cache:"no-store"
+    });
+    if(res.status===401||res.status===403)return {ok:false,msg:"Token rejected by GitHub. Generate a fresh one (must have full 'repo' scope)."};
+    if(res.status===404)return {ok:false,msg:"Token works but can't see this repo. Make sure you used a token from the Makemymandir GitHub account."};
+    if(!res.ok)return {ok:false,msg:"GitHub error "+res.status+". Try again in a moment."};
+    return {ok:true};
+  }catch(e){return {ok:false,msg:"No internet connection. Check your network."};}
+}
+
+async function saveGithubToken(){
   const tok=document.getElementById("ghTokenInp").value.trim();
-  if(!tok){toast("Please enter a GitHub token","err");return;}
+  if(!tok){toast("Please paste your GitHub token","err");return;}
+  toast("Checking token with GitHub...","info");
+  const v=await validateToken(tok);
+  if(!v.ok){toast(v.msg,"err");return;}
   localStorage.setItem("mmm5-gh-token",tok);
   ghToken=tok;
   closeSetupModal();
-  toast("GitHub connected — syncing now...","info");
+  toast("✓ GitHub connected — syncing now","ok");
   startSync();
-  pushToGitHub();
+  // Don't push immediately on first connect — pull first to get team's latest, then push
+  setTimeout(()=>pushToGitHub(),1500);
 }
 
 function buildSyncPayload(){
@@ -612,24 +636,34 @@ function applySyncPayload(data){
 async function getGitHubFileSHA(){
   const tok=getGhToken();if(!tok)return null;
   try{
-    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}`,{
-      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"}
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}?t=${Date.now()}`,{
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"},
+      cache:"no-store"
     });
     if(res.status===404)return null;
+    if(!res.ok)return null;
     const data=await res.json();
     return data.sha||null;
   }catch(e){return null;}
 }
 
 async function pullFromGitHub(){
-  const tok=getGhToken();if(!tok)return;
+  const tok=getGhToken();if(!tok){setSyncStatus("offline","");return;}
   setSyncStatus("syncing","Syncing...");
   try{
     const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}?t=${Date.now()}`,{
-      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"}
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"},
+      cache:"no-store"
     });
-    if(res.status===404){setSyncStatus("synced","Ready");return;}
-    if(!res.ok){setSyncStatus("error","Sync error");return;}
+    if(res.status===401||res.status===403){
+      clearGhToken();
+      toast("⚠ GitHub token rejected — please re-enter it","err");
+      setSyncStatus("offline","");
+      openSetupModal();
+      return;
+    }
+    if(res.status===404){setSyncStatus("synced","Connected · no data yet");return;}
+    if(!res.ok){setSyncStatus("error","Sync error "+res.status);return;}
     const fileData=await res.json();
     const content=JSON.parse(atob(fileData.content.replace(/\n/g,"")));
     applySyncPayload(content);
@@ -637,39 +671,65 @@ async function pullFromGitHub(){
     setSyncStatus("synced","Synced "+relTime(lastSyncTime.toISOString()));
     render();
   }catch(e){
-    setSyncStatus("error","Sync failed");
+    setSyncStatus("error","Offline — check internet");
     console.error("Pull error:",e);
   }
 }
 
-async function pushToGitHub(){
-  const tok=getGhToken();if(!tok)return;
-  if(isSyncing)return;
+async function pushToGitHub(retry=0){
+  const tok=getGhToken();
+  if(!tok){
+    toast("⚠ Not connected to GitHub. Click ⚙️ Sync Settings to connect.","err");
+    setSyncStatus("offline","");
+    return false;
+  }
+  if(isSyncing && retry===0)return false;
   isSyncing=true;
   setSyncStatus("syncing","Saving...");
   try{
     const payload=buildSyncPayload();
-    const content=btoa(JSON.stringify(payload,null,2));
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
     const sha=await getGitHubFileSHA();
-    const body={message:"Dashboard sync — "+new Date().toISOString(),content};
+    const body={message:"Dashboard sync — "+(user?.name||"?")+" — "+new Date().toISOString(),content};
     if(sha)body.sha=sha;
     const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_DATA_PATH}`,{
       method:"PUT",
       headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},
-      body:JSON.stringify(body)
+      body:JSON.stringify(body),
+      cache:"no-store"
     });
     if(res.ok){
       lastSyncTime=new Date();
-      setSyncStatus("synced","Synced just now");
-    }else{
-      const err=await res.json();
-      console.error("Push error:",err);
-      setSyncStatus("error","Save failed");
+      setSyncStatus("synced","Saved just now");
+      isSyncing=false;
+      return true;
     }
+    if(res.status===401||res.status===403){
+      clearGhToken();
+      toast("⚠ GitHub token rejected — please re-enter it","err");
+      setSyncStatus("offline","");
+      openSetupModal();
+      isSyncing=false;
+      return false;
+    }
+    if(res.status===409 && retry<2){
+      // Someone else saved while we were saving. Pull their changes, then re-push ours.
+      isSyncing=false;
+      toast("Team made changes at the same time — merging...","info");
+      await pullFromGitHub();
+      return await pushToGitHub(retry+1);
+    }
+    const err=await res.json().catch(()=>({}));
+    console.error("Push error:",err);
+    setSyncStatus("error","Save failed — "+(err.message||"unknown"));
+    isSyncing=false;
+    return false;
   }catch(e){
-    setSyncStatus("error","No connection");
+    setSyncStatus("error","Offline — check internet");
     console.error("Push error:",e);
-  }finally{isSyncing=false;}
+    isSyncing=false;
+    return false;
+  }
 }
 
 async function manualSync(){
@@ -692,9 +752,15 @@ function setSyncStatus(state,text){
   const dot=pill?.querySelector(".sp-dot");
   const txt=document.getElementById("syncPillTxt");
   if(!pill)return;
+  // No more lying to team — if there's no token, show real OFFLINE state regardless of role
+  if(user && !getGhToken()){
+    pill.className="sync-pill error";
+    if(dot)dot.className="sp-dot dot-r";
+    if(txt)txt.textContent="OFFLINE — click ⚙️ to connect";
+    return;
+  }
   pill.className="sync-pill "+state;
   if(dot)dot.className="sp-dot "+(state==="synced"?"dot-g":state==="syncing"?"dot-am":state==="error"?"dot-r":"dot-off");
-  if(user&&user.role==="team"&&!getGhToken()){pill.className="sync-pill synced";if(dot)dot.className="sp-dot dot-g";if(txt)txt.textContent="Ready";return;}
   if(txt)txt.textContent=text;
 }
 
@@ -711,14 +777,18 @@ function doLogin(){
     const pill=document.getElementById("sbRolePill");
     pill.textContent=user.role==="admin"?"Admin":"Team";
     pill.className="rpill "+(user.role==="admin"?"rp-a":"rp-t");
+    // Sync settings nav now visible for EVERYONE (team also needs to connect)
+    const ssnav=document.getElementById("syncSettingsNav");
+    if(ssnav)ssnav.style.display="flex";
     const tok=getGhToken();
-    if(tok){startSync();}else{
-      setSyncStatus("offline","Not connected");
+    if(tok){
+      startSync();
+    }else{
+      setSyncStatus("offline","");
+      // Auto-open the setup modal on first login if no token saved
+      setTimeout(()=>openSetupModal(),300);
     }
     navTo("all",document.querySelector(".nav-item"));
-    // Show sync settings only to admin
-    const ssnav=document.getElementById("syncSettingsNav");
-    if(ssnav&&user.role==="admin")ssnav.style.display="flex";
     // Save session so refresh doesn't log out
     localStorage.setItem("mmm5-session", JSON.stringify({username:u, ts:Date.now()}));
   }else{
@@ -1176,10 +1246,17 @@ document.getElementById("setupModalBg").addEventListener("click",e=>{if(e.target
     const pill = document.getElementById("sbRolePill");
     pill.textContent = user.role==="admin"?"Admin":"Team";
     pill.className = "rpill "+(user.role==="admin"?"rp-a":"rp-t");
+    // Sync settings nav now visible for EVERYONE (team also needs to connect)
     const ssnav = document.getElementById("syncSettingsNav");
-    if(ssnav && user.role==="admin") ssnav.style.display="flex";
+    if(ssnav) ssnav.style.display="flex";
     const tok = getGhToken();
-    if(tok){startSync();}else{setSyncStatus("offline","Set up in Sync Settings");}
+    if(tok){
+      startSync();
+    }else{
+      setSyncStatus("offline","");
+      // Auto-open the setup modal if no token saved
+      setTimeout(()=>openSetupModal(),300);
+    }
     navTo("all", document.querySelector(".nav-item"));
   }catch(e){}
 })();
