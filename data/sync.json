@@ -45,13 +45,19 @@
       "type": "Carousel",
       "hook": "Thinking of a mandir? Here's what budget you actually need.",
       "caption": "Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",
-      "brief": "shanishingnapur",
+      "brief": "",
       "cta": "DM budget + space for quote"
     }
   },
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 8,
+      "user": "Team Member",
+      "time": "2026-05-02T13:28:47.344Z"
+    },
     {
       "action": "edited",
       "postId": 8,
