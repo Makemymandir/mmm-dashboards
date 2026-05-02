@@ -567,6 +567,47 @@ function logAct(a){const acts=getActs();acts.unshift(a);if(acts.length>200)acts.
 function getGhToken(){return localStorage.getItem("mmm5-gh-token");}
 function clearGhToken(){localStorage.removeItem("mmm5-gh-token");ghToken=null;if(syncInterval)clearInterval(syncInterval);}
 
+// UTF-8 safe base64 encode/decode (browsers' btoa/atob only handle Latin-1)
+function b64encUtf8(str){return btoa(unescape(encodeURIComponent(str)));}
+function b64decUtf8(b64){try{return decodeURIComponent(escape(atob(b64)));}catch(e){return atob(b64);}}
+
+// Resolves a media object to a displayable src (handles legacy base64 string, {data:...}, or {url:...})
+function resolveMediaSrc(m){
+  if(!m)return null;
+  if(typeof m==='string')return m;
+  if(m.url)return m.url+(m.url.includes('?')?'&':'?')+'t='+(m.ts||0);
+  if(m.data)return m.data;
+  return null;
+}
+
+// Push a binary image (data URL) to GitHub as a separate file. Returns {url, sha} or null on failure.
+async function pushImageToGitHub(filename, dataUrl){
+  const tok=getGhToken();
+  if(!tok)return null;
+  const base64=dataUrl.indexOf(',')>=0?dataUrl.split(',')[1]:dataUrl;
+  const path=`${GH_IMG_PATH}/${filename}`;
+  // Look up existing SHA so we can overwrite if the file already exists
+  let existingSha=null;
+  try{
+    const r=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}?t=${Date.now()}`,{
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json"},cache:"no-store"
+    });
+    if(r.ok)existingSha=(await r.json()).sha;
+  }catch(e){}
+  const body={message:`Image upload: ${filename} — ${user?.name||'?'}`,content:base64};
+  if(existingSha)body.sha=existingSha;
+  try{
+    const res=await fetch(`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`,{
+      method:"PUT",
+      headers:{"Authorization":`token ${tok}`,"Accept":"application/vnd.github.v3+json","Content-Type":"application/json"},
+      body:JSON.stringify(body),cache:"no-store"
+    });
+    if(!res.ok){console.error("Image push failed:",res.status,await res.text());return null;}
+    const data=await res.json();
+    return {sha:data.content.sha,url:`https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${path}`};
+  }catch(e){console.error("Image push error:",e);return null;}
+}
+
 async function validateToken(tok){
   // Ping GitHub to make sure the token actually works for this repo before saving
   try{
@@ -597,7 +638,7 @@ async function saveGithubToken(){
 }
 
 function buildSyncPayload(){
-  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs()};
+  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs(),media:{},slides:{}};
   POSTS.forEach(p=>{
     const st=gs(p.id);
     if(st!=="pending")data.statuses[p.id]=st;
@@ -607,6 +648,22 @@ function buildSyncPayload(){
     if(rn)data.rejections[p.id]=rn;
     const notes=gNotes(p.id);
     if(notes.length)data.notes[p.id]=notes;
+    // Include media ONLY if it has a URL (i.e. successfully uploaded to GitHub).
+    // Local-only base64 (data:) is too large to put inside sync.json.
+    const m=gm(p.id);
+    if(m && typeof m==='object' && m.url){
+      data.media[p.id]={type:m.type||'img',url:m.url,ts:m.ts||0};
+    }
+    // Same for slides — only include slide indexes that have been uploaded with a URL.
+    const sl=gsl(p.id);
+    const synced={};
+    Object.keys(sl).forEach(idx=>{
+      const s=sl[idx];
+      if(s && typeof s==='object' && s.url){
+        synced[idx]={url:s.url,ts:s.ts||0};
+      }
+    });
+    if(Object.keys(synced).length)data.slides[p.id]=synced;
   });
   return data;
 }
@@ -630,6 +687,37 @@ function applySyncPayload(data){
     const merged=[...local,...remote.filter(n=>!local.find(e=>e.time===n.time&&e.action===n.action))];
     merged.sort((a,b)=>new Date(b.time)-new Date(a.time));
     sto("acts",merged.slice(0,200));
+  }
+  // NEW: Apply media URLs from team members. Don't overwrite local in-progress uploads.
+  if(data.media){
+    Object.keys(data.media).forEach(id=>{
+      const remote=data.media[id];
+      if(!remote||!remote.url)return;
+      const local=gm(id);
+      // If local has fresh base64 from an in-progress upload, leave it alone
+      if(local && local.data && !local.url) return;
+      // If local URL is newer than remote, keep local
+      if(local && local.url && local.ts && remote.ts && local.ts > remote.ts) return;
+      sto("md-"+id, remote);
+    });
+  }
+  // NEW: Apply slide URLs
+  if(data.slides){
+    Object.keys(data.slides).forEach(id=>{
+      const remote=data.slides[id];
+      const local=gsl(id);
+      const merged={...local};
+      Object.keys(remote).forEach(idx=>{
+        const r=remote[idx];
+        const l=local[idx];
+        if(!r||!r.url)return;
+        // Don't clobber local uncompleted upload (string data with no URL)
+        if(typeof l==='string' || (l && l.data && !l.url)) return;
+        if(l && l.url && l.ts && r.ts && l.ts > r.ts) return;
+        merged[idx]=r;
+      });
+      sto("slides-"+id,merged);
+    });
   }
 }
 
@@ -665,7 +753,7 @@ async function pullFromGitHub(){
     if(res.status===404){setSyncStatus("synced","Connected · no data yet");return;}
     if(!res.ok){setSyncStatus("error","Sync error "+res.status);return;}
     const fileData=await res.json();
-    const content=JSON.parse(atob(fileData.content.replace(/\n/g,"")));
+    const content=JSON.parse(b64decUtf8(fileData.content.replace(/\n/g,"")));
     applySyncPayload(content);
     lastSyncTime=new Date();
     setSyncStatus("synced","Synced "+relTime(lastSyncTime.toISOString()));
@@ -688,7 +776,7 @@ async function pushToGitHub(retry=0){
   setSyncStatus("syncing","Saving...");
   try{
     const payload=buildSyncPayload();
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
+    const content=b64encUtf8(JSON.stringify(payload,null,2));
     const sha=await getGitHubFileSHA();
     const body={message:"Dashboard sync — "+(user?.name||"?")+" — "+new Date().toISOString(),content};
     if(sha)body.sha=sha;
@@ -898,7 +986,7 @@ function renderCard(p,isAdmin){
   const pp=gp(p.id),st=gs(p.id),m=gm(p.id),reason=gr(p.id);
   const isVid=m&&m.type==="video";
   const isToday=getTodayPosts().find(x=>x.id===p.id)&&st!=="published";
-  const imgSrc=m?m.data:THUMBS[p.id];
+  const imgSrc=resolveMediaSrc(m)||THUMBS[p.id];
   const editedType=ge(p.id).type||p.type;const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[editedType];
   const stcls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
   const sbcls={"pending":"bs-pending","approved":"bs-approved","rejected":"bs-rejected","revision":"bs-revision","published":"bs-published"}[st];
@@ -957,7 +1045,7 @@ function quickCopy(id,btn){
     setTimeout(()=>{btn.textContent=t;btn.style.background="";btn.style.color="";},2000);
   });
 }
-function dlMedia(id){const m=gm(id);if(!m)return;const a=document.createElement("a");a.href=m.data;a.download=`post_${id}.${m.type==="video"?"mp4":"jpg"}`;a.click();}
+function dlMedia(id){const m=gm(id);if(!m)return;const src=resolveMediaSrc(m);if(!src)return;const a=document.createElement("a");a.href=src;a.download=`post_${id}.${m.type==="video"?"mp4":"jpg"}`;a.target="_blank";a.click();}
 
 /* ══ REJECT ══ */
 function openRejOv(id){rejectTargetId=id;document.getElementById("rejReason").value="";document.getElementById("rejOv").classList.add("open");setTimeout(()=>document.getElementById("rejReason").focus(),100);}
@@ -1044,8 +1132,9 @@ function buildModalLeft(p,m){
     const count=p.slides.length;
     const slidesHtml=p.slides.map((s,i)=>{
       const up=ups[i];
+      const upSrc=resolveMediaSrc(up);
       return `<div class="cv-slide${i===0?" on":""}" id="cvS${i}">
-        ${up?`<img src="${up}"><div class="cv-slide-lbl">Slide ${i+1} of ${count}</div>`:`<div class="cv-slide-lbl">Slide ${i+1} of ${count}</div><div class="cv-slide-txt">${s}</div><div class="cv-slide-hint">Upload your design using the buttons below</div>`}
+        ${upSrc?`<img src="${upSrc}"><div class="cv-slide-lbl">Slide ${i+1} of ${count}</div>`:`<div class="cv-slide-lbl">Slide ${i+1} of ${count}</div><div class="cv-slide-txt">${s}</div><div class="cv-slide-hint">Upload your design using the buttons below</div>`}
       </div>`;
     }).join("");
     const dotsHtml=p.slides.map((_,i)=>`<div class="cv-d${i===0?" on":""}" onclick="goSlide(${i})"></div>`).join("");
@@ -1061,7 +1150,7 @@ function buildModalLeft(p,m){
     </div>`;
   }else{
     const isVid=m&&m.type==="video";
-    const src=m?m.data:THUMBS[p.id];
+    const src=resolveMediaSrc(m)||THUMBS[p.id];
     left.innerHTML=`<div class="media-viewer">
       ${isVid?`<video class="mv-vid" src="${src}" controls></video>`:`<img class="mv-img" src="${src}">`}
     </div>
@@ -1086,7 +1175,6 @@ function prevSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;go
 function trigSUp(idx){uploadSlideIdx=idx;document.getElementById("slideInp").click();}
 function handleSlideUpload(inp){
   const file=inp.files[0];if(!file)return;
-  // Compress slide image before storing
   const reader=new FileReader();
   reader.onload=e=>{
     const img2=new Image();
@@ -1096,12 +1184,27 @@ function handleSlideUpload(inp){
       canvas.width=img2.width*scale;canvas.height=img2.height*scale;
       canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
       const compressed=canvas.toDataURL("image/jpeg",0.75);
-      const ups=gsl(revId);ups[uploadSlideIdx]=compressed;
+      // Save locally for instant display
+      const ups=gsl(revId);ups[uploadSlideIdx]={data:compressed};
       sto("slides-"+revId,ups);
       buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
       goSlide(uploadSlideIdx);
-      render();toast(`Slide ${uploadSlideIdx+1} uploaded ✓`,"ok");inp.value="";
-      await pushToGitHub();
+      render();
+      toast(`Slide ${uploadSlideIdx+1} saved — uploading...`,"info");inp.value="";
+      // Push slide to GitHub
+      if(!getGhToken()){toast("⚠ Not connected to GitHub. Slide will only show on your device.","err");return;}
+      const idxToUpload=uploadSlideIdx;
+      const result=await pushImageToGitHub(`post-${revId}-slide-${idxToUpload}.jpg`,compressed);
+      if(result){
+        const ups2=gsl(revId);
+        ups2[idxToUpload]={url:result.url,ts:Date.now()};
+        sto("slides-"+revId,ups2);
+        buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
+        await pushToGitHub();
+        toast(`✓ Slide ${idxToUpload+1} synced to team`,"ok");
+      }else{
+        toast(`⚠ Slide ${idxToUpload+1} saved locally but upload failed. Click ⟳ Sync to retry.`,"err");
+      }
     };
     img2.src=e.target.result;
   };
@@ -1119,7 +1222,6 @@ function handleUpload(inp,type){
   const file=inp.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=async e=>{
-    // Compress images
     if(type==="img"){
       const img2=new Image();
       img2.onload=async()=>{
@@ -1128,17 +1230,41 @@ function handleUpload(inp,type){
         canvas.width=img2.width*scale;canvas.height=img2.height*scale;
         canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
         const compressed=canvas.toDataURL("image/jpeg",0.8);
+        // Save base64 locally for instant display
         try{sto("md-"+revId,{type:"img",data:compressed});}catch(ex){toast("Image too large","err");inp.value="";return;}
         buildModalLeft(POSTS.find(x=>x.id===revId),{type:"img",data:compressed});
-        render();toast("Photo uploaded ✓","ok");inp.value="";
-        await pushToGitHub();
+        render();toast("Photo saved — uploading to team...","info");inp.value="";
+        // Push image to GitHub as a separate file
+        if(!getGhToken()){toast("⚠ Not connected to GitHub. Photo will only show on your device.","err");return;}
+        const result=await pushImageToGitHub(`post-${revId}.jpg`,compressed);
+        if(result){
+          // Replace local base64 with URL ref (saves localStorage space + same source for everyone)
+          const final={type:"img",url:result.url,ts:Date.now()};
+          sto("md-"+revId,final);
+          buildModalLeft(POSTS.find(x=>x.id===revId),final);
+          await pushToGitHub();
+          toast("✓ Photo synced — team can see it now","ok");
+        }else{
+          toast("⚠ Photo saved locally but failed to upload. Click ⟳ Sync to retry.","err");
+        }
       };
       img2.src=e.target.result;
     }else{
+      // Video — no compression, just save and push
       try{sto("md-"+revId,{type:"video",data:e.target.result});}catch(ex){toast("Video too large — try a shorter clip","err");inp.value="";return;}
       buildModalLeft(POSTS.find(x=>x.id===revId),{type:"video",data:e.target.result});
-      render();toast("Video uploaded ✓","ok");inp.value="";
-      await pushToGitHub();
+      render();toast("Video saved — uploading to team...","info");inp.value="";
+      if(!getGhToken()){toast("⚠ Not connected to GitHub. Video will only show on your device.","err");return;}
+      const result=await pushImageToGitHub(`post-${revId}.mp4`,e.target.result);
+      if(result){
+        const final={type:"video",url:result.url,ts:Date.now()};
+        sto("md-"+revId,final);
+        buildModalLeft(POSTS.find(x=>x.id===revId),final);
+        await pushToGitHub();
+        toast("✓ Video synced — team can see it now","ok");
+      }else{
+        toast("⚠ Video saved locally but failed to upload. Click ⟳ Sync to retry.","err");
+      }
     }
   };
   reader.readAsDataURL(file);
