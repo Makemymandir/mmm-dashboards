@@ -238,6 +238,10 @@
       "1": {
         "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-8-slide-1.jpg",
         "ts": 1777727631626
+      },
+      "2": {
+        "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-8-slide-2.jpg",
+        "ts": 1777727639162
       }
     }
   }
