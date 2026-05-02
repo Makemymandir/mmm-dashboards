@@ -5,14 +5,42 @@
   "edits": {
     "1": {
       "hook": "She sent us a plain wall. We sent back this...",
-      "caption": "The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",
-      "brief": "30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal.",
+      "caption": "The brief was simple â a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",
+      "brief": "30-sec reel: blank corner â Corian fabrication â LED-lit mandir reveal.",
       "cta": "DM your space photo"
+    },
+    "2": {
+      "title": "mahalaxmi",
+      "type": "Carousel",
+      "hook": "Choosing your mandir material? Here's what nobody tells you.",
+      "caption": "Not all mandir materials are equal. Here's an honest breakdown so you choose right the first time.\n\nSwipe to see which material suits your home, budget, and lifestyle.\n\n#mandirmaterial #corianmandir #woodenmandir #homemandirdesign #makemymandir",
+      "brief": "5 slides: Hook, Corian, Wood, Marble, CTA",
+      "cta": "DM for material recommendation"
+    },
+    "4": {
+      "title": "Vastu guide: the right wall for your mandir",
+      "type": "Carousel",
+      "hook": "Is your mandir in the wrong spot? Here's how to fix it.",
+      "caption": "A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",
+      "brief": "bhimashankar",
+      "cta": "DM floor plan"
     }
   },
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 4,
+      "user": "Team Member",
+      "time": "2026-04-28T13:16:23.575Z"
+    },
+    {
+      "action": "edited",
+      "postId": 2,
+      "user": "Team Member",
+      "time": "2026-04-28T13:15:30.328Z"
+    },
     {
       "action": "approved",
       "postId": 1,
