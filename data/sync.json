@@ -89,6 +89,12 @@
       "time": "2026-04-22T14:48:38.678Z"
     }
   ],
-  "media": {},
+  "media": {
+    "3": {
+      "type": "img",
+      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-3.jpg",
+      "ts": 1777711179583
+    }
+  },
   "slides": {}
 }
