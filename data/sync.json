@@ -1,7 +1,41 @@
 {
-  "statuses": {},
-  "edits": {},
+  "statuses": {
+    "1": "approved"
+  },
+  "edits": {
+    "1": {
+      "hook": "She sent us a plain wall. We sent back this...",
+      "caption": "The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",
+      "brief": "30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal.",
+      "cta": "DM your space photo"
+    }
+  },
   "rejections": {},
   "notes": {},
-  "activity": []
+  "activity": [
+    {
+      "action": "approved",
+      "postId": 1,
+      "user": "Nilesh K Mehta",
+      "time": "2026-04-24T07:06:30.458Z"
+    },
+    {
+      "action": "edited",
+      "postId": 1,
+      "user": "Team Member",
+      "time": "2026-04-24T06:02:03.556Z"
+    },
+    {
+      "action": "edited",
+      "postId": 1,
+      "user": "Team Member",
+      "time": "2026-04-22T14:48:40.445Z"
+    },
+    {
+      "action": "edited",
+      "postId": 1,
+      "user": "Team Member",
+      "time": "2026-04-22T14:48:38.678Z"
+    }
+  ]
 }
