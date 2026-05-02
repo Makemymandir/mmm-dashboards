@@ -17,7 +17,7 @@
       "cta": "DM for material recommendation"
     },
     "3": {
-      "title": "Wall-mounted mandir — product spotlight",
+      "title": "mahalaxmi",
       "type": "Static",
       "hook": "No dedicated pooja room? No problem.",
       "caption": "Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",
@@ -36,6 +36,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 3,
+      "user": "Team Member",
+      "time": "2026-05-02T08:41:33.471Z"
+    },
     {
       "action": "edited",
       "postId": 3,
