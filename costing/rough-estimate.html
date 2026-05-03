@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMM Costing — Rough Estimate</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
+      <span class="topbar-title">Costing System</span>
+    </div>
+    <div class="topbar-right">
+      <span class="user-info">
+        <span id="userName">...</span>
+        <span class="user-role" id="userRole">...</span>
+      </span>
+      <button class="btn-text" onclick="api.logout()">Sign Out</button>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div style="margin-bottom: 16px;">
+      <a href="#" id="backLink" class="back-link">← Back to Project</a>
+    </div>
+    
+    <div id="content">
+      <div class="loading">Loading...</div>
+    </div>
+  </main>
+  
+  <script src="js/api.js"></script>
+  <script src="js/rough-estimate.js"></script>
+</body>
+</html>
