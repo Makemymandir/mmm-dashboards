@@ -787,3 +787,130 @@ body {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+/* ============================================
+   MASTERS ADMIN
+   ============================================ */
+.masters-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--grey-light);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--grey);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.tab-btn:hover {
+  color: var(--orange);
+}
+
+.tab-btn.active {
+  color: var(--orange);
+  border-bottom-color: var(--orange);
+}
+
+.masters-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  flex: 1;
+  max-width: 400px;
+  padding: 10px 14px;
+  border: 1px solid var(--grey-light);
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--orange);
+}
+
+.masters-table-wrap {
+  background: white;
+  border: 1px solid var(--grey-light);
+  border-radius: 12px;
+  overflow: auto;
+  max-height: 70vh;
+}
+
+.masters-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.masters-table thead {
+  background: var(--cream);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.masters-table th {
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 600;
+  color: var(--orange-dark, #C5651C);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--grey-light);
+}
+
+.masters-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F0E6DC;
+  vertical-align: middle;
+}
+
+.masters-table tr:hover {
+  background: #FFFBF6;
+}
+
+.masters-table td[contenteditable="true"]:focus {
+  outline: 2px solid var(--orange);
+  background: #FFFBF6;
+}
+
+.masters-table td[contenteditable="true"] {
+  cursor: text;
+}
+
+.toast {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  padding: 12px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  font-size: 0.9rem;
+  font-weight: 500;
+  z-index: 9999;
+}
+
+.toast-success {
+  border-left: 4px solid #4CAF50;
+  color: #2E7D32;
+}
+
+.toast-error {
+  border-left: 4px solid #E53935;
+  color: #C62828;
+}
