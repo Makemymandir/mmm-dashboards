@@ -1,0 +1,194 @@
+/* ============================================
+   PDF — ROUGH ESTIMATE
+   A4 size: 210mm × 297mm
+   ============================================ */
+
+.pdf-page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 14mm 14mm;
+  background: #ffffff;
+  font-family: 'Arial', 'Helvetica', sans-serif;
+  color: #1F1F1F;
+  font-size: 10pt;
+  line-height: 1.4;
+  box-sizing: border-box;
+  position: relative;
+  page-break-after: always;
+}
+
+.pdf-page:last-child {
+  page-break-after: auto;
+}
+
+/* HEADER */
+.pdf-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10mm;
+  border-bottom: 2px solid #E87722;
+  margin-bottom: 6mm;
+}
+
+.pdf-logo {
+  max-width: 60mm;
+  max-height: 25mm;
+  object-fit: contain;
+}
+
+.pdf-framework-icon {
+  max-width: 30mm;
+  max-height: 25mm;
+  object-fit: contain;
+}
+
+.pdf-address {
+  text-align: center;
+  font-size: 9pt;
+  color: #555;
+  margin-bottom: 6mm;
+  line-height: 1.4;
+}
+
+.pdf-address strong {
+  color: #1F1F1F;
+}
+
+/* CLIENT INFO TABLE */
+.pdf-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4mm;
+  font-size: 9.5pt;
+}
+
+.pdf-info-table td {
+  border: 1px solid #999;
+  padding: 4px 8px;
+  vertical-align: middle;
+}
+
+.pdf-info-table .label {
+  font-weight: 600;
+  background: #F8F8F8;
+  width: 23%;
+}
+
+/* MANDIR SPECS */
+.pdf-specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4mm;
+  font-size: 9.5pt;
+}
+
+.pdf-specs-table th, .pdf-specs-table td {
+  border: 1px solid #999;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.pdf-specs-table th {
+  background: #F8F8F8;
+  font-weight: 600;
+}
+
+.pdf-specs-table .specs-header {
+  background: #FFF7F0;
+  font-weight: 700;
+  text-align: left;
+  padding: 4px 8px;
+  font-size: 9.5pt;
+}
+
+/* DESIGN FRAMEWORK + MATERIAL */
+.pdf-framework-row {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4mm;
+  font-size: 9.5pt;
+}
+
+.pdf-framework-row td {
+  border: 1px solid #999;
+  padding: 6px 8px;
+}
+
+.pdf-framework-row .label {
+  font-weight: 600;
+  background: #F8F8F8;
+  width: 23%;
+}
+
+/* ROUGH ESTIMATE COMPARISON TABLE */
+.pdf-estimate-title {
+  background: #1F1F1F;
+  color: #fff;
+  padding: 8px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 11pt;
+  letter-spacing: 1px;
+  margin-bottom: 0;
+}
+
+.pdf-estimate-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4mm;
+  font-size: 9pt;
+}
+
+.pdf-estimate-table th, .pdf-estimate-table td {
+  border: 1px solid #999;
+  padding: 6px 6px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.pdf-estimate-table thead th {
+  background: #F8F8F8;
+  font-weight: 700;
+  font-size: 9pt;
+}
+
+.pdf-estimate-table .row-label {
+  font-weight: 600;
+  text-align: left;
+  background: #FAFAFA;
+  width: 18%;
+}
+
+.pdf-estimate-table .selected-col {
+  background: #FFF7F0;
+}
+
+.pdf-estimate-table .selected-col strong {
+  color: #C5651C;
+}
+
+/* DISCLAIMER */
+.pdf-disclaimer {
+  border: 1px solid #999;
+  padding: 8px 10px;
+  font-size: 8.5pt;
+  line-height: 1.5;
+  margin-top: 4mm;
+  background: #FAFAFA;
+}
+
+.pdf-disclaimer strong {
+  color: #1F1F1F;
+}
+
+/* PAGE 2 — PROCESS PAGE */
+.pdf-page-2 {
+  padding: 0;
+}
+
+.pdf-process-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
