@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MMM Costing — Rough Estimate</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/pdf-rough.css">
+  
+  <!-- html2pdf library for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
   <header class="topbar">
@@ -30,6 +34,9 @@
       <div class="loading">Loading...</div>
     </div>
   </main>
+  
+  <!-- Hidden div used to render the PDF template; sized to A4 dimensions. -->
+  <div id="pdfRoot" style="position:absolute; left:-9999px; top:0;"></div>
   
   <script src="js/api.js"></script>
   <script src="js/rough-estimate.js"></script>
