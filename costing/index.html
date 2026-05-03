@@ -3,35 +3,84 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MMM Costing — Loading</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #FFF7F0;
-      color: #1F1F1F;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
-    }
-    h1 { color: #E87722; font-size: 2rem; margin-bottom: 0.5rem; }
-    p { color: #5C5C5C; }
-    code {
-      background: #fff;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #E87722;
-    }
-  </style>
+  <title>MMM Costing — Login</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-  <div>
-    <h1>MMM Costing System</h1>
-    <p>Phase 1 — under construction</p>
-    <p style="margin-top: 2rem; font-size: 0.85rem;">If you can read this, GitHub Pages is serving the costing folder correctly.</p>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <img src="assets/logo.png" alt="Make My Mandir" class="login-logo">
+        <h1>Costing System</h1>
+        <p class="login-tagline">Sign in to continue</p>
+      </div>
+      
+      <form id="loginForm" class="login-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </div>
+        
+        <div id="errorMessage" class="error-message" style="display:none;"></div>
+        
+        <button type="submit" id="loginButton" class="btn-primary">
+          <span id="loginButtonText">Sign In</span>
+        </button>
+      </form>
+    </div>
+    
+    <p class="login-footer">© Make My Mandir · Internal use only</p>
   </div>
+  
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('errorMessage');
+      const button = document.getElementById('loginButton');
+      const buttonText = document.getElementById('loginButtonText');
+      
+      errorEl.style.display = 'none';
+      button.disabled = true;
+      buttonText.textContent = 'Signing in...';
+      
+      try {
+        const result = await api.call('login', { username, password });
+        
+        if (result.ok) {
+          // Save session in localStorage
+          localStorage.setItem('mmm_token', result.token);
+          localStorage.setItem('mmm_user', JSON.stringify(result.user));
+          
+          // Redirect to dashboard
+          window.location.href = 'dashboard.html';
+        } else {
+          errorEl.textContent = result.error || 'Login failed';
+          errorEl.style.display = 'block';
+          button.disabled = false;
+          buttonText.textContent = 'Sign In';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Network error. Please try again.';
+        errorEl.style.display = 'block';
+        button.disabled = false;
+        buttonText.textContent = 'Sign In';
+        console.error(err);
+      }
+    });
+    
+    // If already logged in, redirect to dashboard
+    if (localStorage.getItem('mmm_token')) {
+      window.location.href = 'dashboard.html';
+    }
+  </script>
 </body>
 </html>
