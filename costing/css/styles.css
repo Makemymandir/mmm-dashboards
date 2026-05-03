@@ -628,7 +628,7 @@ body {
   gap: 4px;
   border-bottom: 2px solid var(--grey-light);
   margin-bottom: 24px;
-  overflow-x: auto;
+  overflow-x: visible;
 }
 
 .tab {
