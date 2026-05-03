@@ -572,8 +572,8 @@ function buildPdfHtml(data) {
     </div>
     
     <!-- PAGE 2 — THE PROCESS -->
-    <div class="pdf-page pdf-page-2">
-      <img src="assets/process-page.png" class="pdf-process-img" crossorigin="anonymous">
+    <div style="page-break-before: always; width: 210mm; height: 297mm; padding: 0; margin: 0; overflow: hidden;">
+      <img src="assets/process-page.png" style="width: 210mm; height: 297mm; display: block; object-fit: cover;" crossorigin="anonymous">
     </div>
   `;
 }
