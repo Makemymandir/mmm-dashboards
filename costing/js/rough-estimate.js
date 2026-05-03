@@ -6,13 +6,14 @@ let project = null;
 let rates = null;
 let viewingEstimate = null;
 
+// Real Silver is default-OFF (rare option, "On Request" pricing)
 const MATERIALS = [
-  { key: 'real_silver',    label: 'Real Silver',     rateKey: 'Real Silver' },
-  { key: 'marble',          label: 'Marble',           rateKey: 'Marble' },
-  { key: 'solid_surface',   label: 'Solid Surface',    rateKey: 'Solid Surface' },
-  { key: 'solid_wood',      label: 'Solid Wood',       rateKey: 'Solid Wood' },
-  { key: 'hdhmr_duco',      label: 'HDHMR + Duco',     rateKey: 'HDHMR + Duco' },
-  { key: 'acrylic_prelam',  label: 'Acrylic + Prelam', rateKey: 'Acrylic + Prelam' }
+  { key: 'real_silver',    label: 'Real Silver',     rateKey: 'Real Silver',     defaultChecked: false },
+  { key: 'marble',          label: 'Marble',           rateKey: 'Marble',           defaultChecked: true  },
+  { key: 'solid_surface',   label: 'Solid Surface',    rateKey: 'Solid Surface',    defaultChecked: true  },
+  { key: 'solid_wood',      label: 'Solid Wood',       rateKey: 'Solid Wood',       defaultChecked: true  },
+  { key: 'hdhmr_duco',      label: 'HDHMR + Duco',     rateKey: 'HDHMR + Duco',     defaultChecked: true  },
+  { key: 'acrylic_prelam',  label: 'Acrylic + Prelam', rateKey: 'Acrylic + Prelam', defaultChecked: true  }
 ];
 
 const FRAMEWORK_ICONS = {
@@ -146,19 +147,19 @@ function renderBuilder() {
         </div>
         
         <div class="cft-display">
-          <span class="cft-label">Cubic Feet</span>
+          <span class="cft-label">Cubic Feet (internal only)</span>
           <span class="cft-value" id="cftValue">—</span>
         </div>
         
         <hr style="margin: 24px 0; border: none; border-top: 1px solid var(--grey-light);">
         
         <h4 style="margin-bottom: 12px; font-size: 0.95rem;">Materials to compare</h4>
-        <p style="color: var(--grey); font-size: 0.85rem; margin-bottom: 16px;">Untick any material you don't want shown in this estimate.</p>
+        <p style="color: var(--grey); font-size: 0.85rem; margin-bottom: 16px;">Tick or untick materials to include in the comparison.</p>
         
         <div class="materials-checkboxes">
           ${MATERIALS.map(m => `
             <label class="material-check">
-              <input type="checkbox" id="mat_${m.key}" checked onchange="recalc()">
+              <input type="checkbox" id="mat_${m.key}" ${m.defaultChecked ? 'checked' : ''} onchange="recalc()">
               <span>${m.label}</span>
               <span class="material-rate">${formatRate(m.rateKey)}</span>
             </label>
@@ -315,8 +316,7 @@ function renderViewer() {
         <h1 class="project-client-name">${escapeHtml(p.client_name)}</h1>
         <div class="project-meta">
           ${escapeHtml(p.framework)} · 
-          ${snap.width || '?'} × ${snap.depth || '?'} × ${snap.height || '?'} ft = 
-          ${e.cubic_feet ? Number(e.cubic_feet).toFixed(2) : '?'} CFT · 
+          ${snap.width || '?'} × ${snap.depth || '?'} × ${snap.height || '?'} ft · 
           Created ${formatDate(e.created_at)} by ${escapeHtml(e.created_by)}
         </div>
       </div>
@@ -333,7 +333,7 @@ function renderViewer() {
           <tr><th>Material</th><th style="text-align:right;">Starting Price</th></tr>
         </thead>
         <tbody>
-          ${renderViewerRows(snap.materials_included || ['Real Silver','Marble','Solid Surface','Solid Wood','HDHMR + Duco','Acrylic + Prelam'])}
+          ${renderViewerRows(snap.materials_included || [])}
         </tbody>
       </table>
       
@@ -386,7 +386,7 @@ async function redownloadPdf() {
       hdhmr_duco: e.hdhmr_duco,
       acrylic_prelam: e.acrylic_prelam
     },
-    materials_included: snap.materials_included || ['Real Silver','Marble','Solid Surface','Solid Wood','HDHMR + Duco','Acrylic + Prelam']
+    materials_included: snap.materials_included || []
   };
   
   try {
@@ -408,10 +408,8 @@ async function generatePdf(data) {
   const html = buildPdfHtml(data);
   const root = document.getElementById('pdfRoot');
   
-  // Wrap in a container we can pass to html2pdf
   root.innerHTML = '<div id="pdfContent">' + html + '</div>';
   
-  // Wait for images to load
   await waitForImages(root);
   
   const filename = data.estimate_id + '.pdf';
@@ -425,7 +423,7 @@ async function generatePdf(data) {
       scale: 2,
       useCORS: true,
       letterRendering: true,
-      logging: true
+      logging: false
     },
     jsPDF: { 
       unit: 'mm', 
@@ -468,99 +466,114 @@ function buildPdfHtml(data) {
   const completionDate = p.expected_completion ? formatDate(p.expected_completion) : '—';
   
   return `
+    <!-- PAGE 1 -->
     <div class="pdf-page">
       <div class="pdf-header">
         <img src="assets/logo.png" class="pdf-logo" crossorigin="anonymous">
         <img src="assets/${frameworkIcon}" class="pdf-framework-icon" crossorigin="anonymous">
       </div>
       
-      <div class="pdf-address">
-        <strong>Make My Mandir</strong><br>
-        Jehangir Villa, Ground Floor, Shankarseth Road, Bhawani Peth,<br>
-        Opp. Hotel Kanak, Near Kumar Pacific Mall, Pune – 411042<br>
-        9822275805 · info@makemymandir.com
+      <div class="pdf-main">
+        <table class="pdf-info-table">
+          <tr>
+            <td class="label">Client Name</td>
+            <td>${escapeHtml(p.client_name)}</td>
+            <td class="label">Location</td>
+            <td>${escapeHtml(p.location || '')}</td>
+          </tr>
+          <tr>
+            <td class="label">Mobile</td>
+            <td>${escapeHtml(p.contact || '')}</td>
+            <td class="label">Email</td>
+            <td>${escapeHtml(p.email || '')}</td>
+          </tr>
+          <tr>
+            <td class="label">Type of Space</td>
+            <td>${escapeHtml(p.type_of_space || '')}</td>
+            <td class="label">Expected Completion</td>
+            <td>${completionDate}</td>
+          </tr>
+          <tr>
+            <td class="label">Estimate ID</td>
+            <td>${escapeHtml(data.estimate_id)}</td>
+            <td class="label">Date</td>
+            <td>${today}</td>
+          </tr>
+        </table>
+        
+        <table class="pdf-specs-table">
+          <tr>
+            <td colspan="3" class="specs-header">Mandir Specifications (in feet)</td>
+          </tr>
+          <tr>
+            <th>Width</th>
+            <th>Depth</th>
+            <th>Height</th>
+          </tr>
+          <tr>
+            <td><strong>${data.width}</strong></td>
+            <td><strong>${data.depth}</strong></td>
+            <td><strong>${data.height}</strong></td>
+          </tr>
+        </table>
+        
+        <table class="pdf-framework-row">
+          <tr>
+            <td class="label">Design Framework</td>
+            <td colspan="3"><strong>${escapeHtml(p.framework)}</strong></td>
+          </tr>
+        </table>
+        
+        <div class="pdf-estimate-title">ROUGH ESTIMATE</div>
+        <table class="pdf-estimate-table">
+          <thead>
+            <tr>
+              <th class="row-label">Description</th>
+              ${comparisonCols}
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="price-row">
+              <td class="row-label">Starting Price</td>
+              ${priceRow}
+            </tr>
+            ${extraRows}
+          </tbody>
+        </table>
+        
+        <div class="pdf-disclaimer">
+          <strong>DISCLAIMER:</strong> This is a preliminary estimate based on initial inputs. 
+          Final pricing will be confirmed after design finalisation and may vary based on design 
+          development, materials, and site conditions. All mandirs are customised, and changes 
+          during the design process may impact the final cost. Additional charges such as design 
+          fees, installation, transport, and taxes are extra unless specified. Estimated timelines 
+          will be shared after final design approval. All designs remain the intellectual property 
+          of Make My Mandir. Unauthorized use will lead to legal action.
+        </div>
       </div>
       
-      <table class="pdf-info-table">
-        <tr>
-          <td class="label">Client Name</td>
-          <td>${escapeHtml(p.client_name)}</td>
-          <td class="label">Location</td>
-          <td>${escapeHtml(p.location || '')}</td>
-        </tr>
-        <tr>
-          <td class="label">Mobile</td>
-          <td>${escapeHtml(p.contact || '')}</td>
-          <td class="label">Email</td>
-          <td>${escapeHtml(p.email || '')}</td>
-        </tr>
-        <tr>
-          <td class="label">Type of Space</td>
-          <td>${escapeHtml(p.type_of_space || '')}</td>
-          <td class="label">Expected Completion</td>
-          <td>${completionDate}</td>
-        </tr>
-        <tr>
-          <td class="label">Estimate ID</td>
-          <td>${escapeHtml(data.estimate_id)}</td>
-          <td class="label">Date</td>
-          <td>${today}</td>
-        </tr>
-      </table>
-      
-      <table class="pdf-specs-table">
-        <tr>
-          <td colspan="3" class="specs-header">Mandir Specifications (in feet)</td>
-        </tr>
-        <tr>
-          <th>Width</th>
-          <th>Depth</th>
-          <th>Height</th>
-        </tr>
-        <tr>
-          <td><strong>${data.width}</strong></td>
-          <td><strong>${data.depth}</strong></td>
-          <td><strong>${data.height}</strong></td>
-        </tr>
-      </table>
-      
-      <table class="pdf-framework-row">
-        <tr>
-          <td class="label">Design Framework</td>
-          <td>${escapeHtml(p.framework)}</td>
-          <td class="label">Cubic Feet</td>
-          <td><strong>${Number(data.cubic_feet).toFixed(2)} CFT</strong></td>
-        </tr>
-      </table>
-      
-      <div class="pdf-estimate-title">ROUGH ESTIMATE</div>
-      <table class="pdf-estimate-table">
-        <thead>
-          <tr>
-            <th class="row-label">Description</th>
-            ${comparisonCols}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="row-label">Starting Price</td>
-            ${priceRow}
-          </tr>
-          ${extraRows}
-        </tbody>
-      </table>
-      
-      <div class="pdf-disclaimer">
-        <strong>DISCLAIMER:</strong> This is a preliminary estimate based on initial inputs. 
-        Final pricing will be confirmed after design finalisation and may vary based on design 
-        development, materials, and site conditions. All mandirs are customised, and changes 
-        during the design process may impact the final cost. Additional charges such as design 
-        fees, installation, transport, and taxes are extra unless specified. Estimated timelines 
-        will be shared after final design approval. All designs remain the intellectual property 
-        of Make My Mandir. Unauthorized use will lead to legal action.
+      <div class="pdf-footer">
+        <div class="pdf-footer-block">
+          <div class="pdf-footer-label">Address</div>
+          <strong>Make My Mandir</strong><br>
+          Jehangir Villa, Ground Floor,<br>
+          Shankarseth Road, Bhawani Peth,<br>
+          Opp. Hotel Kanak, Pune – 411042
+        </div>
+        <div class="pdf-footer-block">
+          <div class="pdf-footer-label">Contact</div>
+          <strong>+91 77679 62441</strong><br>
+          info@makemymandir.com
+        </div>
+        <div class="pdf-footer-block">
+          <div class="pdf-footer-label">Online</div>
+          makemymandir.com<br>
+          @make_my_mandir
+        </div>
       </div>
     </div>
     
+    <!-- PAGE 2 — THE PROCESS -->
     <div class="pdf-page pdf-page-2">
       <img src="assets/process-page.png" class="pdf-process-img" crossorigin="anonymous">
     </div>
