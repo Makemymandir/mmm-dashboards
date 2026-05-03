@@ -5,7 +5,7 @@
 
 .pdf-page {
   width: 210mm;
-  min-height: 297mm;
+  height: 287mm;
   padding: 14mm 14mm;
   background: #ffffff;
   font-family: 'Arial', 'Helvetica', sans-serif;
@@ -15,6 +15,7 @@
   box-sizing: border-box;
   position: relative;
   page-break-after: always;
+  overflow: hidden;
 }
 
 .pdf-page:last-child {
@@ -55,7 +56,6 @@
   color: #1F1F1F;
 }
 
-/* CLIENT INFO TABLE */
 .pdf-info-table {
   width: 100%;
   border-collapse: collapse;
@@ -75,7 +75,6 @@
   width: 23%;
 }
 
-/* MANDIR SPECS */
 .pdf-specs-table {
   width: 100%;
   border-collapse: collapse;
@@ -102,7 +101,6 @@
   font-size: 9.5pt;
 }
 
-/* DESIGN FRAMEWORK + MATERIAL */
 .pdf-framework-row {
   width: 100%;
   border-collapse: collapse;
@@ -121,7 +119,6 @@
   width: 23%;
 }
 
-/* ROUGH ESTIMATE COMPARISON TABLE */
 .pdf-estimate-title {
   background: #1F1F1F;
   color: #fff;
@@ -160,15 +157,6 @@
   width: 18%;
 }
 
-.pdf-estimate-table .selected-col {
-  background: #FFF7F0;
-}
-
-.pdf-estimate-table .selected-col strong {
-  color: #C5651C;
-}
-
-/* DISCLAIMER */
 .pdf-disclaimer {
   border: 1px solid #999;
   padding: 8px 10px;
@@ -182,13 +170,15 @@
   color: #1F1F1F;
 }
 
-/* PAGE 2 — PROCESS PAGE */
+/* PAGE 2 — PROCESS PAGE (full bleed image) */
 .pdf-page-2 {
   padding: 0;
+  height: 297mm;
 }
 
 .pdf-process-img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
   display: block;
 }
