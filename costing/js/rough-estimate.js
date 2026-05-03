@@ -405,15 +405,34 @@ async function redownloadPdf() {
 // ============================================
 
 async function generatePdf(data) {
+  console.log('=== PDF GENERATION START ===');
+  
   const html = buildPdfHtml(data);
   const root = document.getElementById('pdfRoot');
   
   root.innerHTML = '<div id="pdfContent">' + html + '</div>';
   
+  // Make pdfRoot visible to ensure rendering works
+  root.style.position = 'fixed';
+  root.style.top = '0';
+  root.style.left = '-9999px';
+  root.style.width = '210mm';
+  root.style.background = 'white';
+  
+  console.log('Waiting for images to load...');
   await waitForImages(root);
+  
+  // Log status of all images
+  const imgs = root.querySelectorAll('img');
+  imgs.forEach((img, i) => {
+    console.log(`Image ${i}: src=${img.src}, complete=${img.complete}, naturalWidth=${img.naturalWidth}, naturalHeight=${img.naturalHeight}`);
+  });
   
   const filename = data.estimate_id + '.pdf';
   const targetEl = document.getElementById('pdfContent');
+  
+  console.log('Target element height:', targetEl.offsetHeight);
+  console.log('Starting html2pdf conversion...');
   
   const opt = {
     margin: 0,
@@ -423,7 +442,8 @@ async function generatePdf(data) {
       scale: 2,
       useCORS: true,
       letterRendering: true,
-      logging: false
+      logging: true,
+      allowTaint: true
     },
     jsPDF: { 
       unit: 'mm', 
@@ -433,9 +453,21 @@ async function generatePdf(data) {
     pagebreak: { mode: ['css', 'legacy'] }
   };
   
-  await html2pdf().from(targetEl).set(opt).save();
+  try {
+    await html2pdf().from(targetEl).set(opt).save();
+    console.log('=== PDF GENERATION COMPLETE ===');
+  } catch (err) {
+    console.error('PDF generation failed:', err);
+  }
   
-  setTimeout(() => { root.innerHTML = ''; }, 1000);
+  setTimeout(() => { 
+    root.innerHTML = ''; 
+    root.style.position = '';
+    root.style.top = '';
+    root.style.left = '';
+    root.style.width = '';
+    root.style.background = '';
+  }, 1000);
 }
 
 function buildPdfHtml(data) {
