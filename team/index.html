@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make My Mandir — Internal Tools</title>
+  <link rel="icon" type="image/png" href="../costing/assets/logo.png">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --orange: #E87722;
+      --orange-dark: #C5651C;
+      --orange-light: #FFF7F0;
+      --dark: #1F1F1F;
+      --grey: #5C5C5C;
+      --grey-light: #E8E8E8;
+      --white: #FFFFFF;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #FFF7F0 0%, #FFE8D6 100%);
+      min-height: 100vh;
+      color: var(--dark);
+      -webkit-font-smoothing: antialiased;
+      padding: 32px 20px;
+    }
+    
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    
+    .logo {
+      max-width: 200px;
+      height: auto;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      color: var(--grey);
+      font-size: 1rem;
+    }
+    
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .tile {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+    
+    .tile:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--orange);
+    }
+    
+    .tile-disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    
+    .tile-icon {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+    
+    .tile-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .tile-description {
+      font-size: 0.9rem;
+      color: var(--grey);
+      line-height: 1.5;
+      flex: 1;
+    }
+    
+    .tile-cta {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--orange);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .tile:hover .tile-cta {
+      color: var(--orange-dark);
+    }
+    
+    .tile-cta-disabled {
+      color: var(--grey);
+    }
+    
+    .badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--orange-light);
+      color: var(--orange-dark);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-soon {
+      background: #F0F0F0;
+      color: var(--grey);
+    }
+    
+    .footer {
+      text-align: center;
+      color: var(--grey);
+      font-size: 0.8rem;
+      margin-top: 24px;
+    }
+    
+    .footer-divider {
+      width: 60px;
+      height: 2px;
+      background: var(--orange);
+      margin: 0 auto 16px;
+      border-radius: 2px;
+    }
+    
+    @media (max-width: 640px) {
+      body {
+        padding: 24px 16px;
+      }
+      
+      .tile-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .logo {
+        max-width: 160px;
+      }
+      
+      .tile {
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <header class="header">
+      <img src="../costing/assets/logo.png" alt="Make My Mandir" class="logo">
+      <h1>Internal Tools</h1>
+      <p>One login away from everything you need.</p>
+    </header>
+    
+    <div class="tile-grid">
+      
+      <!-- Costing System -->
+      <a href="../costing/" class="tile">
+        <span class="badge">Active</span>
+        <div class="tile-icon">🏛️</div>
+        <div class="tile-title">Costing System</div>
+        <div class="tile-description">
+          Create projects, generate rough estimates and final quotations. Manage master rate cards.
+        </div>
+        <div class="tile-cta">Open →</div>
+      </a>
+      
+      <!-- Content Studio -->
+      <a href="../social-media/" class="tile">
+        <span class="badge">Active</span>
+        <div class="tile-icon">📱</div>
+        <div class="tile-title">Content Studio</div>
+        <div class="tile-description">
+          Monthly social media calendar. View captions, hashtags, and posting schedule.
+        </div>
+        <div class="tile-cta">Open →</div>
+      </a>
+      
+      <!-- Design Your Mandir -->
+      <a href="https://www.makemymandir.com/design-your-mandir" target="_blank" class="tile">
+        <span class="badge">Active</span>
+        <div class="tile-icon">🪔</div>
+        <div class="tile-title">Design Your Mandir</div>
+        <div class="tile-description">
+          Customer-facing configurator. Test the form, view recent submissions, share the link.
+        </div>
+        <div class="tile-cta">Open ↗</div>
+      </a>
+      
+      <!-- Cut & Ship -->
+      <div class="tile tile-disabled">
+        <span class="badge badge-soon">Coming Soon</span>
+        <div class="tile-icon">📦</div>
+        <div class="tile-title">Cut & Ship</div>
+        <div class="tile-description">
+          Pre-cut mandir packages for direct shipping. Mockup ready, launch pending.
+        </div>
+        <div class="tile-cta tile-cta-disabled">In development</div>
+      </div>
+      
+      <!-- Future placeholder -->
+      <div class="tile tile-disabled" style="grid-column: 1 / -1;">
+        <span class="badge badge-soon">Coming Soon</span>
+        <div class="tile-icon">➕</div>
+        <div class="tile-title">More Tools</div>
+        <div class="tile-description">
+          WhatsApp lead engagement, competitor tracker, sales briefing — coming as we build them out.
+        </div>
+        <div class="tile-cta tile-cta-disabled">Stay tuned</div>
+      </div>
+      
+    </div>
+    
+    <footer class="footer">
+      <div class="footer-divider"></div>
+      <p>Make My Mandir · Internal Tools Hub</p>
+      <p style="margin-top: 4px; font-size: 0.75rem;">For team use only · For support contact Nilesh</p>
+    </footer>
+    
+  </div>
+</body>
+</html>
