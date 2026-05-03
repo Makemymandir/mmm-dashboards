@@ -1,10 +1,10 @@
 // ============================================
-// rough-estimate.js — Rough Estimate Builder
+// rough-estimate.js — Rough Estimate Builder + PDF
 // ============================================
 
 let project = null;
 let rates = null;
-let isLoading = false;
+let viewingEstimate = null; // if not null, we're in view mode
 
 const MATERIALS = [
   { key: 'real_silver',    label: 'Real Silver',     rateKey: 'Real Silver' },
@@ -15,6 +15,16 @@ const MATERIALS = [
   { key: 'acrylic_prelam',  label: 'Acrylic + Prelam', rateKey: 'Acrylic + Prelam' }
 ];
 
+// Map framework name to icon filename
+const FRAMEWORK_ICONS = {
+  'Sinhasan':            'framework-sinhasan.png',
+  'Wall/Floor Mounted':  'framework-wfm.png',
+  'Back Panel':          'framework-bpn.png',
+  'Open Cabinet':        'framework-ocm.png',
+  'Cabinet with Door':   'framework-cmd.png',
+  'Mandir Room':         'framework-mdr.png'
+};
+
 document.addEventListener('DOMContentLoaded', async function() {
   if (!api.requireLogin()) return;
   
@@ -24,20 +34,22 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   const params = new URLSearchParams(window.location.search);
   const projectId = params.get('project_id');
+  const estimateId = params.get('estimate_id');
   
-  if (!projectId) {
-    showError('No project specified');
-    return;
+  if (estimateId) {
+    // View mode: load an existing estimate
+    await loadExistingEstimate(estimateId);
+  } else if (projectId) {
+    // Create mode
+    document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(projectId);
+    await loadDataForCreate(projectId);
+  } else {
+    showError('No project or estimate specified');
   }
-  
-  document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(projectId);
-  
-  await loadData(projectId);
 });
 
-async function loadData(projectId) {
+async function loadDataForCreate(projectId) {
   try {
-    // Load project + rates in parallel
     const [projResult, ratesResult] = await Promise.all([
       api.call('get_project', { project_id: projectId }),
       api.call('get_rough_rates', {})
@@ -54,8 +66,37 @@ async function loadData(projectId) {
     
     project = projResult.project;
     rates = ratesResult.rates;
-    
     renderBuilder();
+  } catch (err) {
+    console.error(err);
+    showError('Connection error');
+  }
+}
+
+async function loadExistingEstimate(estimateId) {
+  try {
+    const result = await api.call('get_rough_estimate', { estimate_id: estimateId });
+    if (!result.ok) {
+      showError(result.error || 'Estimate not found');
+      return;
+    }
+    
+    viewingEstimate = result.estimate;
+    
+    // Also need the project info for header
+    const projResult = await api.call('get_project', { project_id: viewingEstimate.project_id });
+    if (!projResult.ok) {
+      showError('Project not found');
+      return;
+    }
+    project = projResult.project;
+    
+    // Use snapshot rates (not current rates) so the view matches what was saved
+    rates = (viewingEstimate.snapshot && viewingEstimate.snapshot.rates_at_creation) || {};
+    
+    document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=rough';
+    
+    renderViewer();
   } catch (err) {
     console.error(err);
     showError('Connection error');
@@ -67,6 +108,10 @@ function showError(msg) {
     '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3></div>';
 }
 
+// ============================================
+// CREATE MODE — the builder
+// ============================================
+
 function renderBuilder() {
   const p = project;
   const initialW = p.width_ft || '';
@@ -74,7 +119,6 @@ function renderBuilder() {
   const initialH = p.height_ft || '';
   
   document.getElementById('content').innerHTML = `
-    <!-- Header card -->
     <div class="project-header">
       <div class="project-header-left">
         <div class="project-id-large">${p.project_id} · New Rough Estimate</div>
@@ -87,14 +131,9 @@ function renderBuilder() {
       </div>
     </div>
     
-    <!-- Two-column layout: inputs on left, results on right -->
     <div class="rough-layout">
-      
-      <!-- LEFT: Inputs -->
       <div class="card">
-        <div class="card-header">
-          <h3>Specifications</h3>
-        </div>
+        <div class="card-header"><h3>Specifications</h3></div>
         
         <div class="form-row form-row-3">
           <div class="form-group">
@@ -135,16 +174,12 @@ function renderBuilder() {
         
         <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
           <button class="btn-secondary" onclick="window.location.href='project.html?id=${p.project_id}'">Cancel</button>
-          <button class="btn-primary" onclick="saveEstimate()" id="saveBtn">Save Rough Estimate</button>
+          <button class="btn-primary" onclick="saveEstimate()" id="saveBtn">Save & Generate PDF</button>
         </div>
       </div>
       
-      <!-- RIGHT: Live preview -->
       <div class="card">
-        <div class="card-header">
-          <h3>Live Preview</h3>
-        </div>
-        
+        <div class="card-header"><h3>Live Preview</h3></div>
         <div id="previewArea">
           <p style="color: var(--grey);">Enter dimensions to see prices.</p>
         </div>
@@ -152,7 +187,6 @@ function renderBuilder() {
     </div>
   `;
   
-  // Initial calculation
   recalc();
 }
 
@@ -171,9 +205,7 @@ function recalc() {
   const cft = w * d * h;
   document.getElementById('cftValue').textContent = cft > 0 ? cft.toFixed(2) + ' CFT' : '—';
   
-  // Get checked materials
   const checked = MATERIALS.filter(m => document.getElementById('mat_' + m.key).checked);
-  
   const previewArea = document.getElementById('previewArea');
   
   if (cft === 0 || checked.length === 0) {
@@ -217,12 +249,11 @@ async function saveEstimate() {
   errorEl.style.display = 'none';
   
   if (w <= 0 || d <= 0 || h <= 0) {
-    errorEl.textContent = 'Please enter all three dimensions (Width, Depth, Height) greater than 0.';
+    errorEl.textContent = 'Please enter all three dimensions greater than 0.';
     errorEl.style.display = 'block';
     return;
   }
   
-  // Get checked materials
   const checked = MATERIALS.filter(m => document.getElementById('mat_' + m.key).checked);
   if (checked.length === 0) {
     errorEl.textContent = 'Please select at least one material to compare.';
@@ -243,21 +274,316 @@ async function saveEstimate() {
     });
     
     if (result.ok) {
-      // Redirect back to project, on Rough Estimates tab
-      window.location.href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=rough';
+      btn.textContent = 'Generating PDF...';
+      
+      // Generate PDF immediately after saving
+      const pdfData = {
+        estimate_id: result.estimate_id,
+        width: w, depth: d, height: h,
+        cubic_feet: result.prices.cubic_feet,
+        prices: result.prices,
+        materials_included: checked.map(m => m.label)
+      };
+      
+      await generatePdf(pdfData);
+      
+      // Redirect back after a short delay (so user sees the PDF download)
+      setTimeout(() => {
+        window.location.href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=rough';
+      }, 1500);
     } else {
       errorEl.textContent = result.error || 'Failed to save';
       errorEl.style.display = 'block';
       btn.disabled = false;
-      btn.textContent = 'Save Rough Estimate';
+      btn.textContent = 'Save & Generate PDF';
     }
   } catch (err) {
     console.error(err);
     errorEl.textContent = 'Connection error. Please try again.';
     errorEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = 'Save Rough Estimate';
+    btn.textContent = 'Save & Generate PDF';
   }
+}
+
+// ============================================
+// VIEW MODE — re-display saved estimate
+// ============================================
+
+function renderViewer() {
+  const e = viewingEstimate;
+  const p = project;
+  const snap = e.snapshot || {};
+  
+  document.getElementById('content').innerHTML = `
+    <div class="project-header">
+      <div class="project-header-left">
+        <div class="project-id-large">${e.estimate_id}</div>
+        <h1 class="project-client-name">${escapeHtml(p.client_name)}</h1>
+        <div class="project-meta">
+          ${escapeHtml(p.framework)} · 
+          ${snap.width || '?'} × ${snap.depth || '?'} × ${snap.height || '?'} ft = 
+          ${e.cubic_feet ? Number(e.cubic_feet).toFixed(2) : '?'} CFT · 
+          Created ${formatDate(e.created_at)} by ${escapeHtml(e.created_by)}
+        </div>
+      </div>
+      <div class="project-header-right">
+        <button class="btn-primary" onclick="redownloadPdf()" id="dlBtn">Download PDF</button>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-header"><h3>Estimate Details</h3></div>
+      
+      <table class="preview-table">
+        <thead>
+          <tr><th>Material</th><th style="text-align:right;">Starting Price</th></tr>
+        </thead>
+        <tbody>
+          ${renderViewerRows(snap.materials_included || ['Real Silver','Marble','Solid Surface','Solid Wood','HDHMR + Duco','Acrylic + Prelam'])}
+        </tbody>
+      </table>
+      
+      <div class="preview-disclaimer" style="margin-top: 20px;">
+        <strong>Note:</strong> Design Fees, Installation, Transport, Packing, Insurance, GST (18%) are extra. 
+        Final pricing may vary based on design, customization, and site conditions.
+      </div>
+    </div>
+  `;
+}
+
+function renderViewerRows(includedLabels) {
+  const e = viewingEstimate;
+  let html = '';
+  
+  MATERIALS.forEach(m => {
+    if (!includedLabels.includes(m.label)) return;
+    
+    let priceDisplay;
+    if (m.key === 'real_silver') {
+      priceDisplay = '<span style="color: var(--orange); font-weight: 600;">On Request</span>';
+    } else {
+      priceDisplay = '<strong>' + formatINR(e[m.key]) + '</strong>';
+    }
+    html += `<tr><td>${m.label}</td><td style="text-align:right;">${priceDisplay}</td></tr>`;
+  });
+  
+  return html;
+}
+
+async function redownloadPdf() {
+  const btn = document.getElementById('dlBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating PDF...';
+  
+  const e = viewingEstimate;
+  const snap = e.snapshot || {};
+  
+  const pdfData = {
+    estimate_id: e.estimate_id,
+    width: snap.width,
+    depth: snap.depth,
+    height: snap.height,
+    cubic_feet: e.cubic_feet,
+    prices: {
+      real_silver: 'On Request',
+      marble: e.marble,
+      solid_surface: e.solid_surface,
+      solid_wood: e.solid_wood,
+      hdhmr_duco: e.hdhmr_duco,
+      acrylic_prelam: e.acrylic_prelam
+    },
+    materials_included: snap.materials_included || ['Real Silver','Marble','Solid Surface','Solid Wood','HDHMR + Duco','Acrylic + Prelam']
+  };
+  
+  try {
+    await generatePdf(pdfData);
+  } catch (err) {
+    console.error(err);
+    toast('PDF generation failed: ' + err.message, 'error');
+  }
+  
+  btn.disabled = false;
+  btn.textContent = 'Download PDF';
+}
+
+// ============================================
+// PDF GENERATION
+// ============================================
+
+async function generatePdf(data) {
+  const html = buildPdfHtml(data);
+  const root = document.getElementById('pdfRoot');
+  root.innerHTML = html;
+  
+  // Wait for images to load
+  await waitForImages(root);
+  
+  const filename = data.estimate_id + '.pdf';
+  
+  const opt = {
+    margin: 0,
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { 
+      scale: 2,
+      useCORS: true,
+      letterRendering: true
+    },
+    jsPDF: { 
+      unit: 'mm', 
+      format: 'a4', 
+      orientation: 'portrait' 
+    },
+    pagebreak: { mode: ['css', 'legacy'] }
+  };
+  
+  await html2pdf().from(root.firstElementChild.parentElement).set(opt).save();
+  
+  // Clean up the hidden DOM
+  setTimeout(() => { root.innerHTML = ''; }, 1000);
+}
+
+function buildPdfHtml(data) {
+  const p = project;
+  const frameworkIcon = FRAMEWORK_ICONS[p.framework] || 'logo.png';
+  const includedLabels = data.materials_included || [];
+  const includedMats = MATERIALS.filter(m => includedLabels.includes(m.label));
+  
+  // Build the comparison table dynamically
+  let comparisonCols = '';
+  let priceRow = '';
+  let extraRows = ['Design Fees', 'Installation', 'Transport', 'Packing', 'Insurance', 'GST (18%)']
+    .map(label => '<tr><td class="row-label">' + label + '</td>' + 
+      includedMats.map(() => '<td>Extra</td>').join('') + '</tr>').join('');
+  
+  includedMats.forEach(m => {
+    comparisonCols += `<th>${m.label}</th>`;
+    
+    let price;
+    if (m.key === 'real_silver') {
+      price = 'On Request';
+    } else {
+      price = formatINR(data.prices[m.key]);
+    }
+    priceRow += `<td><strong>${price}</strong></td>`;
+  });
+  
+  const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const completionDate = p.expected_completion ? formatDate(p.expected_completion) : '—';
+  
+  return `
+    <!-- PAGE 1 -->
+    <div class="pdf-page">
+      <div class="pdf-header">
+        <img src="assets/logo.png" class="pdf-logo" crossorigin="anonymous">
+        <img src="assets/${frameworkIcon}" class="pdf-framework-icon" crossorigin="anonymous">
+      </div>
+      
+      <div class="pdf-address">
+        <strong>Make My Mandir</strong><br>
+        Jehangir Villa, Ground Floor, Shankarseth Road, Bhawani Peth,<br>
+        Opp. Hotel Kanak, Near Kumar Pacific Mall, Pune – 411042<br>
+        9822275805 · info@makemymandir.com
+      </div>
+      
+      <table class="pdf-info-table">
+        <tr>
+          <td class="label">Client Name</td>
+          <td>${escapeHtml(p.client_name)}</td>
+          <td class="label">Location</td>
+          <td>${escapeHtml(p.location || '')}</td>
+        </tr>
+        <tr>
+          <td class="label">Mobile</td>
+          <td>${escapeHtml(p.contact || '')}</td>
+          <td class="label">Email</td>
+          <td>${escapeHtml(p.email || '')}</td>
+        </tr>
+        <tr>
+          <td class="label">Type of Space</td>
+          <td>${escapeHtml(p.type_of_space || '')}</td>
+          <td class="label">Expected Completion</td>
+          <td>${completionDate}</td>
+        </tr>
+        <tr>
+          <td class="label">Estimate ID</td>
+          <td>${escapeHtml(data.estimate_id)}</td>
+          <td class="label">Date</td>
+          <td>${today}</td>
+        </tr>
+      </table>
+      
+      <table class="pdf-specs-table">
+        <tr>
+          <td colspan="3" class="specs-header">Mandir Specifications (in feet)</td>
+        </tr>
+        <tr>
+          <th>Width</th>
+          <th>Depth</th>
+          <th>Height</th>
+        </tr>
+        <tr>
+          <td><strong>${data.width}</strong></td>
+          <td><strong>${data.depth}</strong></td>
+          <td><strong>${data.height}</strong></td>
+        </tr>
+      </table>
+      
+      <table class="pdf-framework-row">
+        <tr>
+          <td class="label">Design Framework</td>
+          <td>${escapeHtml(p.framework)}</td>
+          <td class="label">Cubic Feet</td>
+          <td><strong>${Number(data.cubic_feet).toFixed(2)} CFT</strong></td>
+        </tr>
+      </table>
+      
+      <div class="pdf-estimate-title">ROUGH ESTIMATE</div>
+      <table class="pdf-estimate-table">
+        <thead>
+          <tr>
+            <th class="row-label">Description</th>
+            ${comparisonCols}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-label">Starting Price</td>
+            ${priceRow}
+          </tr>
+          ${extraRows}
+        </tbody>
+      </table>
+      
+      <div class="pdf-disclaimer">
+        <strong>DISCLAIMER:</strong> This is a preliminary estimate based on initial inputs. 
+        Final pricing will be confirmed after design finalisation and may vary based on design 
+        development, materials, and site conditions. All mandirs are customised, and changes 
+        during the design process may impact the final cost. Additional charges such as design 
+        fees, installation, transport, and taxes are extra unless specified. Estimated timelines 
+        will be shared after final design approval. All designs remain the intellectual property 
+        of Make My Mandir. Unauthorized use will lead to legal action.
+      </div>
+    </div>
+    
+    <!-- PAGE 2 — THE PROCESS -->
+    <div class="pdf-page pdf-page-2">
+      <img src="assets/process-page.png" class="pdf-process-img" crossorigin="anonymous">
+    </div>
+  `;
+}
+
+function waitForImages(container) {
+  const imgs = container.querySelectorAll('img');
+  const promises = Array.from(imgs).map(img => {
+    if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+    return new Promise(resolve => {
+      img.onload = resolve;
+      img.onerror = resolve; // resolve even on error so we don't hang
+    });
+  });
+  return Promise.all(promises);
 }
 
 // ============================================
@@ -275,6 +601,34 @@ function escapeHtml(str) {
 }
 
 function formatINR(num) {
-  if (num === null || num === undefined || isNaN(num)) return '₹0';
+  if (num === null || num === undefined || num === '' || isNaN(num)) return '—';
+  if (typeof num === 'string') return num;
   return '₹' + Number(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch {
+    return '';
+  }
+}
+
+function toast(msg, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity 0.3s';
+    setTimeout(() => t.remove(), 300);
+  }, 2500);
 }
