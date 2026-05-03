@@ -5,6 +5,8 @@
 let currentProject = null;
 let isEditMode = false;
 let activeTab = 'details';
+let roughEstimates = [];
+let loadedRoughOnce = false;
 
 document.addEventListener('DOMContentLoaded', async function() {
   if (!api.requireLogin()) return;
@@ -15,6 +17,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   const params = new URLSearchParams(window.location.search);
   const projectId = params.get('id');
+  const initialTab = params.get('tab');
+  
+  if (initialTab && ['details', 'rough', 'quote'].includes(initialTab)) {
+    activeTab = initialTab;
+  }
   
   if (!projectId) {
     showError('No project selected');
@@ -38,10 +45,111 @@ async function loadProject(projectId) {
     
     currentProject = result.project;
     render();
+    
+    // If we landed directly on the rough estimates tab, load them
+    if (activeTab === 'rough') {
+      loadRoughEstimates();
+    }
   } catch (err) {
     console.error(err);
     showError('Connection error');
   }
+}
+
+async function loadRoughEstimates() {
+  if (!currentProject) return;
+  
+  const container = document.getElementById('roughListContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<div class="loading">Loading rough estimates...</div>';
+  
+  try {
+    const result = await api.call('list_rough_estimates', { 
+      project_id: currentProject.project_id 
+    });
+    
+    if (!result.ok) {
+      container.innerHTML = '<div class="empty-tab"><h3>Error</h3><p>' + escapeHtml(result.error) + '</p></div>';
+      return;
+    }
+    
+    roughEstimates = result.estimates;
+    loadedRoughOnce = true;
+    renderRoughList();
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = '<div class="empty-tab"><h3>Connection error</h3></div>';
+  }
+}
+
+function renderRoughList() {
+  const container = document.getElementById('roughListContainer');
+  if (!container) return;
+  
+  if (roughEstimates.length === 0) {
+    container.innerHTML = `
+      <div class="empty-tab">
+        <h3>No rough estimates yet</h3>
+        <p>Generate a quick price comparison across all 6 materials.</p>
+        <button class="btn-primary" onclick="newRoughEstimate()">+ New Rough Estimate</button>
+      </div>
+    `;
+    return;
+  }
+  
+  let html = `
+    <div class="card">
+      <div class="card-header">
+        <h3>Rough Estimates (${roughEstimates.length})</h3>
+        <button class="btn-primary" onclick="newRoughEstimate()">+ New Rough Estimate</button>
+      </div>
+      <table class="project-table" style="border-radius: 0; box-shadow: none;">
+        <thead>
+          <tr>
+            <th>Estimate ID</th>
+            <th>Created</th>
+            <th>By</th>
+            <th>CFT</th>
+            <th style="text-align:right;">Solid Surface</th>
+            <th style="text-align:right;">Solid Wood</th>
+            <th style="text-align:right;">HDHMR+Duco</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+  
+  roughEstimates.forEach(e => {
+    html += `
+      <tr>
+        <td><span class="project-id-cell">${e.estimate_id}</span></td>
+        <td style="color:var(--grey);font-size:0.85rem;">${formatDate(e.created_at)}</td>
+        <td style="color:var(--grey);font-size:0.85rem;">${escapeHtml(e.created_by || '')}</td>
+        <td>${e.cubic_feet ? Number(e.cubic_feet).toFixed(2) : '—'}</td>
+        <td style="text-align:right;">${formatINR(e.solid_surface)}</td>
+        <td style="text-align:right;">${formatINR(e.solid_wood)}</td>
+        <td style="text-align:right;">${formatINR(e.hdhmr_duco)}</td>
+        <td style="text-align:right;">
+          <button class="btn-text" onclick="viewRoughEstimate('${e.estimate_id}')">View</button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+}
+
+function newRoughEstimate() {
+  if (!currentProject) return;
+  window.location.href = 'rough-estimate.html?project_id=' + encodeURIComponent(currentProject.project_id);
+}
+
+function viewRoughEstimate(estimateId) {
+  // For now, just show a toast saying "PDF generation coming next"
+  // We'll wire this up properly in Section 6.3
+  toast('PDF view coming in next step', 'success');
 }
 
 function showError(msg) {
@@ -87,9 +195,8 @@ function render() {
     </div>
     
     <div id="tabRough" class="tab-content ${activeTab === 'rough' ? 'tab-content-active' : ''}">
-      <div class="empty-tab">
-        <h3>No rough estimates yet</h3>
-        <p>Rough Estimate generator coming in next section.</p>
+      <div id="roughListContainer">
+        <div class="loading">Loading...</div>
       </div>
     </div>
     
@@ -172,7 +279,6 @@ function renderDetailsTab() {
     `;
   }
   
-  // Read-only view
   return `
     <div class="card">
       <div class="card-header">
@@ -227,6 +333,9 @@ function detailItem(label, value) {
 function switchTab(name) {
   activeTab = name;
   render();
+  if (name === 'rough') {
+    loadRoughEstimates();
+  }
 }
 
 function enterEditMode() {
@@ -268,7 +377,6 @@ async function saveEdit() {
   try {
     const result = await api.call('update_project', { project: updated });
     if (result.ok) {
-      // Update local state and re-render
       Object.assign(currentProject, updated);
       isEditMode = false;
       render();
@@ -347,6 +455,12 @@ function formatDateForInput(iso) {
   } catch {
     return '';
   }
+}
+
+function formatINR(num) {
+  if (num === null || num === undefined || num === '' || isNaN(num)) return '—';
+  if (typeof num === 'string' && num === 'On Request') return 'On Request';
+  return '₹' + Number(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
 }
 
 function toast(msg, type = 'success') {
