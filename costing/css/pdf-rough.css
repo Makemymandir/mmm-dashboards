@@ -202,8 +202,8 @@
 .pdf-footer-block {
   display: table-cell;
   vertical-align: top;
-  font-size: 8.5pt;
-  line-height: 1.6;
+  font-size: 7.5pt;
+  line-height: 1.4;
   color: #1F1F1F;
   padding-right: 6mm;
 }
