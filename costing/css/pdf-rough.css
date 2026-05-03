@@ -228,16 +228,17 @@
 
 /* PAGE 2 — THE PROCESS (full bleed image) */
 .pdf-page-2 {
-  padding: 0;
+  padding: 0 !important;
   width: 210mm;
-  height: 287mm;
+  height: 297mm;
   display: block;
   overflow: hidden;
+  position: relative;
 }
 
 .pdf-process-img {
   width: 100%;
-  max-height: 100%;
+  height: 100%;
   display: block;
   object-fit: contain;
 }
