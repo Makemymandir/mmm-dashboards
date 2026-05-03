@@ -16,6 +16,12 @@ document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('userName').textContent = user.displayName;
   document.getElementById('userRole').textContent = user.role;
   
+  // Show Masters link for admin users only
+  if (user.role === 'admin') {
+    const mastersLink = document.getElementById('mastersLink');
+    if (mastersLink) mastersLink.style.display = 'inline-block';
+  }
+  
   // Load projects
   await loadProjects();
 });
