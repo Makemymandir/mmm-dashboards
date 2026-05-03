@@ -4,7 +4,7 @@
 
 let project = null;
 let rates = null;
-let viewingEstimate = null; // if not null, we're in view mode
+let viewingEstimate = null;
 
 const MATERIALS = [
   { key: 'real_silver',    label: 'Real Silver',     rateKey: 'Real Silver' },
@@ -15,7 +15,6 @@ const MATERIALS = [
   { key: 'acrylic_prelam',  label: 'Acrylic + Prelam', rateKey: 'Acrylic + Prelam' }
 ];
 
-// Map framework name to icon filename
 const FRAMEWORK_ICONS = {
   'Sinhasan':            'framework-sinhasan.png',
   'Wall/Floor Mounted':  'framework-wfm.png',
@@ -37,10 +36,8 @@ document.addEventListener('DOMContentLoaded', async function() {
   const estimateId = params.get('estimate_id');
   
   if (estimateId) {
-    // View mode: load an existing estimate
     await loadExistingEstimate(estimateId);
   } else if (projectId) {
-    // Create mode
     document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(projectId);
     await loadDataForCreate(projectId);
   } else {
@@ -83,7 +80,6 @@ async function loadExistingEstimate(estimateId) {
     
     viewingEstimate = result.estimate;
     
-    // Also need the project info for header
     const projResult = await api.call('get_project', { project_id: viewingEstimate.project_id });
     if (!projResult.ok) {
       showError('Project not found');
@@ -91,7 +87,6 @@ async function loadExistingEstimate(estimateId) {
     }
     project = projResult.project;
     
-    // Use snapshot rates (not current rates) so the view matches what was saved
     rates = (viewingEstimate.snapshot && viewingEstimate.snapshot.rates_at_creation) || {};
     
     document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=rough';
@@ -276,7 +271,6 @@ async function saveEstimate() {
     if (result.ok) {
       btn.textContent = 'Generating PDF...';
       
-      // Generate PDF immediately after saving
       const pdfData = {
         estimate_id: result.estimate_id,
         width: w, depth: d, height: h,
@@ -287,7 +281,6 @@ async function saveEstimate() {
       
       await generatePdf(pdfData);
       
-      // Redirect back after a short delay (so user sees the PDF download)
       setTimeout(() => {
         window.location.href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=rough';
       }, 1500);
@@ -414,12 +407,15 @@ async function redownloadPdf() {
 async function generatePdf(data) {
   const html = buildPdfHtml(data);
   const root = document.getElementById('pdfRoot');
-  root.innerHTML = html;
+  
+  // Wrap in a container we can pass to html2pdf
+  root.innerHTML = '<div id="pdfContent">' + html + '</div>';
   
   // Wait for images to load
   await waitForImages(root);
   
   const filename = data.estimate_id + '.pdf';
+  const targetEl = document.getElementById('pdfContent');
   
   const opt = {
     margin: 0,
@@ -428,7 +424,8 @@ async function generatePdf(data) {
     html2canvas: { 
       scale: 2,
       useCORS: true,
-      letterRendering: true
+      letterRendering: true,
+      logging: true
     },
     jsPDF: { 
       unit: 'mm', 
@@ -438,9 +435,8 @@ async function generatePdf(data) {
     pagebreak: { mode: ['css', 'legacy'] }
   };
   
-  await html2pdf().from(root.firstElementChild.parentElement).set(opt).save();
+  await html2pdf().from(targetEl).set(opt).save();
   
-  // Clean up the hidden DOM
   setTimeout(() => { root.innerHTML = ''; }, 1000);
 }
 
@@ -450,7 +446,6 @@ function buildPdfHtml(data) {
   const includedLabels = data.materials_included || [];
   const includedMats = MATERIALS.filter(m => includedLabels.includes(m.label));
   
-  // Build the comparison table dynamically
   let comparisonCols = '';
   let priceRow = '';
   let extraRows = ['Design Fees', 'Installation', 'Transport', 'Packing', 'Insurance', 'GST (18%)']
@@ -473,7 +468,6 @@ function buildPdfHtml(data) {
   const completionDate = p.expected_completion ? formatDate(p.expected_completion) : '—';
   
   return `
-    <!-- PAGE 1 -->
     <div class="pdf-page">
       <div class="pdf-header">
         <img src="assets/logo.png" class="pdf-logo" crossorigin="anonymous">
@@ -567,7 +561,6 @@ function buildPdfHtml(data) {
       </div>
     </div>
     
-    <!-- PAGE 2 — THE PROCESS -->
     <div class="pdf-page pdf-page-2">
       <img src="assets/process-page.png" class="pdf-process-img" crossorigin="anonymous">
     </div>
@@ -580,7 +573,7 @@ function waitForImages(container) {
     if (img.complete && img.naturalHeight > 0) return Promise.resolve();
     return new Promise(resolve => {
       img.onload = resolve;
-      img.onerror = resolve; // resolve even on error so we don't hang
+      img.onerror = resolve;
     });
   });
   return Promise.all(promises);
