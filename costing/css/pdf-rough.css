@@ -1,6 +1,7 @@
 /* ============================================
    PDF — ROUGH ESTIMATE
    A4 size: 210mm × 297mm
+   Make My Mandir colour scheme: orange + cream
    ============================================ */
 
 .pdf-page {
@@ -16,46 +17,42 @@
   position: relative;
   page-break-after: always;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .pdf-page:last-child {
   page-break-after: auto;
 }
 
-/* HEADER */
+/* HEADER (logo + framework icon, larger) */
 .pdf-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10mm;
+  padding-bottom: 8mm;
   border-bottom: 2px solid #E87722;
-  margin-bottom: 6mm;
+  margin-bottom: 8mm;
 }
 
 .pdf-logo {
-  max-width: 60mm;
-  max-height: 25mm;
+  max-width: 70mm;
+  max-height: 30mm;
   object-fit: contain;
 }
 
 .pdf-framework-icon {
-  max-width: 30mm;
-  max-height: 25mm;
+  max-width: 60mm;
+  max-height: 50mm;
   object-fit: contain;
 }
 
-.pdf-address {
-  text-align: center;
-  font-size: 9pt;
-  color: #555;
-  margin-bottom: 6mm;
-  line-height: 1.4;
+/* MAIN CONTENT WRAPPER (so footer stays at bottom) */
+.pdf-main {
+  flex: 1;
 }
 
-.pdf-address strong {
-  color: #1F1F1F;
-}
-
+/* CLIENT INFO TABLE */
 .pdf-info-table {
   width: 100%;
   border-collapse: collapse;
@@ -64,17 +61,19 @@
 }
 
 .pdf-info-table td {
-  border: 1px solid #999;
-  padding: 4px 8px;
+  border: 1px solid #E8C9AE;
+  padding: 5px 9px;
   vertical-align: middle;
 }
 
 .pdf-info-table .label {
   font-weight: 600;
-  background: #F8F8F8;
+  background: #FFF7F0;
+  color: #C5651C;
   width: 23%;
 }
 
+/* MANDIR SPECS */
 .pdf-specs-table {
   width: 100%;
   border-collapse: collapse;
@@ -83,24 +82,28 @@
 }
 
 .pdf-specs-table th, .pdf-specs-table td {
-  border: 1px solid #999;
-  padding: 6px 8px;
+  border: 1px solid #E8C9AE;
+  padding: 7px 8px;
   text-align: center;
 }
 
 .pdf-specs-table th {
-  background: #F8F8F8;
+  background: #FFF7F0;
   font-weight: 600;
+  color: #C5651C;
 }
 
 .pdf-specs-table .specs-header {
-  background: #FFF7F0;
+  background: #E87722;
+  color: #ffffff;
   font-weight: 700;
   text-align: left;
-  padding: 4px 8px;
+  padding: 6px 10px;
   font-size: 9.5pt;
+  letter-spacing: 0.5px;
 }
 
+/* DESIGN FRAMEWORK ROW */
 .pdf-framework-row {
   width: 100%;
   border-collapse: collapse;
@@ -109,24 +112,26 @@
 }
 
 .pdf-framework-row td {
-  border: 1px solid #999;
-  padding: 6px 8px;
+  border: 1px solid #E8C9AE;
+  padding: 7px 9px;
 }
 
 .pdf-framework-row .label {
   font-weight: 600;
-  background: #F8F8F8;
+  background: #FFF7F0;
+  color: #C5651C;
   width: 23%;
 }
 
+/* ROUGH ESTIMATE COMPARISON TABLE */
 .pdf-estimate-title {
-  background: #1F1F1F;
-  color: #fff;
-  padding: 8px;
+  background: #E87722;
+  color: #ffffff;
+  padding: 9px;
   text-align: center;
   font-weight: 700;
-  font-size: 11pt;
-  letter-spacing: 1px;
+  font-size: 12pt;
+  letter-spacing: 1.5px;
   margin-bottom: 0;
 }
 
@@ -138,42 +143,86 @@
 }
 
 .pdf-estimate-table th, .pdf-estimate-table td {
-  border: 1px solid #999;
-  padding: 6px 6px;
+  border: 1px solid #E8C9AE;
+  padding: 7px 6px;
   text-align: center;
   vertical-align: middle;
 }
 
 .pdf-estimate-table thead th {
-  background: #F8F8F8;
+  background: #FFF7F0;
   font-weight: 700;
   font-size: 9pt;
+  color: #C5651C;
 }
 
 .pdf-estimate-table .row-label {
   font-weight: 600;
   text-align: left;
-  background: #FAFAFA;
+  background: #FFF7F0;
+  color: #C5651C;
   width: 18%;
 }
 
-.pdf-disclaimer {
-  border: 1px solid #999;
-  padding: 8px 10px;
-  font-size: 8.5pt;
-  line-height: 1.5;
-  margin-top: 4mm;
-  background: #FAFAFA;
+.pdf-estimate-table .price-row td {
+  background: #FFFBF6;
 }
 
-.pdf-disclaimer strong {
+.pdf-estimate-table .price-row strong {
   color: #1F1F1F;
 }
 
-/* PAGE 2 — PROCESS PAGE (full bleed image) */
+/* DISCLAIMER */
+.pdf-disclaimer {
+  border: 1px solid #E8C9AE;
+  border-left: 3px solid #E87722;
+  padding: 9px 12px;
+  font-size: 8.5pt;
+  line-height: 1.5;
+  margin-top: 4mm;
+  background: #FFF7F0;
+}
+
+.pdf-disclaimer strong {
+  color: #C5651C;
+}
+
+/* FOOTER (address, phone, email, website, instagram) */
+.pdf-footer {
+  margin-top: 6mm;
+  padding-top: 6mm;
+  border-top: 2px solid #E87722;
+  font-size: 8.5pt;
+  line-height: 1.5;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8mm;
+  color: #1F1F1F;
+}
+
+.pdf-footer-block {
+  flex: 1;
+}
+
+.pdf-footer-label {
+  font-size: 7.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #C5651C;
+  font-weight: 700;
+  margin-bottom: 2mm;
+}
+
+.pdf-footer-block strong {
+  color: #1F1F1F;
+}
+
+/* PAGE 2 — THE PROCESS (full bleed image) */
 .pdf-page-2 {
   padding: 0;
   height: 297mm;
+  display: block;
 }
 
 .pdf-process-img {
