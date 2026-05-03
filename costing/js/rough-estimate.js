@@ -552,12 +552,11 @@ function buildPdfHtml(data) {
         </div>
       </div>
       
-      <div class="pdf-footer">
-        <div class="pdf-footer-block">
+<div class="pdf-footer-block">
           <div class="pdf-footer-label">Address</div>
           <strong>Make My Mandir</strong><br>
-          Jehangir Villa, Shankarseth Road,<br>
-          Bhawani Peth, Pune – 411042
+          Shankarseth Road, Bhawani Peth,<br>
+          Pune – 411042
         </div>
         <div class="pdf-footer-block">
           <div class="pdf-footer-label">Contact</div>
