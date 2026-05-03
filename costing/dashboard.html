@@ -13,13 +13,14 @@
       <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
       <span class="topbar-title">Costing System</span>
     </div>
-    <div class="topbar-right">
-      <span class="user-info">
-        <span id="userName">...</span>
-        <span class="user-role" id="userRole">...</span>
-      </span>
-      <button class="btn-text" onclick="api.logout()">Sign Out</button>
-    </div>
+    <div class="app-header-right">
+  <a href="masters.html" id="mastersLink" class="btn-link" style="display:none;">Masters</a>
+  <div class="user-info">
+    <div id="userName">—</div>
+    <div id="userRole" class="user-role">—</div>
+  </div>
+  <button class="btn-link" onclick="api.logout()">Sign Out</button>
+</div>
   </header>
   
   <main class="main-content">
