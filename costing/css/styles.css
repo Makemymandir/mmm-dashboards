@@ -825,6 +825,13 @@ body {
   align-items: center;
   gap: 16px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.masters-toolbar .btn-primary {
+  margin-left: auto;
+  padding: 8px 16px;
+  font-size: 0.9rem;
 }
 
 .search-input {
