@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MMM Costing — Project</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
+      <span class="topbar-title">Costing System</span>
+    </div>
+    <div class="topbar-right">
+      <span class="user-info">
+        <span id="userName">...</span>
+        <span class="user-role" id="userRole">...</span>
+      </span>
+      <button class="btn-text" onclick="api.logout()">Sign Out</button>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div style="margin-bottom: 16px;">
+      <a href="dashboard.html" style="color: var(--orange); text-decoration: none; font-size: 0.9rem;">← Back to Dashboard</a>
+    </div>
+    
+    <div id="projectContent">
+      <div class="loading">Loading project...</div>
+    </div>
+  </main>
+  
+  <script src="js/api.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      if (!api.requireLogin()) return;
+      
+      const user = api.getCurrentUser();
+      document.getElementById('userName').textContent = user.displayName;
+      document.getElementById('userRole').textContent = user.role;
+      
+      const params = new URLSearchParams(window.location.search);
+      const projectId = params.get('id');
+      
+      const container = document.getElementById('projectContent');
+      
+      if (!projectId) {
+        container.innerHTML = '<div class="empty-state"><h3>No project selected</h3></div>';
+        return;
+      }
+      
+      try {
+        const result = await api.call('get_project', { project_id: projectId });
+        
+        if (!result.ok) {
+          container.innerHTML = '<div class="empty-state"><h3>Project not found</h3><p>' + result.error + '</p></div>';
+          return;
+        }
+        
+        const p = result.project;
+        container.innerHTML = `
+          <div style="background: var(--white); padding: 32px; border-radius: var(--radius); box-shadow: var(--shadow-sm);">
+            <h1 style="color: var(--orange); font-family: 'Courier New', monospace; margin-bottom: 8px;">${p.project_id}</h1>
+            <h2 style="margin-bottom: 24px;">${p.client_name}</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+              <div><strong>Framework:</strong><br>${p.framework}</div>
+              <div><strong>Size:</strong><br>${p.width_ft || '?'} × ${p.depth_ft || '?'} × ${p.height_ft || '?'} ft</div>
+              <div><strong>Type:</strong><br>${p.type_of_space || '—'}</div>
+              <div><strong>Status:</strong><br><span class="status-badge status-${p.status}">${p.status}</span></div>
+              <div><strong>Contact:</strong><br>${p.contact || '—'}</div>
+              <div><strong>Location:</strong><br>${p.location || '—'}</div>
+            </div>
+            
+            <div style="background: var(--orange-light); padding: 20px; border-radius: 8px; margin-top: 24px;">
+              <h3 style="margin-bottom: 8px;">Project view coming soon</h3>
+              <p style="color: var(--grey);">Rough Estimate and Final Quotation builders will be added next. Project successfully created and saved to the system.</p>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<div class="empty-state"><h3>Connection error</h3></div>';
+      }
+    });
+  </script>
+</body>
+</html>
