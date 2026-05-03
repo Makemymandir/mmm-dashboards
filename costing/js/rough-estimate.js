@@ -285,6 +285,7 @@ async function generatePdf(data) {
     html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false, allowTaint: true },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
     pagebreak: { mode: 'avoid-all', before: '.html2pdf__page-break' }
+      };
   try {
     await html2pdf().from(targetEl).set(opt).save();
     console.log('=== PDF GENERATION COMPLETE ===');
