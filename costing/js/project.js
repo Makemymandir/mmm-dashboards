@@ -147,9 +147,7 @@ function newRoughEstimate() {
 }
 
 function viewRoughEstimate(estimateId) {
-  // For now, just show a toast saying "PDF generation coming next"
-  // We'll wire this up properly in Section 6.3
-  toast('PDF view coming in next step', 'success');
+  window.location.href = 'rough-estimate.html?estimate_id=' + encodeURIComponent(estimateId);
 }
 
 function showError(msg) {
