@@ -2,35 +2,148 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MMM Costing — Dashboard</title>
   <link rel="stylesheet" href="css/styles.css">
-  <style>
-    .placeholder {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh; flex-direction: column; padding: 20px;
-    }
-    .placeholder h1 { color: var(--orange); margin-bottom: 8px; }
-    .placeholder p { color: var(--grey); margin-bottom: 4px; }
-    .logout-btn { margin-top: 24px; }
-  </style>
 </head>
 <body>
-  <div class="placeholder">
-    <h1>Welcome <span id="userName">...</span></h1>
-    <p>Login successful. Dashboard coming next.</p>
-    <p>Role: <strong id="userRole">...</strong></p>
-    <button class="btn-secondary logout-btn" onclick="api.logout()">Sign Out</button>
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
+      <span class="topbar-title">Costing System</span>
+    </div>
+    <div class="topbar-right">
+      <span class="user-info">
+        <span id="userName">...</span>
+        <span class="user-role" id="userRole">...</span>
+      </span>
+      <button class="btn-text" onclick="api.logout()">Sign Out</button>
+    </div>
+  </header>
+  
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1>Projects</h1>
+        <p class="page-subtitle" id="projectCount">Loading...</p>
+      </div>
+      <button class="btn-primary" onclick="openNewProjectModal()">+ New Project</button>
+    </div>
+    
+    <!-- Search and filter bar -->
+    <div class="toolbar">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search by client name, project ID, or contact..." oninput="onSearchInput()">
+      <div class="status-filter" id="statusFilter">
+        <button class="chip chip-active" data-status="all" onclick="setStatusFilter('all')">All</button>
+        <button class="chip" data-status="Lead" onclick="setStatusFilter('Lead')">Lead</button>
+        <button class="chip" data-status="Active" onclick="setStatusFilter('Active')">Active</button>
+        <button class="chip" data-status="Won" onclick="setStatusFilter('Won')">Won</button>
+        <button class="chip" data-status="Lost" onclick="setStatusFilter('Lost')">Lost</button>
+      </div>
+    </div>
+    
+    <!-- Project list -->
+    <div id="projectListContainer">
+      <div class="loading">Loading projects...</div>
+    </div>
+  </main>
+  
+  <!-- New Project Modal -->
+  <div class="modal-backdrop" id="newProjectModal" style="display:none;" onclick="if(event.target===this) closeNewProjectModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>New Project</h2>
+        <button class="modal-close" onclick="closeNewProjectModal()">×</button>
+      </div>
+      <form id="newProjectForm" class="modal-body" onsubmit="return false;">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="np_client_name">Client Name *</label>
+            <input type="text" id="np_client_name" required>
+          </div>
+          <div class="form-group">
+            <label for="np_contact">Contact Number</label>
+            <input type="tel" id="np_contact" placeholder="98765 43210">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="np_email">Email</label>
+            <input type="email" id="np_email">
+          </div>
+          <div class="form-group">
+            <label for="np_location">Location</label>
+            <input type="text" id="np_location" placeholder="Katraj, Pune">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="np_type">Type of Space</label>
+            <select id="np_type">
+              <option value="">— Select —</option>
+              <option value="Apartment">Apartment</option>
+              <option value="Bungalow">Bungalow</option>
+              <option value="Commercial">Commercial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="np_framework">Design Framework *</label>
+            <select id="np_framework" required>
+              <option value="">— Select —</option>
+              <option value="Sinhasan">Sinhasan</option>
+              <option value="Wall/Floor Mounted">Wall/Floor Mounted</option>
+              <option value="Back Panel">Back Panel</option>
+              <option value="Open Cabinet">Open Cabinet</option>
+              <option value="Cabinet with Door">Cabinet with Door</option>
+              <option value="Mandir Room">Mandir Room</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-row form-row-3">
+          <div class="form-group">
+            <label for="np_width">Width (ft)</label>
+            <input type="number" id="np_width" step="0.1" min="0" placeholder="4">
+          </div>
+          <div class="form-group">
+            <label for="np_depth">Depth (ft)</label>
+            <input type="number" id="np_depth" step="0.1" min="0" placeholder="2">
+          </div>
+          <div class="form-group">
+            <label for="np_height">Height (ft)</label>
+            <input type="number" id="np_height" step="0.1" min="0" placeholder="6">
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="np_completion">Expected Completion Date</label>
+            <input type="date" id="np_completion">
+          </div>
+          <div class="form-group">
+            <!-- placeholder for symmetry -->
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="np_notes">Notes</label>
+          <textarea id="np_notes" rows="3" placeholder="Any additional details..."></textarea>
+        </div>
+        
+        <div id="newProjectError" class="error-message" style="display:none;"></div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeNewProjectModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="createProjectBtn" onclick="createProject()">Create Project</button>
+        </div>
+      </form>
+    </div>
   </div>
   
   <script src="js/api.js"></script>
-  <script>
-    if (!api.requireLogin()) {
-      // already redirected
-    } else {
-      const user = api.getCurrentUser();
-      document.getElementById('userName').textContent = user.displayName;
-      document.getElementById('userRole').textContent = user.role;
-    }
-  </script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
