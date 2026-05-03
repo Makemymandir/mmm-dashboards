@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="app-header">
-    <div class="app-header-left">
-      <img src="assets/logo.png" alt="Make My Mandir" class="app-logo">
-      <span class="app-title">Costing System</span>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
+      <span class="topbar-title">Costing System</span>
     </div>
     <div class="app-header-right">
       <div class="user-info">
@@ -21,15 +21,17 @@
     </div>
   </header>
 
-  <main class="app-main">
-    <a href="dashboard.html" id="backLink" class="back-link">← Back to Dashboard</a>
+  <main class="main-content">
+    <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
     
-    <div class="page-header">
-      <h1>Masters Admin</h1>
-      <p style="color: var(--grey);">Edit your master data directly. Changes save automatically.</p>
+    <div class="dashboard-header">
+      <div>
+        <h1>Masters Admin</h1>
+        <p class="dashboard-count">Edit your master data directly. Changes save automatically.</p>
+      </div>
     </div>
     
-    <div class="masters-tabs" id="mastersTabs">
+    <div class="masters-tabs">
       <button class="tab-btn active" data-key="rough_rates">Rough Rates</button>
       <button class="tab-btn" data-key="material">Material Rates</button>
       <button class="tab-btn" data-key="cnc">CNC Designs</button>
