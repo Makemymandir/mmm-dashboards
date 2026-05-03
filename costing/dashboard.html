@@ -14,28 +14,29 @@
       <span class="topbar-title">Costing System</span>
     </div>
     <div class="app-header-right">
-  <a href="masters.html" id="mastersLink" class="btn-link" style="display:none;">Masters</a>
-  <div class="user-info">
-    <div id="userName">—</div>
-    <div id="userRole" class="user-role">—</div>
-  </div>
-  <button class="btn-link" onclick="api.logout()">Sign Out</button>
-</div>
+      <a href="masters.html" id="mastersLink" class="btn-link" style="display:none;">Masters</a>
+      <div class="user-info">
+        <div id="userName">—</div>
+        <div id="userRole" class="user-role">—</div>
+      </div>
+      <button class="btn-link" onclick="api.logout()">Sign Out</button>
+    </div>
   </header>
-  
+
   <main class="main-content">
-    <div class="page-header">
+    <div class="dashboard-header">
       <div>
         <h1>Projects</h1>
-        <p class="page-subtitle" id="projectCount">Loading...</p>
+        <p id="projectCount" class="dashboard-count">Loading...</p>
       </div>
       <button class="btn-primary" onclick="openNewProjectModal()">+ New Project</button>
     </div>
     
-    <!-- Search and filter bar -->
-    <div class="toolbar">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search by client name, project ID, or contact..." oninput="onSearchInput()">
-      <div class="status-filter" id="statusFilter">
+    <!-- Search and filter -->
+    <div class="dashboard-controls">
+      <input type="text" id="searchInput" class="search-box" placeholder="Search by client, project ID, or location..." oninput="onSearchInput()">
+      
+      <div class="chip-row">
         <button class="chip chip-active" data-status="all" onclick="setStatusFilter('all')">All</button>
         <button class="chip" data-status="Lead" onclick="setStatusFilter('Lead')">Lead</button>
         <button class="chip" data-status="Active" onclick="setStatusFilter('Active')">Active</button>
@@ -49,23 +50,24 @@
       <div class="loading">Loading projects...</div>
     </div>
   </main>
-  
+
   <!-- New Project Modal -->
-  <div class="modal-backdrop" id="newProjectModal" style="display:none;" onclick="if(event.target===this) closeNewProjectModal()">
+  <div id="newProjectModal" class="modal-overlay" style="display:none;">
     <div class="modal">
       <div class="modal-header">
         <h2>New Project</h2>
         <button class="modal-close" onclick="closeNewProjectModal()">×</button>
       </div>
-      <form id="newProjectForm" class="modal-body" onsubmit="return false;">
+      
+      <form id="newProjectForm" onsubmit="event.preventDefault(); createProject();">
         <div class="form-row">
           <div class="form-group">
             <label for="np_client_name">Client Name *</label>
             <input type="text" id="np_client_name" required>
           </div>
           <div class="form-group">
-            <label for="np_contact">Contact Number</label>
-            <input type="tel" id="np_contact" placeholder="98765 43210">
+            <label for="np_contact">Contact (Phone)</label>
+            <input type="text" id="np_contact">
           </div>
         </div>
         
@@ -76,7 +78,7 @@
           </div>
           <div class="form-group">
             <label for="np_location">Location</label>
-            <input type="text" id="np_location" placeholder="Katraj, Pune">
+            <input type="text" id="np_location" placeholder="City / area">
           </div>
         </div>
         
@@ -85,21 +87,24 @@
             <label for="np_type">Type of Space</label>
             <select id="np_type">
               <option value="">— Select —</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Bungalow">Bungalow</option>
-              <option value="Commercial">Commercial</option>
+              <option>Apartment</option>
+              <option>Bungalow</option>
+              <option>Villa</option>
+              <option>Office</option>
+              <option>Showroom</option>
+              <option>Other</option>
             </select>
           </div>
           <div class="form-group">
             <label for="np_framework">Design Framework *</label>
             <select id="np_framework" required>
               <option value="">— Select —</option>
-              <option value="Sinhasan">Sinhasan</option>
-              <option value="Wall/Floor Mounted">Wall/Floor Mounted</option>
-              <option value="Back Panel">Back Panel</option>
-              <option value="Open Cabinet">Open Cabinet</option>
-              <option value="Cabinet with Door">Cabinet with Door</option>
-              <option value="Mandir Room">Mandir Room</option>
+              <option>Sinhasan</option>
+              <option>Wall/Floor Mounted</option>
+              <option>Back Panel</option>
+              <option>Open Cabinet</option>
+              <option>Cabinet with Door</option>
+              <option>Mandir Room</option>
             </select>
           </div>
         </div>
@@ -107,38 +112,34 @@
         <div class="form-row form-row-3">
           <div class="form-group">
             <label for="np_width">Width (ft)</label>
-            <input type="number" id="np_width" step="0.1" min="0" placeholder="4">
+            <input type="number" id="np_width" step="0.1" min="0">
           </div>
           <div class="form-group">
             <label for="np_depth">Depth (ft)</label>
-            <input type="number" id="np_depth" step="0.1" min="0" placeholder="2">
+            <input type="number" id="np_depth" step="0.1" min="0">
           </div>
           <div class="form-group">
             <label for="np_height">Height (ft)</label>
-            <input type="number" id="np_height" step="0.1" min="0" placeholder="6">
+            <input type="number" id="np_height" step="0.1" min="0">
           </div>
         </div>
         
         <div class="form-row">
           <div class="form-group">
-            <label for="np_completion">Expected Completion Date</label>
+            <label for="np_completion">Expected Completion</label>
             <input type="date" id="np_completion">
           </div>
           <div class="form-group">
-            <!-- placeholder for symmetry -->
+            <label for="np_notes">Notes</label>
+            <input type="text" id="np_notes" placeholder="Any extra context...">
           </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="np_notes">Notes</label>
-          <textarea id="np_notes" rows="3" placeholder="Any additional details..."></textarea>
         </div>
         
         <div id="newProjectError" class="error-message" style="display:none;"></div>
         
         <div class="modal-footer">
           <button type="button" class="btn-secondary" onclick="closeNewProjectModal()">Cancel</button>
-          <button type="submit" class="btn-primary" id="createProjectBtn" onclick="createProject()">Create Project</button>
+          <button type="submit" class="btn-primary" id="createProjectBtn">Create Project</button>
         </div>
       </form>
     </div>
