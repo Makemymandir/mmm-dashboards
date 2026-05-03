@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MMM Costing — Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .placeholder {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; flex-direction: column; padding: 20px;
+    }
+    .placeholder h1 { color: var(--orange); margin-bottom: 8px; }
+    .placeholder p { color: var(--grey); margin-bottom: 4px; }
+    .logout-btn { margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <div class="placeholder">
+    <h1>Welcome <span id="userName">...</span></h1>
+    <p>Login successful. Dashboard coming next.</p>
+    <p>Role: <strong id="userRole">...</strong></p>
+    <button class="btn-secondary logout-btn" onclick="api.logout()">Sign Out</button>
+  </div>
+  
+  <script src="js/api.js"></script>
+  <script>
+    if (!api.requireLogin()) {
+      // already redirected
+    } else {
+      const user = api.getCurrentUser();
+      document.getElementById('userName').textContent = user.displayName;
+      document.getElementById('userRole').textContent = user.role;
+    }
+  </script>
+</body>
+</html>
