@@ -1,7 +1,3 @@
-// ============================================
-// masters.js — Masters Admin
-// ============================================
-
 let currentMasterKey = 'rough_rates';
 let currentData = null;
 
@@ -10,7 +6,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   const user = api.getCurrentUser();
   
-  // Admin only
   if (user.role !== 'admin') {
     document.getElementById('mastersContent').innerHTML = 
       '<div class="empty-state"><h3>Admin access only</h3><p>You don\'t have permission to view this page.</p></div>';
@@ -20,7 +15,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   document.getElementById('userName').textContent = user.displayName;
   document.getElementById('userRole').textContent = user.role;
   
-  // Wire tab buttons
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.key;
@@ -28,7 +22,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   });
   
-  // Load default tab
   await loadMaster('rough_rates');
 });
 
@@ -62,33 +55,34 @@ async function loadMaster(key) {
 function renderTable(data) {
   const content = document.getElementById('mastersContent');
   
-  if (!data.rows || data.rows.length === 0) {
-    content.innerHTML = '<div class="empty-state"><h3>No rows yet</h3></div>';
+  const validRows = data.rows.filter(row => {
+    const firstCol = data.headers[0];
+    return row[firstCol] !== '' && row[firstCol] !== null && row[firstCol] !== undefined;
+  });
+  
+  const visibleHeaders = data.headers.filter(h => 
+    h !== '_rowIndex' && h.toLowerCase() !== 'created_at' && h.toLowerCase() !== 'created_by' && h.toLowerCase() !== 'updated_at' && h.toLowerCase() !== 'updated_by'
+  );
+  
+  let html = '<div class="masters-toolbar">';
+  html += '<input type="text" id="searchBox" placeholder="Search..." class="search-input" oninput="filterRows()">';
+  html += '<span style="color: var(--grey); font-size: 0.9rem;">' + validRows.length + ' rows</span>';
+  html += '<button class="btn-primary" onclick="openAddRowModal()">+ Add Row</button>';
+  html += '</div>';
+  
+  if (validRows.length === 0) {
+    html += '<div class="empty-state"><h3>No rows yet</h3><p>Click "+ Add Row" to create the first one.</p></div>';
+    content.innerHTML = html;
     return;
   }
   
-  // Filter out internal columns from display
-  const visibleHeaders = data.headers.filter(h => 
-    h !== '_rowIndex' && h.toLowerCase() !== 'created_at' && h.toLowerCase() !== 'created_by'
-  );
+  html += '<div class="masters-table-wrap">';
+  html += '<table class="masters-table" id="mastersTable">';
+  html += '<thead><tr>';
+  visibleHeaders.forEach(h => { html += '<th>' + formatHeader(h) + '</th>'; });
+  html += '</tr></thead><tbody>';
   
-  let html = `
-    <div class="masters-toolbar">
-      <input type="text" id="searchBox" placeholder="Search..." class="search-input" oninput="filterRows()">
-      <span style="color: var(--grey); font-size: 0.9rem;">${data.rows.length} rows</span>
-    </div>
-    
-    <div class="masters-table-wrap">
-      <table class="masters-table" id="mastersTable">
-        <thead>
-          <tr>
-            ${visibleHeaders.map(h => '<th>' + formatHeader(h) + '</th>').join('')}
-          </tr>
-        </thead>
-        <tbody>
-  `;
-  
-  data.rows.forEach(row => {
+  validRows.forEach(row => {
     html += '<tr data-row-index="' + row._rowIndex + '">';
     visibleHeaders.forEach(h => {
       const value = row[h];
@@ -96,26 +90,27 @@ function renderTable(data) {
       const isEditable = isCellEditable(h);
       
       if (isActive) {
-        html += '<td><input type="checkbox" ' + (value === true || value === 'TRUE' || value === 'true' ? 'checked' : '') + 
+        const isChecked = (value === true || value === 'TRUE' || value === 'true' || value === 1);
+        html += '<td><input type="checkbox" ' + (isChecked ? 'checked' : '') + 
                 ' onchange="updateCell(' + row._rowIndex + ', \'' + h + '\', this.checked)"></td>';
       } else if (isEditable) {
-        html += '<td contenteditable="true" data-col="' + h + '" data-original="' + escapeHtml(String(value)) + '" ' +
-                'onblur="handleEdit(this, ' + row._rowIndex + ')">' + escapeHtml(String(value || '')) + '</td>';
+        const safeVal = (value === null || value === undefined) ? '' : value;
+        html += '<td contenteditable="true" data-col="' + h + '" data-original="' + escapeHtml(String(safeVal)) + '" ' +
+                'onblur="handleEdit(this, ' + row._rowIndex + ')">' + escapeHtml(String(safeVal)) + '</td>';
       } else {
-        html += '<td>' + escapeHtml(String(value || '')) + '</td>';
+        const safeVal = (value === null || value === undefined) ? '' : value;
+        html += '<td>' + escapeHtml(String(safeVal)) + '</td>';
       }
     });
     html += '</tr>';
   });
   
   html += '</tbody></table></div>';
-  
   content.innerHTML = html;
 }
 
 function isCellEditable(headerName) {
-  // For now, all non-system columns are editable
-  const systemCols = ['_rowIndex', 'id', 'created_at', 'created_by'];
+  const systemCols = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
   return !systemCols.includes(headerName.toLowerCase());
 }
 
@@ -128,7 +123,7 @@ function handleEdit(cell, rowIndex) {
   const newValue = cell.textContent.trim();
   const column = cell.dataset.col;
   
-  if (newValue === original) return; // no change
+  if (newValue === original) return;
   
   updateCell(rowIndex, column, newValue);
   cell.dataset.original = newValue;
@@ -166,7 +161,130 @@ function filterRows() {
   });
 }
 
-// Helpers
+function openAddRowModal() {
+  if (!currentData) return;
+  
+  const headers = currentData.headers;
+  const skipCols = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
+  const formFields = headers.filter(h => !skipCols.includes(h.toLowerCase()));
+  
+  let html = '';
+  formFields.forEach(h => {
+    const id = 'addRow_' + h;
+    const isActive = h.toLowerCase() === 'active';
+    const isRate = h.toLowerCase().indexOf('rate') !== -1;
+    
+    if (isActive) {
+      html += '<div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">';
+      html += '<input type="checkbox" id="' + id + '" checked>';
+      html += '<label for="' + id + '" style="margin: 0;">Active (visible in new quotes)</label>';
+      html += '</div>';
+    } else {
+      const inputType = isRate ? 'number' : 'text';
+      const stepAttr = isRate ? 'step="any"' : '';
+      html += '<div class="form-group">';
+      html += '<label for="' + id + '">' + formatHeader(h) + '</label>';
+      html += '<input type="' + inputType + '" id="' + id + '" ' + stepAttr + ' placeholder="Enter ' + formatHeader(h).toLowerCase() + '">';
+      html += '</div>';
+    }
+  });
+  
+  document.getElementById('addRowFields').innerHTML = html;
+  document.getElementById('addRowTitle').textContent = 'Add New Row — ' + getMasterDisplayName(currentMasterKey);
+  document.getElementById('addRowError').style.display = 'none';
+  document.getElementById('addRowSubmitBtn').disabled = false;
+  document.getElementById('addRowSubmitBtn').textContent = 'Add Row';
+  document.getElementById('addRowModal').style.display = 'flex';
+  
+  const firstInput = document.querySelector('#addRowFields input[type="text"], #addRowFields input[type="number"]');
+  if (firstInput) firstInput.focus();
+}
+
+function closeAddRowModal() {
+  document.getElementById('addRowModal').style.display = 'none';
+}
+
+function getMasterDisplayName(key) {
+  const names = {
+    'rough_rates': 'Rough Rates',
+    'material': 'Material Rates',
+    'cnc': 'CNC Designs',
+    'decor': 'Decor',
+    'hardware': 'Hardware',
+    'lighting': 'Lighting'
+  };
+  return names[key] || key;
+}
+
+async function submitAddRow() {
+  const errorEl = document.getElementById('addRowError');
+  const btn = document.getElementById('addRowSubmitBtn');
+  errorEl.style.display = 'none';
+  
+  const headers = currentData.headers;
+  const skipCols = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
+  const rowData = {};
+  let firstField = null;
+  let firstFieldValue = null;
+  
+  headers.forEach(h => {
+    if (skipCols.includes(h.toLowerCase())) return;
+    
+    const id = 'addRow_' + h;
+    const el = document.getElementById(id);
+    if (!el) return;
+    
+    if (el.type === 'checkbox') {
+      rowData[h] = el.checked;
+    } else if (el.type === 'number') {
+      rowData[h] = el.value === '' ? '' : parseFloat(el.value);
+    } else {
+      rowData[h] = el.value.trim();
+    }
+    
+    if (firstField === null) {
+      firstField = h;
+      firstFieldValue = rowData[h];
+    }
+  });
+  
+  if (firstFieldValue === '' || firstFieldValue === null || firstFieldValue === undefined) {
+    errorEl.textContent = formatHeader(firstField) + ' is required.';
+    errorEl.style.display = 'block';
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.textContent = 'Adding...';
+  
+  const user = api.getCurrentUser();
+  
+  try {
+    const result = await api.call('add_master_row', {
+      master_key: currentMasterKey,
+      row_data: rowData,
+      username: user.username
+    });
+    
+    if (result.ok) {
+      toast('Row added', 'success');
+      closeAddRowModal();
+      await loadMaster(currentMasterKey);
+    } else {
+      errorEl.textContent = result.error || 'Failed to add row';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Add Row';
+    }
+  } catch (err) {
+    console.error(err);
+    errorEl.textContent = 'Connection error';
+    errorEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Add Row';
+  }
+}
+
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str)
