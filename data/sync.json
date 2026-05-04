@@ -21,10 +21,10 @@
       "cta": ""
     },
     "3": {
-      "title": "TULJA BHAVANI TEMPLE",
+      "title": "TULJA BHAVANI TEMPLE 9/5/2025",
       "type": "Carousel",
       "hook": "",
-      "caption": "\n",
+      "caption": "",
       "brief": "",
       "cta": ""
     },
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 3,
+      "user": "Team Member",
+      "time": "2026-05-04T07:30:21.627Z"
+    },
     {
       "action": "edited",
       "postId": 2,
