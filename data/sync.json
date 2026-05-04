@@ -59,11 +59,25 @@
       "caption": "Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",
       "brief": "",
       "cta": "DM budget + space for quote"
+    },
+    "15": {
+      "title": "make my mandir",
+      "type": "Carousel",
+      "hook": "You asked. We answered — honestly.",
+      "caption": "Before you DM us, here are the 5 questions we get asked most.\n\n#CustomMandir #MandirFAQ #MakeMyMandir #PuneInteriors",
+      "brief": "7 slides: Intro, 5 Q&As, CTA",
+      "cta": "DM us your question"
     }
   },
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 15,
+      "user": "Nilesh K Mehta",
+      "time": "2026-05-04T07:23:55.423Z"
+    },
     {
       "action": "edited",
       "postId": 2,
