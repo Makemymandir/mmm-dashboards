@@ -1,6 +1,11 @@
+// ============================================
+// rough-estimate.js — Builder + PDF (final clean)
+// ============================================
+
 let project = null;
 let rates = null;
 let viewingEstimate = null;
+let pdfInProgress = false;
 
 const MATERIALS = [
   { key: 'real_silver',    label: 'Real Silver',     rateKey: 'Real Silver',     defaultChecked: false },
@@ -25,9 +30,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   const user = api.getCurrentUser();
   document.getElementById('userName').textContent = user.displayName;
   document.getElementById('userRole').textContent = user.role;
+  
   const params = new URLSearchParams(window.location.search);
   const projectId = params.get('project_id');
   const estimateId = params.get('estimate_id');
+  
   if (estimateId) {
     await loadExistingEstimate(estimateId);
   } else if (projectId) {
@@ -78,7 +85,7 @@ function renderBuilder() {
   document.getElementById('content').innerHTML = `
     <div class="project-header">
       <div class="project-header-left">
-        <div class="project-id-large">${p.project_id} · New Rough Estimate</div>
+        <div class="project-id-large">${escapeHtml(p.project_id)} · New Rough Estimate</div>
         <h1 class="project-client-name">${escapeHtml(p.client_name)}</h1>
         <div class="project-meta">${escapeHtml(p.location || 'No location')} · ${escapeHtml(p.framework)} · ${escapeHtml(p.type_of_space || 'Space type not set')}</div>
       </div>
@@ -100,7 +107,7 @@ function renderBuilder() {
         </div>
         <div id="builderError" class="error-message" style="display:none; margin-top: 16px;"></div>
         <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
-          <button class="btn-secondary" onclick="window.location.href='project.html?id=${p.project_id}'">Cancel</button>
+          <button class="btn-secondary" onclick="window.location.href='project.html?id=${encodeURIComponent(p.project_id)}'">Cancel</button>
           <button class="btn-primary" onclick="saveEstimate()" id="saveBtn">Save & Generate PDF</button>
         </div>
       </div>
@@ -148,6 +155,7 @@ function recalc() {
 }
 
 async function saveEstimate() {
+  if (pdfInProgress) return;
   const w = parseFloat(document.getElementById('re_width').value) || 0;
   const d = parseFloat(document.getElementById('re_depth').value) || 0;
   const h = parseFloat(document.getElementById('re_height').value) || 0;
@@ -157,6 +165,7 @@ async function saveEstimate() {
   if (w <= 0 || d <= 0 || h <= 0) { errorEl.textContent = 'Please enter all three dimensions greater than 0.'; errorEl.style.display = 'block'; return; }
   const checked = MATERIALS.filter(m => document.getElementById('mat_' + m.key).checked);
   if (checked.length === 0) { errorEl.textContent = 'Please select at least one material to compare.'; errorEl.style.display = 'block'; return; }
+  
   btn.disabled = true;
   btn.textContent = 'Saving...';
   try {
@@ -197,7 +206,7 @@ function renderViewer() {
   document.getElementById('content').innerHTML = `
     <div class="project-header">
       <div class="project-header-left">
-        <div class="project-id-large">${e.estimate_id}</div>
+        <div class="project-id-large">${escapeHtml(e.estimate_id)}</div>
         <h1 class="project-client-name">${escapeHtml(p.client_name)}</h1>
         <div class="project-meta">${escapeHtml(p.framework)} · ${snap.width || '?'} × ${snap.depth || '?'} × ${snap.height || '?'} ft · Created ${formatDate(e.created_at)} by ${escapeHtml(e.created_by)}</div>
       </div>
@@ -231,6 +240,7 @@ function renderViewerRows(includedLabels) {
 }
 
 async function redownloadPdf() {
+  if (pdfInProgress) return;
   const btn = document.getElementById('dlBtn');
   btn.disabled = true;
   btn.textContent = 'Generating PDF...';
@@ -260,65 +270,110 @@ async function redownloadPdf() {
   btn.textContent = 'Download PDF';
 }
 
+// ============================================
+// PDF GENERATION — TWO-STEP RENDER
+// Renders page 1 and page 2 separately, joins into one PDF.
+// This is html2pdf's documented multi-page pattern and avoids 
+// the offscreen-render-collapse issue that caused blank middle pages.
+// ============================================
+
 async function generatePdf(data) {
-  console.log('=== PDF GENERATION START ===');
-  const html = buildPdfHtml(data);
+  if (pdfInProgress) return;
+  pdfInProgress = true;
+  
   const root = document.getElementById('pdfRoot');
-  root.innerHTML = '<div id="pdfContent">' + html + '</div>';
+  root.innerHTML = '';
   root.style.position = 'fixed';
   root.style.top = '0';
   root.style.left = '-9999px';
   root.style.width = '210mm';
   root.style.background = 'white';
-  await waitForImages(root);
-  const imgs = root.querySelectorAll('img');
-  imgs.forEach((img, i) => {
-    console.log('Image ' + i + ': src=' + img.src + ', complete=' + img.complete + ', naturalWidth=' + img.naturalWidth);
-  });
-  const filename = data.estimate_id + '.pdf';
-  const targetEl = document.getElementById('pdfContent');
-  console.log('Target element height:', targetEl.offsetHeight);
-  const opt = {
-    margin: 0,
-    filename: filename,
-    image: { type: 'jpeg', quality: 0.95 },
-    html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false, allowTaint: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: 'avoid-all', before: '.html2pdf__page-break' }
-      };
+  
   try {
-    await html2pdf().from(targetEl).set(opt).save();
-    console.log('=== PDF GENERATION COMPLETE ===');
+    // Build page 1 (estimate) and page 2 (process image) as SEPARATE elements
+    const page1 = document.createElement('div');
+    page1.innerHTML = buildEstimatePageHtml(data);
+    root.appendChild(page1);
+    
+    const page2 = document.createElement('div');
+    page2.innerHTML = buildProcessPageHtml();
+    root.appendChild(page2);
+    
+    // Wait for ALL images across both pages
+    await waitForImages(root);
+    
+    const filename = data.estimate_id + '.pdf';
+    
+    // jsPDF instance to hold both pages
+    const pdf = new jspdf.jsPDF({
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait'
+    });
+    
+    // Page 1: render estimate to canvas, add to PDF
+    const canvas1 = await html2canvas(page1.firstElementChild, {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff'
+    });
+    const img1 = canvas1.toDataURL('image/jpeg', 0.95);
+    pdf.addImage(img1, 'JPEG', 0, 0, 210, 297);
+    
+    // Page 2: render process page, add as new page
+    pdf.addPage('a4', 'portrait');
+    const canvas2 = await html2canvas(page2.firstElementChild, {
+      scale: 2,
+      useCORS: true,
+      letterRendering: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff'
+    });
+    const img2 = canvas2.toDataURL('image/jpeg', 0.95);
+    pdf.addImage(img2, 'JPEG', 0, 0, 210, 297);
+    
+    pdf.save(filename);
+    
   } catch (err) {
     console.error('PDF generation failed:', err);
+    toast('PDF generation failed. Please try again.', 'error');
+    throw err;
+  } finally {
+    setTimeout(() => {
+      root.innerHTML = '';
+      root.style.position = '';
+      root.style.top = '';
+      root.style.left = '';
+      root.style.width = '';
+      root.style.background = '';
+      pdfInProgress = false;
+    }, 500);
   }
-  setTimeout(() => {
-    root.innerHTML = '';
-    root.style.position = '';
-    root.style.top = '';
-    root.style.left = '';
-    root.style.width = '';
-    root.style.background = '';
-  }, 1000);
 }
 
-function buildPdfHtml(data) {
+function buildEstimatePageHtml(data) {
   const p = project;
   const frameworkIcon = FRAMEWORK_ICONS[p.framework] || 'logo.png';
   const includedLabels = data.materials_included || [];
   const includedMats = MATERIALS.filter(m => includedLabels.includes(m.label));
+  
   let comparisonCols = '';
   let priceRow = '';
   let extraRows = ['Design Fees', 'Installation', 'Transport', 'Packing', 'Insurance', 'GST (18%)']
     .map(label => '<tr><td class="row-label">' + label + '</td>' + includedMats.map(() => '<td>Extra</td>').join('') + '</tr>').join('');
+  
   includedMats.forEach(m => {
-    comparisonCols += '<th>' + m.label + '</th>';
+    comparisonCols += '<th>' + escapeHtml(m.label) + '</th>';
     let price;
     if (m.key === 'real_silver') { price = 'On Request'; } else { price = formatINR(data.prices[m.key]); }
     priceRow += '<td><strong>' + price + '</strong></td>';
   });
+  
   const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
   const completionDate = p.expected_completion ? formatDate(p.expected_completion) : '—';
+  
   return `
     <div class="pdf-page">
       <div class="pdf-header">
@@ -348,14 +403,18 @@ function buildPdfHtml(data) {
         <strong>DISCLAIMER:</strong> This is a preliminary estimate based on initial inputs. Final pricing will be confirmed after design finalisation and may vary based on design development, materials, and site conditions. All mandirs are customised, and changes during the design process may impact the final cost. Additional charges such as design fees, installation, transport, and taxes are extra unless specified. Estimated timelines will be shared after final design approval. All designs remain the intellectual property of Make My Mandir. Unauthorized use will lead to legal action.
       </div>
       <div class="pdf-footer">
-        <div class="pdf-footer-block"><div class="pdf-footer-label">Address</div><strong>Make My Mandir</strong><br>Shankarseth Road, Bhawani Peth,<br>Pune – 411042</div>
+        <div class="pdf-footer-block"><div class="pdf-footer-label">Address</div><strong>Make My Mandir</strong><br>Jehangir Villa, Ground Floor,<br>Shankarseth Road, Bhawani Peth,<br>Pune – 411042</div>
         <div class="pdf-footer-block"><div class="pdf-footer-label">Contact</div><strong>+91 77679 62441</strong><br>info@makemymandir.com</div>
         <div class="pdf-footer-block"><div class="pdf-footer-label">Online</div>makemymandir.com<br>@make_my_mandir</div>
       </div>
     </div>
-    <div class="html2pdf__page-break"></div>
-    <div style="width: 210mm; height: 297mm; padding: 0; margin: 0; overflow: hidden; box-sizing: border-box; display: block;">
-      <img src="assets/process-page.png" style="width: 210mm; height: 297mm; display: block; object-fit: cover; margin: 0; padding: 0;" crossorigin="anonymous">
+  `;
+}
+
+function buildProcessPageHtml() {
+  return `
+    <div style="width: 210mm; height: 297mm; padding: 0; margin: 0; overflow: hidden; box-sizing: border-box;">
+      <img src="assets/process-page.png" style="width: 210mm; height: 297mm; display: block; object-fit: cover;" crossorigin="anonymous">
     </div>
   `;
 }
@@ -364,11 +423,17 @@ function waitForImages(container) {
   const imgs = container.querySelectorAll('img');
   const promises = Array.from(imgs).map(img => {
     if (img.complete && img.naturalHeight > 0) return Promise.resolve();
-    return new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+    return new Promise(resolve => {
+      img.onload = () => resolve();
+      img.onerror = () => resolve();
+      // Safety timeout — never wait more than 5s for an image
+      setTimeout(() => resolve(), 5000);
+    });
   });
   return Promise.all(promises);
 }
 
+// Helpers
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
