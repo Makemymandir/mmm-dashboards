@@ -694,9 +694,10 @@ function applySyncPayload(data){
       const remote=data.media[id];
       if(!remote||!remote.url)return;
       const local=gm(id);
-      // If local has fresh base64 from an in-progress upload, leave it alone
-      if(local && local.data && !local.url) return;
-      // If local URL is newer than remote, keep local
+      // v3: A real URL from GitHub always beats stale local base64.
+      // The earlier guard (skip if local.data && !local.url) protected in-progress uploads
+      // but also caused stale test-run blobs to hide team uploads. Trust the remote URL.
+      // Only keep local if it's a newer real URL.
       if(local && local.url && local.ts && remote.ts && local.ts > remote.ts) return;
       sto("md-"+id, remote);
     });
@@ -711,8 +712,7 @@ function applySyncPayload(data){
         const r=remote[idx];
         const l=local[idx];
         if(!r||!r.url)return;
-        // Don't clobber local uncompleted upload (string data with no URL)
-        if(typeof l==='string' || (l && l.data && !l.url)) return;
+        // v3: Same as above — remote URL wins over stale local base64.
         if(l && l.url && l.ts && r.ts && l.ts > r.ts) return;
         merged[idx]=r;
       });
@@ -909,6 +909,25 @@ function navTo(page,el){
 }
 
 /* ══ COUNTS ══ */
+/* v3: A post is "ready for admin review" only when team has finished uploading.
+   Carousel = every slide present. Static/Reel = the single media present. */
+function isMediaReady(p){
+  if(p.type==="Carousel"&&p.slides){
+    const ups=gsl(p.id);
+    return p.slides.every((_,i)=>ups[i]&&(ups[i].url||ups[i].data));
+  }
+  const m=gm(p.id);
+  return !!(m&&(m.url||m.data));
+}
+function getReviewCounts(){
+  let ready=0, awaiting=0;
+  POSTS.forEach(p=>{
+    const st=gs(p.id);
+    if(st!=="pending"&&st!=="revision")return;
+    if(isMediaReady(p)) ready++; else awaiting++;
+  });
+  return {ready, awaiting};
+}
 function updateCounts(){
   const c={pending:0,approved:0,revision:0,rejected:0,published:0};
   POSTS.forEach(p=>{const s=gs(p.id);c[s]=(c[s]||0)+1;});
@@ -954,7 +973,7 @@ function render(){
 
   html+=`<div class="stats-row">
     <div class="sc sc-all" onclick="navTo('all',null)"><div class="sc-n">27</div><div class="sc-l">Total</div></div>
-    <div class="sc sc-pend" onclick="navTo('pending',null)"><div class="sc-n">${counts.pending||0}</div><div class="sc-l">Pending</div></div>
+    <div class="sc sc-pend" onclick="navTo('pending',null)"><div class="sc-n">${counts.pending||0}</div><div class="sc-l" style="line-height:1.25;">Pending<br><span style="font-size:10px;opacity:.85;">${(()=>{const r=getReviewCounts();return r.ready?`<b>${r.ready} ready</b> · ${r.awaiting} awaiting`:`${r.awaiting} awaiting upload`;})()}</span></div></div>
     <div class="sc sc-app" onclick="navTo('approved',null)"><div class="sc-n">${appCnt}</div><div class="sc-l">Approved</div></div>
     <div class="sc sc-rev" onclick="navTo('revision',null)"><div class="sc-n">${counts.revision||0}</div><div class="sc-l">Revision</div></div>
     <div class="sc sc-rej" onclick="navTo('rejected',null)"><div class="sc-n">${counts.rejected||0}</div><div class="sc-l">Rejected</div></div>
@@ -984,15 +1003,26 @@ function render(){
 
 function renderCard(p,isAdmin){
   const pp=gp(p.id),st=gs(p.id),m=gm(p.id),reason=gr(p.id);
-  const isVid=m&&m.type==="video";
+  const ups=gsl(p.id);
+  const upCnt=Object.keys(ups).length;
+  const isVid=m&&m.type==="video"&&p.type!=="Carousel";
   const isToday=getTodayPosts().find(x=>x.id===p.id)&&st!=="published";
-  const imgSrc=resolveMediaSrc(m)||THUMBS[p.id];
+  /* v3: For Carousels the card thumbnail must come from the first uploaded slide.
+     A stale single-image (md-X) entry from earlier test runs must NOT win. */
+  let imgSrc=null;
+  if(p.type==="Carousel"){
+    if(upCnt){
+      const firstKey=Object.keys(ups).sort((a,b)=>(+a)-(+b))[0];
+      imgSrc=resolveMediaSrc(ups[firstKey]);
+    }
+  }else{
+    imgSrc=resolveMediaSrc(m);
+  }
+  imgSrc=imgSrc||THUMBS[p.id];
   const editedType=ge(p.id).type||p.type;const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[editedType];
   const stcls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
   const sbcls={"pending":"bs-pending","approved":"bs-approved","rejected":"bs-rejected","revision":"bs-revision","published":"bs-published"}[st];
   const slides=p.slides;
-  const ups=gsl(p.id);
-  const upCnt=Object.keys(ups).length;
 
   let rejBanner="";
   if(st==="rejected"&&reason)rejBanner=`<div class="rej-banner"><div class="rb-text">❌ ${reason.substring(0,90)}${reason.length>90?"...":""}</div></div>`;
@@ -1010,7 +1040,7 @@ function renderCard(p,isAdmin){
     actions+=`<button class="ab ab-rej" onclick="openRejOv(${p.id})">Reject</button>`;
   }
   actions+=`<button class="ab ab-copy" onclick="quickCopy(${p.id},this)">Copy</button>`;
-  if(m)actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
+  if(m||(p.type==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
 
   return `<div class="pc ${stcls}${isToday?" today-post":""}">
     <div class="tw">
@@ -1045,7 +1075,25 @@ function quickCopy(id,btn){
     setTimeout(()=>{btn.textContent=t;btn.style.background="";btn.style.color="";},2000);
   });
 }
-function dlMedia(id){const m=gm(id);if(!m)return;const src=resolveMediaSrc(m);if(!src)return;const a=document.createElement("a");a.href=src;a.download=`post_${id}.${m.type==="video"?"mp4":"jpg"}`;a.target="_blank";a.click();}
+function dlMedia(id){
+  const post=POSTS.find(x=>x.id===id);
+  if(post&&post.type==="Carousel"){
+    const ups=gsl(id);
+    const keys=Object.keys(ups).sort((a,b)=>(+a)-(+b));
+    if(!keys.length){toast("No slides uploaded yet","err");return;}
+    keys.forEach((k,i)=>{
+      const src=resolveMediaSrc(ups[k]);
+      if(!src)return;
+      setTimeout(()=>{
+        const a=document.createElement("a");a.href=src;a.download=`post_${id}_slide_${(+k)+1}.jpg`;a.target="_blank";a.click();
+      },i*250);
+    });
+    toast(`Downloading ${keys.length} slides`,"ok");
+    return;
+  }
+  const m=gm(id);if(!m)return;const src=resolveMediaSrc(m);if(!src)return;
+  const a=document.createElement("a");a.href=src;a.download=`post_${id}.${m.type==="video"?"mp4":"jpg"}`;a.target="_blank";a.click();
+}
 
 /* ══ REJECT ══ */
 function openRejOv(id){rejectTargetId=id;document.getElementById("rejReason").value="";document.getElementById("rejOv").classList.add("open");setTimeout(()=>document.getElementById("rejReason").focus(),100);}
