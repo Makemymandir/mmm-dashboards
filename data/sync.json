@@ -37,7 +37,7 @@
       "cta": ""
     },
     "5": {
-      "title": "VITHHAL TEMPLE",
+      "title": "VITHHAL TEMPLE 14/5/2025",
       "type": "Carousel",
       "hook": "",
       "caption": "",
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 5,
+      "user": "Team Member",
+      "time": "2026-05-04T07:34:40.030Z"
+    },
     {
       "action": "edited",
       "postId": 5,
