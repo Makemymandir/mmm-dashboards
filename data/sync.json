@@ -37,12 +37,12 @@
       "cta": ""
     },
     "5": {
-      "title": "",
+      "title": "VITHHAL TEMPLE",
       "type": "Carousel",
-      "hook": "Ever wondered how a premium Corian mandir is actually built?",
-      "caption": "From raw Corian sheet to sacred centrepiece.\n\nDM us or WhatsApp to start your design conversation.\n\n#corianmandir #mandirmaking #behindthescenes #custommandir #makemymandir",
-      "brief": "45-sec BTS: Corian → CNC cutting → assembly → LED → final glow.",
-      "cta": "DM to start your design"
+      "hook": "",
+      "caption": "",
+      "brief": "",
+      "cta": ""
     },
     "6": {
       "title": "Narasimha Jayanti — festive greeting",
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 5,
+      "user": "Team Member",
+      "time": "2026-05-04T07:34:13.364Z"
+    },
     {
       "action": "edited",
       "postId": 2,
