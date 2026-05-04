@@ -68,6 +68,14 @@
       "brief": "",
       "cta": ""
     },
+    "9": {
+      "title": "KHATU 23/5/2025",
+      "type": "Carousel",
+      "hook": "",
+      "caption": "",
+      "brief": "",
+      "cta": ""
+    },
     "15": {
       "title": "make my mandir",
       "type": "Carousel",
@@ -80,6 +88,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 9,
+      "user": "Team Member",
+      "time": "2026-05-04T07:40:32.465Z"
+    },
     {
       "action": "edited",
       "postId": 8,
