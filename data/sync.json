@@ -76,6 +76,12 @@
       "action": "edited",
       "postId": 6,
       "user": "Team Member",
+      "time": "2026-05-04T07:36:12.667Z"
+    },
+    {
+      "action": "edited",
+      "postId": 6,
+      "user": "Team Member",
       "time": "2026-05-04T07:35:36.660Z"
     },
     {
@@ -527,11 +533,6 @@
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5.jpg",
       "ts": 1777875247416
-    },
-    "6": {
-      "type": "img",
-      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-6.jpg",
-      "ts": 1777878188998
     }
   },
   "slides": {
