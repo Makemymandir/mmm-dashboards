@@ -291,6 +291,11 @@
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5.jpg",
       "ts": 1777875247416
+    },
+    "6": {
+      "type": "img",
+      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-6.jpg",
+      "ts": 1777878188998
     }
   },
   "slides": {
