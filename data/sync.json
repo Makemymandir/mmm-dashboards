@@ -52,6 +52,14 @@
       "brief": "",
       "cta": ""
     },
+    "7": {
+      "title": "BALAJI 12/5/2025",
+      "type": "Carousel",
+      "hook": "",
+      "caption": "",
+      "brief": "",
+      "cta": "DM your requirement"
+    },
     "8": {
       "title": "3 mandir packages — what they cost",
       "type": "Carousel",
@@ -72,6 +80,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 7,
+      "user": "Team Member",
+      "time": "2026-05-04T07:37:38.206Z"
+    },
     {
       "action": "edited",
       "postId": 6,
@@ -533,6 +547,11 @@
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5.jpg",
       "ts": 1777875247416
+    },
+    "6": {
+      "type": "img",
+      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-6.jpg",
+      "ts": 1777878188998
     }
   },
   "slides": {
