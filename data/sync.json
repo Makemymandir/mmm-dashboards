@@ -77,7 +77,7 @@
       "cta": ""
     },
     "10": {
-      "title": "RENUKAMATA 26/5/2025",
+      "title": "3D AI Mandir 26/5/2025",
       "type": "Carousel",
       "hook": "",
       "caption": "",
@@ -104,6 +104,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 10,
+      "user": "Team Member",
+      "time": "2026-05-04T07:44:18.632Z"
+    },
     {
       "action": "edited",
       "postId": 11,
