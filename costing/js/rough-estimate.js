@@ -403,7 +403,7 @@ function buildEstimatePageHtml(data) {
         <strong>DISCLAIMER:</strong> This is a preliminary estimate based on initial inputs. Final pricing will be confirmed after design finalisation and may vary based on design development, materials, and site conditions. All mandirs are customised, and changes during the design process may impact the final cost. Additional charges such as design fees, installation, transport, and taxes are extra unless specified. Estimated timelines will be shared after final design approval. All designs remain the intellectual property of Make My Mandir. Unauthorized use will lead to legal action.
       </div>
       <div class="pdf-footer">
-        <div class="pdf-footer-block"><div class="pdf-footer-label">Address</div><strong>Make My Mandir</strong><br>Jehangir Villa, Ground Floor,<br>Shankarseth Road, Bhawani Peth,<br>Pune – 411042</div>
+        <div class="pdf-footer-block"><div class="pdf-footer-label">Address</div><strong>Make My Mandir</strong><br>Pune, Maharashtra,<br>India</div>
         <div class="pdf-footer-block"><div class="pdf-footer-label">Contact</div><strong>+91 77679 62441</strong><br>info@makemymandir.com</div>
         <div class="pdf-footer-block"><div class="pdf-footer-label">Online</div>makemymandir.com<br>@make_my_mandir</div>
       </div>
