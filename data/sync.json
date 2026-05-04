@@ -13,7 +13,7 @@
       "cta": ""
     },
     "2": {
-      "title": "Ai 3D mandir ",
+      "title": "Ai 3D mandir 7/5/2025",
       "type": "Carousel",
       "hook": "",
       "caption": "",
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 2,
+      "user": "Team Member",
+      "time": "2026-05-04T07:29:50.628Z"
+    },
     {
       "action": "edited",
       "postId": 1,
