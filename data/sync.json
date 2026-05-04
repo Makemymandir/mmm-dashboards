@@ -29,12 +29,12 @@
       "cta": ""
     },
     "4": {
-      "title": "bhima shankar",
+      "title": "3D AI Mandir 12/5/2025",
       "type": "Carousel",
-      "hook": "Is your mandir in the wrong spot? Here's how to fix it.",
-      "caption": "A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",
-      "brief": "bhimashankar",
-      "cta": "DM floor plan"
+      "hook": "",
+      "caption": "",
+      "brief": "",
+      "cta": ""
     },
     "5": {
       "title": "",
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 4,
+      "user": "Team Member",
+      "time": "2026-05-04T07:32:14.524Z"
+    },
     {
       "action": "edited",
       "postId": 3,
