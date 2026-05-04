@@ -5,8 +5,12 @@
   },
   "edits": {
     "1": {
-      "hook": "She sent us a plain wall. We sent back this...",
-      "cta": "DM your space photo"
+      "title": "Bhima Shankar Temple",
+      "type": "Reel",
+      "hook": "",
+      "caption": "\n",
+      "brief": "",
+      "cta": ""
     },
     "2": {
       "title": "mahalaxmi",
@@ -60,6 +64,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 1,
+      "user": "Team Member",
+      "time": "2026-05-04T07:21:26.885Z"
+    },
     {
       "action": "edited",
       "postId": 5,
