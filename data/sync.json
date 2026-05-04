@@ -45,12 +45,12 @@
       "cta": ""
     },
     "6": {
-      "title": "Narasimha Jayanti — festive greeting",
-      "type": "Static",
-      "hook": "Jai Shri Narasimha. May the divine protector guard your home today.",
-      "caption": "Jai Shri Narasimha on this blessed Jayanti. 🙏\n\n#NarasimhaJayanti #JaiShriNarasimha #makemymandir",
-      "brief": "Devotional graphic in gold and maroon.",
-      "cta": "None"
+      "title": "3D AI Mandir 16/5/2025",
+      "type": "Carousel",
+      "hook": "",
+      "caption": "",
+      "brief": "",
+      "cta": ""
     },
     "8": {
       "title": "3 mandir packages — what they cost",
@@ -72,6 +72,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 6,
+      "user": "Team Member",
+      "time": "2026-05-04T07:35:36.660Z"
+    },
     {
       "action": "edited",
       "postId": 5,
