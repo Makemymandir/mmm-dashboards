@@ -6,7 +6,7 @@
   "edits": {
     "1": {
       "title": "Bhima Shankar Temple 5/5/2025",
-      "type": "Reel",
+      "type": "Carousel",
       "hook": "",
       "caption": "",
       "brief": "",
@@ -112,6 +112,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 1,
+      "user": "Team Member",
+      "time": "2026-05-05T05:34:22.689Z"
+    },
     {
       "action": "edited",
       "postId": 12,
