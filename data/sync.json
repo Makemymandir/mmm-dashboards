@@ -6,18 +6,11 @@
   "edits": {
     "1": {
       "title": "Bhima Shankar Temple 5/5/2025",
-      "type": "Carousel",
+      "type": "Reel",
       "hook": "",
       "caption": "",
       "brief": "",
-      "cta": "",
-      "slides": [
-        "Slide 1",
-        "Slide 2",
-        "Slide 3",
-        "Slide 4",
-        "Slide 5"
-      ]
+      "cta": ""
     },
     "2": {
       "title": "3D AI Mandir 7/5/2025",
@@ -679,11 +672,6 @@
     }
   ],
   "media": {
-    "1": {
-      "type": "img",
-      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-1.jpg",
-      "ts": 1778061633504
-    },
     "5": {
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5.jpg",
