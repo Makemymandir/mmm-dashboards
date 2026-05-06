@@ -1251,9 +1251,13 @@ function navTo(page,el){
 /* v3: A post is "ready for admin review" only when team has finished uploading.
    Carousel = every slide present. Static/Reel = the single media present. */
 function isMediaReady(p){
-  if(p.type==="Carousel"&&p.slides){
+  // v6.3 FIX: respect type/slide edits
+  const ed=ge(p.id);
+  const effType=ed.type||p.type;
+  const effSlides=ed.slides||p.slides;
+  if(effType==="Carousel"&&effSlides){
     const ups=gsl(p.id);
-    return p.slides.every((_,i)=>ups[i]&&(ups[i].url||ups[i].data));
+    return effSlides.every((_,i)=>ups[i]&&(ups[i].url||ups[i].data));
   }
   const m=gm(p.id);
   return !!(m&&(m.url||m.data));
@@ -1357,10 +1361,15 @@ function renderCard(p,isAdmin){
   const upCnt=Object.keys(ups).length;
   const isVid=m&&m.type==="video"&&p.type!=="Carousel";
   const isToday=getTodayPosts().find(x=>x.id===p.id)&&st!=="published";
+  // v6.3: Use the EFFECTIVE type and slides — i.e. respect the user's edits,
+  // so a Static post converted to Carousel via the dropdown shows carousel behavior on the card too.
+  const ed=ge(p.id);
+  const effType=ed.type||p.type;
+  const effSlides=ed.slides||p.slides;
   /* v3: For Carousels the card thumbnail must come from the first uploaded slide.
      A stale single-image (md-X) entry from earlier test runs must NOT win. */
   let imgSrc=null;
-  if(p.type==="Carousel"){
+  if(effType==="Carousel"){
     if(upCnt){
       const firstKey=Object.keys(ups).sort((a,b)=>(+a)-(+b))[0];
       imgSrc=resolveMediaSrc(ups[firstKey]);
@@ -1369,10 +1378,10 @@ function renderCard(p,isAdmin){
     imgSrc=resolveMediaSrc(m);
   }
   imgSrc=imgSrc||THUMBS[p.id];
-  const editedType=ge(p.id).type||p.type;const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[editedType];
+  const editedType=effType;const tcls={Reel:"bt-reel",Carousel:"bt-carousel",Static:"bt-static"}[editedType];
   const stcls={"pending":"pc-pending","approved":"pc-approved","rejected":"pc-rejected","revision":"pc-revision","published":"pc-published"}[st];
   const sbcls={"pending":"bs-pending","approved":"bs-approved","rejected":"bs-rejected","revision":"bs-revision","published":"bs-published"}[st];
-  const slides=p.slides;
+  const slides=effSlides;
 
   let rejBanner="";
   if(st==="rejected"&&reason)rejBanner=`<div class="rej-banner"><div class="rb-text">❌ ${reason.substring(0,90)}${reason.length>90?"...":""}</div></div>`;
@@ -1380,7 +1389,7 @@ function renderCard(p,isAdmin){
 
   const slideDots=slides?`<div class="slide-dots">${slides.map((_,i)=>`<div class="sdot${i===0?" on":""}"></div>`).join("")}</div>`:"";
   let mediaBadge="";
-  if(p.type==="Carousel"&&slides)mediaBadge=upCnt?`<span class="badge-team">${upCnt}/${slides.length} slides ✓</span>`:"";
+  if(effType==="Carousel"&&slides)mediaBadge=upCnt?`<span class="badge-team">${upCnt}/${slides.length} slides ✓</span>`:"";
   else if(m)mediaBadge=`<span class="badge-team">${isVid?"🎬 Video":"📷 Photo"} uploaded</span>`;
 
   let actions=`<button class="ab ab-rev" onclick="openReview(${p.id})">Review</button>`;
@@ -1390,7 +1399,7 @@ function renderCard(p,isAdmin){
     actions+=`<button class="ab ab-rej" onclick="openRejOv(${p.id})">Reject</button>`;
   }
   actions+=`<button class="ab ab-copy" onclick="quickCopy(${p.id},this)">Copy</button>`;
-  if(m||(p.type==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
+  if(m||(effType==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
 
   const camp=getCampaignForPost(p.id);
   const campBadge=camp?`<span class="badge-camp">📅 ${camp.name.length>20?camp.name.substring(0,20)+"…":camp.name}</span>`:"";
@@ -1491,7 +1500,7 @@ function openReview(id){
   </div></div>`;
 
   let body=brandRef+`
-    <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
+    <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);" onchange="onTypeChange(this.value)"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
     <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${pp.hook.replace(/"/g,"&quot;")}"></div>
     <div class="fg">
       <span class="fl">Caption <span class="fl-cnt ${cCls}">${chars}/2200 chars · ${hashes} hashtags</span></span>
@@ -1539,18 +1548,23 @@ function openReview(id){
 function buildModalLeft(p,m){
   const left=document.getElementById("modalLeft");
   const ups=gsl(p.id);
-  if(p.type==="Carousel"&&p.slides){
-    const count=p.slides.length;
-    const slidesHtml=p.slides.map((s,i)=>{
+  // v6.3 FIX: Use the EDITED type and slides if user has changed them via the dropdown.
+  // This way "Static → Carousel" conversion shows the multi-upload UI immediately.
+  const ed=ge(p.id);
+  const effectiveType=ed.type||p.type;
+  const effectiveSlides=ed.slides||p.slides;
+  if(effectiveType==="Carousel"&&effectiveSlides&&effectiveSlides.length){
+    const count=effectiveSlides.length;
+    const slidesHtml=effectiveSlides.map((s,i)=>{
       const up=ups[i];
       const upSrc=resolveMediaSrc(up);
       return `<div class="cv-slide${i===0?" on":""}" id="cvS${i}">
         ${upSrc?`<img src="${upSrc}"><div class="cv-slide-lbl">Slide ${i+1} of ${count}</div>`:`<div class="cv-slide-lbl">Slide ${i+1} of ${count}</div><div class="cv-slide-txt">${s}</div><div class="cv-slide-hint">Upload your design using the buttons below</div>`}
       </div>`;
     }).join("");
-    const dotsHtml=p.slides.map((_,i)=>`<div class="cv-d${i===0?" on":""}" onclick="goSlide(${i})"></div>`).join("");
-    const upBtns=p.slides.map((_,i)=>`<button class="su-btn${ups[i]?" has":""}" onclick="trigSUp(${i})" title="Upload slide ${i+1}">${ups[i]?"✓ ":""}S${i+1}</button>`).join("");
-    const totalSlides=p.slides.length;
+    const dotsHtml=effectiveSlides.map((_,i)=>`<div class="cv-d${i===0?" on":""}" onclick="goSlide(${i})"></div>`).join("");
+    const upBtns=effectiveSlides.map((_,i)=>`<button class="su-btn${ups[i]?" has":""}" onclick="trigSUp(${i})" title="Upload slide ${i+1}">${ups[i]?"✓ ":""}S${i+1}</button>`).join("");
+    const totalSlides=effectiveSlides.length;
     const filledCnt=Object.keys(ups).filter(k=>ups[k]&&(ups[k].url||ups[k].data)).length;
     const allDone=filledCnt===totalSlides;
     const primaryLabel=filledCnt===0?`📷 Upload All ${totalSlides} Slides`:allDone?`✓ All ${totalSlides} slides uploaded — Replace all?`:`📷 Upload remaining ${totalSlides-filledCnt} slide${totalSlides-filledCnt>1?"s":""}`;
@@ -1565,7 +1579,7 @@ function buildModalLeft(p,m){
         <button class="mub-btn mub-img" onclick="trigMultiSUp()" style="flex:1;">${primaryLabel}</button>
         <button class="mub-btn mub-ai" onclick="openAIPrompts(${p.id},${typeof curSlide!=='undefined'?'curSlide':0})" title="Generate AI image prompts for current slide">🎨 AI Prompts</button>
       </div>
-      <div class="slide-ups"><span class="su-lbl">Or replace one slide:</span>${upBtns}</div>
+      <div class="slide-ups"><span class="su-lbl">Or replace one slide:</span>${upBtns}<button class="su-btn" onclick="adjustSlideCount(1)" title="Add one more slide" style="background:rgba(232,119,34,.18);color:var(--o);border-color:var(--o);">+1</button>${count>2?`<button class="su-btn" onclick="adjustSlideCount(-1)" title="Remove last slide" style="color:var(--r);border-color:rgba(217,71,60,.5);">−1</button>`:""}</div>
     </div>`;
   }else{
     const isVid=m&&m.type==="video";
@@ -1582,15 +1596,21 @@ function buildModalLeft(p,m){
   }
 }
 
+/* v6.3: helper — get the effective slides array (edits override original POSTS data) */
+function getEffSlides(postId){
+  const p=POSTS.find(x=>x.id===postId);if(!p)return null;
+  const ed=ge(postId);
+  return ed.slides||p.slides;
+}
 function goSlide(idx){
-  const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;
+  const slides=getEffSlides(revId);if(!slides)return;
   document.querySelectorAll(".cv-slide").forEach((s,i)=>s.classList.toggle("on",i===idx));
   document.querySelectorAll(".cv-d").forEach((d,i)=>d.classList.toggle("on",i===idx));
-  const ctr=document.getElementById("cvCtr");if(ctr)ctr.textContent=`${idx+1} / ${p.slides.length}`;
+  const ctr=document.getElementById("cvCtr");if(ctr)ctr.textContent=`${idx+1} / ${slides.length}`;
   curSlide=idx;
 }
-function nextSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;goSlide((curSlide+1)%p.slides.length);}
-function prevSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;goSlide((curSlide-1+p.slides.length)%p.slides.length);}
+function nextSlide(){const slides=getEffSlides(revId);if(!slides)return;goSlide((curSlide+1)%slides.length);}
+function prevSlide(){const slides=getEffSlides(revId);if(!slides)return;goSlide((curSlide-1+slides.length)%slides.length);}
 
 function trigSUp(idx){uploadSlideIdx=idx;document.getElementById("slideInp").click();}
 
@@ -1806,9 +1826,65 @@ async function addNote(){
 async function saveEdits(){
   if(!revId)return;
   const _t=document.getElementById("fTitle"),_ty=document.getElementById("fType");const ed={title:_t?_t.value:gp(revId).title,type:_ty?_ty.value:gp(revId).type,hook:document.getElementById("fHook")?.value,caption:document.getElementById("fCaption")?.value,brief:document.getElementById("fBrief")?.value,cta:document.getElementById("fCta")?.value};
+  // v6.3: preserve slides array if it exists in the current edit (so type-conversion + slide-count adjustments persist)
+  const existingEd=ge(revId);
+  if(existingEd.slides)ed.slides=existingEd.slides;
   sto("ed-"+revId,ed);
   logAct({action:"edited",postId:revId,user:user?.name,time:new Date().toISOString()});
   render();toast("Edits saved","ok");
+  await pushToGitHub();
+}
+
+/* v6.3: Type dropdown change — convert post structure on the fly.
+   Static/Reel → Carousel: create 5 default empty slide placeholders so the multi-upload UI renders.
+   Carousel → Static/Reel: keep slides on edit object in case user switches back; just hide the carousel UI. */
+function onTypeChange(newType){
+  if(!revId)return;
+  const ed=ge(revId);
+  const p=POSTS.find(x=>x.id===revId);
+  ed.type=newType;
+  if(newType==="Carousel" && (!ed.slides && !p.slides)){
+    // Create 5 default empty placeholders for a fresh carousel
+    ed.slides=["Slide 1","Slide 2","Slide 3","Slide 4","Slide 5"];
+    toast("Converted to Carousel — 5 empty slides created. Use ±1 buttons to adjust count.","info");
+  }else if(newType==="Carousel" && !ed.slides && p.slides){
+    // Was already a Carousel originally — nothing to do, p.slides will be used
+  }
+  sto("ed-"+revId,ed);
+  // Re-render the modal left side to show the new structure
+  curSlide=0;
+  buildModalLeft(p,gm(revId));
+  render(); // also refresh the cards behind the modal
+}
+
+/* v6.3: Add or remove a slide from the carousel. Only works on the current edit. */
+async function adjustSlideCount(delta){
+  if(!revId)return;
+  const ed=ge(revId);
+  const p=POSTS.find(x=>x.id===revId);
+  // Get the currently effective slides
+  let slides=(ed.slides||p.slides||[]).slice();
+  if(delta>0){
+    if(slides.length>=10){toast("Max 10 slides per carousel","err");return;}
+    slides.push(`Slide ${slides.length+1}`);
+  }else{
+    if(slides.length<=2){toast("Carousel needs at least 2 slides","err");return;}
+    // Removing the last slide — also clean up its uploaded image if any
+    const lastIdx=slides.length-1;
+    const ups=gsl(revId);
+    if(ups[lastIdx]){
+      delete ups[lastIdx];
+      sto("slides-"+revId,ups);
+    }
+    slides.pop();
+  }
+  ed.slides=slides;
+  ed.type="Carousel"; // ensure type is locked in
+  sto("ed-"+revId,ed);
+  if(curSlide>=slides.length)curSlide=slides.length-1;
+  buildModalLeft(p,gm(revId));
+  render();
+  toast(`Now ${slides.length} slides`,"ok");
   await pushToGitHub();
 }
 function closeModal(){document.getElementById("revBg").classList.remove("open");revId=null;}
