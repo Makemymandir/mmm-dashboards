@@ -22,7 +22,7 @@
     },
     "3": {
       "title": "TULJA BHAVANI TEMPLE 9/5/2025",
-      "type": "Carousel",
+      "type": "Reel",
       "hook": "",
       "caption": "",
       "brief": "",
@@ -664,11 +664,6 @@
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-1.jpg",
       "ts": 1778061633504
-    },
-    "3": {
-      "type": "img",
-      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-3.jpg",
-      "ts": 1778068730284
     },
     "5": {
       "type": "img",
