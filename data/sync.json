@@ -26,7 +26,15 @@
       "hook": "",
       "caption": "",
       "brief": "",
-      "cta": ""
+      "cta": "",
+      "slides": [
+        "Slide 1",
+        "Slide 2",
+        "Slide 3",
+        "Slide 4",
+        "Slide 5",
+        "Slide 6"
+      ]
     },
     "4": {
       "title": "3D AI Mandir 12/5/2025",
