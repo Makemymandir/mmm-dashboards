@@ -347,6 +347,173 @@ input[type=file]{display:none;}
   .mleft{width:100%;max-height:300px;}
   .stats-row{grid-template-columns:repeat(3,1fr);}
 }
+/* v6: Knowledge / Hooks / Templates / Requests — shared layout */
+.k-wrap{max-width:920px;margin:0 auto;padding:14px 16px 60px;}
+.k-intro{font-size:12px;color:var(--mid);background:var(--w);padding:11px 14px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.5;}
+.k-toolbar{display:flex;gap:10px;margin-bottom:11px;align-items:center;}
+.k-search{flex:1;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:8px 12px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.k-search:focus{border-color:var(--o);}
+.k-new{background:var(--o);color:#fff;border:none;border-radius:7px;padding:9px 14px;font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap;}
+.k-new:hover{background:#cf6a1d;}
+.k-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px;}
+.kf-pill{font-size:11px;background:var(--w);color:var(--mid);border:1px solid var(--bdr);border-radius:99px;padding:5px 10px;cursor:pointer;font-family:'Inter',sans-serif;}
+.kf-pill:hover{border-color:var(--o);color:var(--o);}
+.kf-pill.on{background:var(--dark);color:#fff;border-color:var(--dark);}
+.kf-c{font-size:10px;opacity:.7;margin-left:2px;}
+.k-list,.hk-list,.tpl-list,.rq-list{display:flex;flex-direction:column;gap:10px;}
+.k-empty{padding:30px;text-align:center;color:var(--mid);font-size:13px;background:var(--w);border-radius:10px;border:1px dashed var(--bdr);}
+
+/* v6: Knowledge cards */
+.k-card{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:12px 15px;}
+.k-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.k-cat-pill{display:inline-block;background:rgba(232,119,34,.12);color:var(--o);font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-right:8px;text-transform:uppercase;letter-spacing:.5px;}
+.k-title{font-size:14px;font-weight:600;color:var(--dark);}
+.k-acts{display:flex;gap:5px;flex-shrink:0;}
+.k-edit,.k-del{background:transparent;border:1px solid var(--bdr);border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer;color:var(--mid);font-family:'Inter',sans-serif;}
+.k-edit:hover{color:var(--o);border-color:var(--o);}
+.k-del:hover{color:var(--r);border-color:var(--r);}
+.k-body{font-size:12px;color:var(--dark);line-height:1.6;margin-top:5px;}
+.k-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.k-tag{font-size:10px;background:#f1eee8;color:var(--mid);padding:2px 7px;border-radius:99px;}
+
+/* v6: Hooks tabs + cards */
+.hk-tabs{display:flex;gap:5px;background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:4px;margin-bottom:11px;flex-wrap:wrap;}
+.hk-tab{flex:1;min-width:120px;background:transparent;border:none;color:var(--mid);font-size:11px;font-weight:600;padding:7px 10px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;}
+.hk-tab:hover{color:var(--dark);}
+.hk-tab.on{background:var(--dark);color:#fff;}
+.hk-c{font-size:10px;opacity:.7;}
+.hk-card{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:11px 14px;}
+.hk-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px;}
+.hk-cat{font-size:10px;font-weight:700;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;}
+.hk-acts{display:flex;gap:5px;align-items:center;}
+.hk-copy{background:rgba(232,119,34,.1);color:var(--o);border:1px solid rgba(232,119,34,.3);border-radius:5px;padding:3px 9px;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;}
+.hk-copy:hover{background:var(--o);color:#fff;}
+.hk-copy.ok{background:var(--g);color:#fff;border-color:var(--g);}
+.hk-edit,.hk-del{background:transparent;border:1px solid var(--bdr);border-radius:5px;padding:3px 7px;font-size:10px;cursor:pointer;color:var(--mid);font-family:'Inter',sans-serif;}
+.hk-edit:hover{color:var(--o);border-color:var(--o);}
+.hk-del:hover{color:var(--r);border-color:var(--r);}
+.hk-body{font-size:13px;color:var(--dark);line-height:1.6;white-space:pre-wrap;}
+.hk-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px;}
+.hk-tag{font-size:9px;background:#f1eee8;color:var(--mid);padding:2px 6px;border-radius:99px;}
+
+/* v6: Templates */
+.tpl-card{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:13px 16px;}
+.tpl-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;border-bottom:1px solid var(--bdr);padding-bottom:9px;}
+.tpl-name{font-size:14px;font-weight:700;color:var(--dark);}
+.tpl-fw{font-size:11px;color:var(--mid);margin-top:2px;}
+.tpl-section{margin-bottom:9px;}
+.tpl-l{font-size:9.5px;font-weight:700;color:var(--o);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px;}
+.tpl-v{font-size:12px;color:var(--dark);line-height:1.55;background:#faf8f4;padding:8px 10px;border-radius:6px;position:relative;padding-right:38px;}
+.tpl-brief{background:#f4ede0;}
+.tpl-copy{position:absolute;top:6px;right:7px;background:var(--w);border:1px solid var(--bdr);border-radius:5px;padding:3px 7px;font-size:10px;cursor:pointer;color:var(--mid);font-family:'Inter',sans-serif;}
+.tpl-copy:hover{color:var(--o);border-color:var(--o);}
+
+/* v6: Requests */
+.rq-card{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:12px 15px;}
+.rq-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;flex-wrap:wrap;gap:7px;}
+.rq-status-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-right:7px;}
+.rq-st-pending{background:rgba(245,158,11,.18);color:#92722e;}
+.rq-st-approved{background:rgba(15,110,86,.18);color:#0f6e56;}
+.rq-st-in_progress{background:rgba(74,144,226,.18);color:#2c6db5;}
+.rq-st-done{background:rgba(123,53,148,.18);color:#7b3594;}
+.rq-st-declined{background:rgba(217,71,60,.18);color:var(--r);}
+.rq-type{font-size:11px;font-weight:700;color:var(--dark);}
+.rq-when{font-size:11px;color:var(--mid);margin-left:7px;}
+.rq-meta{font-size:10px;color:var(--mid);}
+.rq-obj,.rq-brief{font-size:12px;color:var(--dark);line-height:1.5;margin-top:4px;}
+.rq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:5px;margin-top:8px;font-size:11px;color:var(--mid);}
+.rq-grid b{color:var(--dark);font-weight:600;}
+.rq-admin{display:flex;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--bdr);align-items:center;flex-wrap:wrap;}
+.rq-app{background:var(--g);color:#fff;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;}
+.rq-prog{background:var(--b);color:#fff;border:none;border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;}
+.rq-dec{background:transparent;color:var(--r);border:1px solid var(--r);border-radius:5px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;}
+.rq-dec:hover{background:var(--r);color:#fff;}
+.rq-status-sel{font-size:11px;padding:4px 7px;border-radius:5px;border:1px solid var(--bdr);font-family:'Inter',sans-serif;}
+
+/* v6: AI prompts modal */
+.ai-intro{font-size:12px;color:var(--mid);background:linear-gradient(135deg,rgba(232,119,34,.06),rgba(123,53,148,.05));padding:10px 13px;border-radius:8px;margin-bottom:13px;line-height:1.55;}
+.ai-card{background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;margin-bottom:11px;}
+.ai-title{font-size:13px;font-weight:700;color:var(--dark);}
+.ai-hint{font-size:11px;color:var(--mid);margin:2px 0 7px;line-height:1.4;}
+.ai-prompt{width:100%;background:#faf8f4;border:1px solid var(--bdr);border-radius:6px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:11.5px;line-height:1.5;color:var(--dark);resize:vertical;outline:none;box-sizing:border-box;}
+.ai-actions{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.ai-btn{font-size:10.5px;font-weight:600;padding:5px 9px;border-radius:5px;border:1px solid var(--bdr);background:#fff;color:var(--dark);cursor:pointer;font-family:'Inter',sans-serif;}
+.ai-btn:hover{border-color:var(--o);color:var(--o);}
+.ai-copy{background:var(--o);color:#fff;border-color:var(--o);}
+.ai-copy:hover{background:#cf6a1d;color:#fff;}
+.ai-copy.ok{background:var(--g);border-color:var(--g);}
+.ai-chatgpt:hover{border-color:#10a37f;color:#10a37f;}
+.ai-gemini:hover{border-color:#4285f4;color:#4285f4;}
+.ai-grok:hover{border-color:#000;color:#000;}
+.ai-claude:hover{border-color:#cc785c;color:#cc785c;}
+.ai-foot-note{font-size:11px;color:var(--mid);background:#faf8f4;padding:9px 11px;border-radius:7px;line-height:1.5;margin-top:6px;}
+.mub-ai{background:rgba(123,53,148,.85);color:#fff;}
+.mub-ai:hover{background:#7b3594;}
+
+/* v6: Brand reference inside review modal */
+.brand-ref{background:linear-gradient(135deg,rgba(232,119,34,.07),rgba(123,53,148,.05));border:1px solid var(--bdr);border-radius:9px;padding:9px 12px;font-size:11px;line-height:1.5;}
+.br-row{display:flex;gap:7px;padding:2px 0;}
+.br-l{font-weight:700;color:var(--mid);min-width:80px;flex-shrink:0;}
+.br-v{color:var(--dark);flex:1;word-break:break-word;}
+.br-camp{background:rgba(123,53,148,.08);margin:5px -12px -9px;padding:6px 12px;border-radius:0 0 8px 8px;border-top:1px solid rgba(123,53,148,.15);}
+
+/* v5: Brand DNA */
+.dna-wrap{max-width:780px;margin:0 auto;padding:14px 16px 80px;}
+.dna-intro{font-size:12px;color:var(--mid);background:var(--w);padding:11px 14px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.5;}
+.dna-row{margin-bottom:13px;}
+.dna-l{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--dark);margin-bottom:4px;}
+.dna-h{font-size:11px;color:var(--mid);margin-bottom:5px;line-height:1.4;}
+.dna-i{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:13px;color:var(--dark);outline:none;transition:border-color .15s;box-sizing:border-box;}
+.dna-i:focus{border-color:var(--o);}
+.dna-i:disabled{background:#f7f6f3;color:var(--mid);cursor:not-allowed;}
+textarea.dna-i{resize:vertical;min-height:54px;font-family:'Inter',sans-serif;line-height:1.5;}
+.dna-bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0;display:flex;gap:10px;border-top:1px solid var(--bdr);margin-top:18px;}
+.dna-bar.dna-readonly{justify-content:center;color:var(--mid);font-size:12px;background:transparent;border:none;}
+.dna-save{flex:1;background:var(--o);color:#fff;border:none;border-radius:8px;padding:11px;font-weight:600;font-size:13px;cursor:pointer;}
+.dna-save:hover{background:#cf6a1d;}
+.dna-reset{background:transparent;color:var(--mid);border:1px solid var(--bdr);border-radius:8px;padding:11px 16px;font-size:12px;cursor:pointer;}
+.dna-reset:hover{color:var(--r);border-color:var(--r);}
+
+/* v5: Campaigns */
+.cmp-wrap{max-width:920px;margin:0 auto;padding:14px 16px 60px;}
+.cmp-intro{font-size:12px;color:var(--mid);background:var(--w);padding:11px 14px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.5;}
+.cmp-new{background:var(--o);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:600;font-size:12px;cursor:pointer;margin-bottom:14px;}
+.cmp-new:hover{background:#cf6a1d;}
+.cmp-list{display:flex;flex-direction:column;gap:11px;}
+.cmp-card{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:13px 15px;}
+.cmp-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px;}
+.cmp-name{font-size:14px;font-weight:700;color:var(--dark);}
+.cmp-dates{font-size:11px;color:var(--mid);margin-top:2px;}
+.cmp-acts{display:flex;gap:6px;}
+.cmp-edit,.cmp-del{background:transparent;border:1px solid var(--bdr);border-radius:6px;padding:4px 9px;font-size:11px;cursor:pointer;color:var(--mid);}
+.cmp-edit:hover{color:var(--o);border-color:var(--o);}
+.cmp-del:hover{color:var(--r);border-color:var(--r);}
+.cmp-desc{font-size:12px;color:var(--dark);margin-top:4px;line-height:1.5;}
+.cmp-theme{font-size:11px;color:var(--mid);margin-top:5px;line-height:1.5;}
+.cmp-pills{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;}
+.cmp-pill{font-size:10px;background:rgba(232,119,34,.1);color:var(--o);padding:3px 8px;border-radius:99px;font-weight:500;}
+.cmp-empty{font-size:11px;color:var(--mid);font-style:italic;}
+.cmp-empty-big{padding:30px;text-align:center;color:var(--mid);font-size:13px;background:var(--w);border-radius:10px;border:1px dashed var(--bdr);}
+.cmp-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;}
+.cmp-modal{background:var(--w);border-radius:12px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;}
+.cmp-mhd{padding:14px 17px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;font-size:14px;}
+.cmp-mclose{background:transparent;border:none;font-size:22px;color:var(--mid);cursor:pointer;line-height:1;}
+.cmp-mbody{padding:14px 17px;overflow-y:auto;flex:1;}
+.cmp-fl{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dark);margin:9px 0 4px;}
+.cmp-fi{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:13px;outline:none;box-sizing:border-box;}
+.cmp-fi:focus{border-color:var(--o);}
+textarea.cmp-fi{resize:vertical;min-height:42px;line-height:1.5;}
+.cmp-fr{display:flex;gap:10px;}
+.cmp-plist{max-height:200px;overflow-y:auto;border:1px solid var(--bdr);border-radius:7px;padding:7px 11px;background:#faf8f4;}
+.cmp-pcheck{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;cursor:pointer;color:var(--dark);}
+.cmp-pcheck input[type=checkbox]{cursor:pointer;}
+.cmp-lock{color:var(--mid);font-style:italic;font-size:11px;}
+.cmp-mfoot{padding:12px 17px;border-top:1px solid var(--bdr);display:flex;gap:9px;}
+.cmp-save{flex:1;background:var(--o);color:#fff;border:none;border-radius:7px;padding:9px;font-weight:600;font-size:13px;cursor:pointer;}
+.cmp-cancel{background:transparent;border:1px solid var(--bdr);border-radius:7px;padding:9px 16px;font-size:12px;cursor:pointer;color:var(--mid);}
+
+/* v5: Campaign badge on post cards */
+.badge-camp{position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:9.5px;background:rgba(123,53,148,.92);color:#fff;padding:3px 9px;border-radius:99px;font-weight:600;letter-spacing:.3px;backdrop-filter:blur(6px);max-width:55%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -387,6 +554,14 @@ input[type=file]{display:none;}
       <div class="nav-item" onclick="navTo('published',this)"><span class="nav-icon">🚀</span>Published<span class="nav-cnt pu" id="nc-pub">0</span></div>
       <div class="nav-s">Tools</div>
       <div class="nav-item" onclick="navTo('activity',this)"><span class="nav-icon">📜</span>Activity Log</div>
+      <div class="nav-item" onclick="navTo('campaigns',this)"><span class="nav-icon">📅</span>Campaigns<span class="nav-cnt" id="nc-camp">0</span></div>
+      <div class="nav-item" onclick="navTo('requests',this)"><span class="nav-icon">📥</span>Content Requests<span class="nav-cnt am" id="nc-req">0</span></div>
+      <div class="nav-divider" style="height:1px;background:rgba(255,255,255,.07);margin:6px 8px;"></div>
+      <div class="nav-section-lbl" style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.2px;text-transform:uppercase;padding:6px 10px 3px;font-weight:700;">REFERENCE</div>
+      <div class="nav-item" onclick="navTo('knowledge',this)"><span class="nav-icon">📚</span>Knowledge Base<span class="nav-cnt" id="nc-know">0</span></div>
+      <div class="nav-item" onclick="navTo('hooks',this)"><span class="nav-icon">🎬</span>Hooks &amp; Scripts<span class="nav-cnt" id="nc-hook">0</span></div>
+      <div class="nav-item" onclick="navTo('templates',this)"><span class="nav-icon">📋</span>Post Templates<span class="nav-cnt" id="nc-tpl">0</span></div>
+      <div class="nav-item" onclick="navTo('brandDNA',this)"><span class="nav-icon">🎨</span>Brand DNA</div>
       <div class="nav-item" id="syncSettingsNav" onclick="openSetupModal()" style="display:none"><span class="nav-icon">⚙️</span>Sync Settings</div>
     </div>
     <div class="sb-bottom"><button class="logout-btn" onclick="doLogout()">Sign Out</button></div>
@@ -443,6 +618,7 @@ input[type=file]{display:none;}
       <div class="sm-title">⚙️ Connect GitHub — One-time Setup</div>
       <button onclick="closeSetupModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;">×</button>
     </div>
+    <div id="setupConnectedBanner" style="display:none;"></div>
     <div class="sm-sub" style="background:rgba(232,119,34,.12);border-left:3px solid #FFA657;padding:10px 12px;border-radius:6px;margin:8px 0 12px;">
       <strong style="color:#FFA657;">Important:</strong> Without this step nothing actually saves. Your changes will appear to work but team members and admin will NOT see each other's updates.
     </div>
@@ -470,6 +646,7 @@ input[type=file]{display:none;}
 <input type="file" id="imgInp" accept="image/*" onchange="handleUpload(this,'img')">
 <input type="file" id="vidInp" accept="video/*" onchange="handleUpload(this,'vid')">
 <input type="file" id="slideInp" accept="image/*" onchange="handleSlideUpload(this)">
+<input type="file" id="slideMultiInp" accept="image/*" multiple onchange="handleMultiSlideUpload(this)">
 <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
 <script>
@@ -559,6 +736,96 @@ function gm(id){return stg("md-"+id);}
 function gr(id){return stg("rn-"+id)||"";}
 function gsl(id){return stg("slides-"+id)||{};}
 function gNotes(id){return stg("notes-"+id)||[];}
+
+/* v5: Brand DNA + Campaigns helpers.
+   Brand DNA is a single object describing voice, audience, visuals, hashtags, etc.
+   Campaigns is an array of period-bound groupings of posts. */
+const DEFAULT_BRAND_DNA={
+  brand_name:"MakeMyMandir",
+  tagline:"Custom mandirs, crafted to last a lifetime",
+  voice:"Devotional yet modern. Warm, professional, honest. Not pushy.",
+  audience:"Indian families, 30–55, homeowners in Pune / Mumbai / Nashik / Aurangabad / Kolhapur. Decision-makers planning a custom pooja space.",
+  hero_offerings:"Corian mandirs · Marble mandirs · Wall-mount mandirs · Cabinet mandirs · Full pooja rooms",
+  price_range:"₹30,000 – ₹2,00,000+ (Essential / Premium / Signature tiers)",
+  cities:"Pune (free site visit), Mumbai, Nashik, Aurangabad, Kolhapur (video consult + delivery)",
+  do_use:"Real client photos · Honest pricing · Spiritual emojis 🙏 · Sanskrit/devotional terms · Soft warm lighting · Gold + maroon palette",
+  dont_use:"Stock photos · Aggressive sales language · Naming competitors · Exaggerated claims · Cold/blue tones",
+  hashtags_core:"#makemymandir #corianmandir #custommandir #mandirpune",
+  hashtags_topical:"#mandirdesign #poojaroomdesign #vastuformandir #homemandir #mandirinpune",
+  cta_phrases:"DM us · DM your floor plan · WhatsApp for free site visit · Comment your style",
+  visual_style:"Warm gold tones, soft maroon accents, natural daylight or warm LED, real product photography preferred. Minimal text overlay. Hero product centred.",
+  notes:""
+};
+function getBrandDNA(){return stg("brandDNA")||DEFAULT_BRAND_DNA;}
+function getCampaigns(){return stg("campaigns")||[];}
+function getCampaignForPost(postId){
+  return getCampaigns().find(c=>(c.post_ids||[]).includes(postId));
+}
+function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+/* ══ v6: KNOWLEDGE BASE ══ */
+const KNOWLEDGE_CATEGORIES=["Vastu","Materials","Pricing","FAQs","Objections","Manufacturing","Premium Clients","Lighting","Process"];
+const SEED_KNOWLEDGE=[
+  {id:"k1",cat:"Vastu",title:"Best wall for mandir placement",content:"East wall is most auspicious — devotee faces East while praying. North wall is acceptable. AVOID South and West walls. Avoid placing mandir under a staircase or against a bathroom wall.",tags:"vastu,placement",updated_at:""},
+  {id:"k2",cat:"Vastu",title:"Idol height guidelines",content:"Idols should be placed between 2.5 to 4.5 feet from the floor when devotee is sitting on the floor. For wall-mounted mandirs, the main idol should be roughly at chest level when standing. Never place idols on the floor directly.",tags:"vastu,height",updated_at:""},
+  {id:"k3",cat:"Materials",title:"Why we recommend Corian",content:"Corian is a non-porous solid surface — termite-proof, hygienic, seamless joins, customizable in any shape. Lasts 20+ years with no warping. Premium feel without marble's weight.\n\nDownsides: cost is mid-to-premium, not as 'natural' looking as marble for traditional clients.",tags:"corian,material",updated_at:""},
+  {id:"k4",cat:"Materials",title:"Marble pros and cons",content:"PROS: traditional aesthetic, perceived as auspicious, classic Indian look, high resale value if used in fitted units.\n\nCONS: very heavy (structural concern in apartments), porous (can stain), needs sealing every 2-3 years, joints visible, not customizable in complex shapes.",tags:"marble,material",updated_at:""},
+  {id:"k5",cat:"Materials",title:"Wood durability concerns",content:"Wood is beautiful for a few years but: (1) susceptible to termites in Indian climate, (2) warps with humidity changes, (3) needs polishing every 3-5 years, (4) catches fire risk near diyas. Recommended only with marine-ply + lamination, never solid wood for mandirs near oil lamps.",tags:"wood,material",updated_at:""},
+  {id:"k6",cat:"Pricing",title:"Three pricing tiers",content:"ESSENTIAL: ₹30,000–50,000 — wall-mounted, simple Corian, basic LED, 6-10 day delivery.\n\nPREMIUM: ₹60,000–1,20,000 — floor-standing or large wall-mount, carved details, integrated LED, 12-15 day delivery.\n\nSIGNATURE: ₹1,50,000+ — full pooja room or premium custom mandir, 3D wall panels, designer LED, 18-25 day delivery.",tags:"pricing,tiers",updated_at:""},
+  {id:"k7",cat:"FAQs",title:"How long does delivery take?",content:"Most clients have their mandir installed within 12-18 days from final design approval. Compact wall-mounts can ship in 6-8 days. Full pooja rooms take 18-25 days. Site visits add 2-3 days. Festival rush periods may extend by 3-5 days.",tags:"delivery,timeline",updated_at:""},
+  {id:"k8",cat:"FAQs",title:"Do you deliver outside Pune?",content:"Yes. Pune: free site visit + delivery + installation included. Mumbai, Nashik, Aurangabad, Kolhapur: video consultation + delivery + installation included. Outside Maharashtra: case-by-case, additional logistics charges apply.",tags:"delivery,cities",updated_at:""},
+  {id:"k9",cat:"FAQs",title:"What's the minimum budget?",content:"Smallest meaningful mandir starts at ₹30,000 — a simple wall-mounted Corian unit with basic lighting, suitable for 1BHK and compact spaces. Below this, quality compromises become visible.",tags:"pricing,budget",updated_at:""},
+  {id:"k10",cat:"FAQs",title:"Can you do fully custom designs?",content:"Yes. Most of our work is custom. Send us a floor plan or photo of your space via WhatsApp/DM, and our designer will return a 3D concept within 3-5 days. No charge for the concept.",tags:"custom,process",updated_at:""},
+  {id:"k11",cat:"Objections",title:"\"Too expensive\" — how to handle",content:"Don't argue price. Pivot to longevity: 'A ₹50,000 wood mandir lasts 5 years. A ₹50,000 Corian mandir lasts 20+. Per-year cost is actually lower.' Then ask their budget — there's always a tier that fits. NEVER discount aggressively; offer a smaller scope at the lower price.",tags:"objections,pricing",updated_at:""},
+  {id:"k12",cat:"Objections",title:"\"Will discuss with family\"",content:"Almost always means uncertainty about budget or design. Ask: 'Is there a specific concern I can address now? Floor plan compatibility? Budget range? Style direction?' Then send a follow-up reference 2 days later — never push, but stay top of mind.",tags:"objections,follow-up",updated_at:""},
+  {id:"k13",cat:"Manufacturing",title:"Corian thickness limits",content:"Standard Corian sheet is 12mm. Above 18mm thickness, joints become visible — we use thicker pieces only for structural columns. For carved details, we layer multiple 12mm sheets and CNC-route them.",tags:"corian,manufacturing",updated_at:""},
+  {id:"k14",cat:"Lighting",title:"LED specifications",content:"We use 3000K warm white LED strips (12V, 14.4W/m) for ambient mandir lighting. Spot accent: 2700K, 5W. Always run dimmer switches — clients want different intensity for daily prayer vs festivals. Never use cool white (>4000K) — looks clinical, kills the devotional mood.",tags:"led,lighting",updated_at:""},
+  {id:"k15",cat:"Premium Clients",title:"Site visit etiquette",content:"Arrive 5 min early. Carry: tape measure, brand portfolio (printed), 3 material samples (Corian/marble/wood), business cards. Remove shoes before entering pooja area. Don't photograph idols without permission. Take floor plan measurements yourself — never trust verbal dimensions. End with a clear next step + timeline commitment.",tags:"client,site-visit",updated_at:""},
+];
+function getKnowledge(){const k=stg("knowledge");return (k&&k.length)?k:SEED_KNOWLEDGE;}
+
+/* ══ v6: HOOK & SCRIPT LIBRARY ══ */
+const HOOK_TYPES=["hook","script","cta","caption-opener"];
+const HOOK_CATEGORIES=["Luxury","Vastu","Jain","Marble","Modern","Problem-Solution","Emotional","Educational","Festival","BTS"];
+const SEED_HOOKS=[
+  {id:"h1",type:"hook",cat:"Problem-Solution",content:"Your mandir might be on the wrong wall. Here's how to fix it.",tags:"vastu,hook"},
+  {id:"h2",type:"hook",cat:"Emotional",content:"She wakes up at 5 AM for pooja. This is the corner she deserves.",tags:"emotional,gift"},
+  {id:"h3",type:"hook",cat:"Educational",content:"Wood, marble, or Corian — which lasts longest? Swipe to find out.",tags:"material,carousel"},
+  {id:"h4",type:"hook",cat:"Luxury",content:"Three mandirs. Three spaces. One craftsman.",tags:"luxury,reel"},
+  {id:"h5",type:"hook",cat:"BTS",content:"Ever wondered how a Corian mandir is actually built?",tags:"bts,reel"},
+  {id:"h6",type:"hook",cat:"Modern",content:"Small flat. Big devotion. Here's how we solved it.",tags:"compact,1bhk"},
+  {id:"h7",type:"hook",cat:"Educational",content:"5 pooja room mistakes people always make.",tags:"mistakes,carousel"},
+  {id:"h8",type:"hook",cat:"Problem-Solution",content:"He wanted a mandir that doesn't look like one when guests come over.",tags:"cabinet,hidden"},
+  {id:"h9",type:"hook",cat:"Modern",content:"Moving into a new flat? Plan your mandir before the walls are done.",tags:"new-flat,planning"},
+  {id:"h10",type:"script",cat:"BTS",content:"15-second BTS reel structure:\n\n0–3s: Raw Corian sheet on workbench (close-up)\n3–7s: CNC cutting + sparks (mid-shot)\n7–11s: Hands assembling pieces\n11–13s: LED strip switching on (tight shot)\n13–15s: Final glow reveal + logo\n\nAudio: ambient workshop sounds + soft devotional under-track",tags:"bts,structure"},
+  {id:"h11",type:"script",cat:"Emotional",content:"30-sec testimonial reel:\n\n0–4s: Wide shot of empty corner (BEFORE)\n4–8s: Quick 3-shot of design process\n8–18s: Client speaks to camera (10-12 words max)\n18–24s: Reveal of finished mandir\n24–30s: Family using it + CTA\n\nKey: client must say something specific and surprising. Generic 'they were great' = dead reel.",tags:"testimonial,structure"},
+  {id:"h12",type:"script",cat:"Problem-Solution",content:"40-sec before/after reel:\n\n0–5s: Empty/cluttered corner with overlay text 'BEFORE'\n5–10s: Designer sketching with floor plan\n10–18s: Time-lapse of installation\n18–25s: First diya being lit (slow, cinematic)\n25–35s: Wide reveal\n35–40s: Family member smiling + CTA\n\nMusic peaks at the diya-lighting moment.",tags:"before-after,structure"},
+  {id:"h13",type:"cta",cat:"Educational",content:"DM us your floor plan — free design concept in 3-5 days.",tags:"cta,floor-plan"},
+  {id:"h14",type:"cta",cat:"Modern",content:"WhatsApp the photo of your current pooja corner. Our designer redesigns it — no cost.",tags:"cta,redesign"},
+  {id:"h15",type:"cta",cat:"Luxury",content:"DM your budget and space. We'll design around what you have.",tags:"cta,budget"},
+  {id:"h16",type:"cta",cat:"Emotional",content:"Save this for when you're ready. We'll be here. 🙏",tags:"cta,save"},
+  {id:"h17",type:"caption-opener",cat:"Educational",content:"Three things nobody tells you before buying a custom mandir:",tags:"caption,list"},
+  {id:"h18",type:"caption-opener",cat:"Emotional",content:"There's something about a home where the diya is lit every morning.",tags:"caption,emotional"},
+];
+function getHooks(){const h=stg("hooks");return (h&&h.length)?h:SEED_HOOKS;}
+
+/* ══ v6: POST TEMPLATES ══ */
+const SEED_TEMPLATES=[
+  {id:"t1",name:"Material Comparison Carousel",framework:"Carousel · 6 slides · Educational",hook:"Wood, marble, or Corian — which lasts longest?",caption:"Three materials. Three very different stories. Save this before your next mandir decision.\n\n[Material 1 short take]\n[Material 2 short take]\n[Material 3 short take]\n\nWhich one fits your home? DM us your space photo.\n\n#mandirmaterial #corianmandir #marblemandir #custommandir #makemymandir",brief:"Slide 1: Hook · Slide 2-4: One material per slide with verdict · Slide 5: Side-by-side table · Slide 6: CTA",cta:"DM us your space photo",tags:"comparison,educational"},
+  {id:"t2",name:"Testimonial Reel",framework:"Reel · 25-35 sec · Emotional",hook:"They wanted a mandir that didn't look like a mandir to guests.",caption:"Mr. & Mrs. [Name] needed a sacred space that disappears when company arrives.\n\nThis is what we built.\n\nDM us your requirement — we design around real lives.\n\n#clienttestimonial #custommandir #cabinetmandir #makemymandir",brief:"0-4s: Wide of room before · 4-8s: Designer sketching · 8-18s: Client to-camera · 18-25s: Reveal · 25-30s: Family using it · 30s: CTA card",cta:"DM us your requirement",tags:"testimonial,emotional"},
+  {id:"t3",name:"Festival Greeting Static",framework:"Static · IG+FB · Devotional",hook:"Jai Shri [Deity]. May this [Festival] bless your home.",caption:"On this auspicious [Festival], may your pooja corner glow brighter than ever. 🙏\n\nFrom our family at MakeMyMandir to yours.\n\n#[Festival] #JaiShri[Deity] #makemymandir",brief:"Devotional graphic. Gold + maroon palette. Soft warm light. Festival-specific iconography. Brand watermark bottom-right.",cta:"None — pure devotional",tags:"festival,devotional"},
+  {id:"t4",name:"Before/After Reel",framework:"Reel · 35-45 sec · Transformation",hook:"Empty 8x10 corner. 14 days. This is how it ended.",caption:"Started with 4 walls and a dream. Ended with a sanctuary.\n\nFull pooja room transformations starting at ₹1.5L.\n\nDM/WhatsApp for a free site visit. 🙏\n\n#BeforeAfter #PoojaRoomReveal #LuxuryMandir #makemymandir",brief:"0-5s: Empty room with 'BEFORE' overlay · 5-12s: Time-lapse of installation · 12-20s: 3D render to fabrication · 20-30s: Cinematic reveal pan · 30-40s: Family lighting first diya · 40-45s: CTA + brand",cta:"DM for free site visit",tags:"before-after,reveal"},
+  {id:"t5",name:"Problem-Solution Carousel",framework:"Carousel · 7 slides · Educational",hook:"5 pooja room mistakes people always make.",caption:"Renovating? Save this BEFORE the walls go up.\n\nMistake 1: [...]\nMistake 2: [...]\n\nDM us your floor plan — free design audit.\n\n#PoojaRoomDesign #VastuTips #makemymandir",brief:"Slide 1: Hook · Slides 2-6: One mistake per slide with fix · Slide 7: CTA · Style: clean infographic, gold accents on dark warm bg",cta:"DM your floor plan",tags:"mistakes,educational"},
+  {id:"t6",name:"Mandir Reveal Reel",framework:"Reel · 15-20 sec · Cinematic",hook:"This took 18 days. The first diya took 3 seconds.",caption:"Every mandir we build is a different story. This one belonged to the [Family Name] family.\n\nDM us yours.\n\n#MandirReveal #CustomMandir #makemymandir",brief:"0-3s: Closed/concealed mandir · 3-6s: Hands opening doors or LED switching on · 6-12s: Slow detail pans (carving, idol, light) · 12-17s: Wide of finished mandir in context · 17-20s: CTA card",cta:"DM us yours",tags:"reveal,cinematic"},
+];
+function getTemplates(){const t=stg("templates");return (t&&t.length)?t:SEED_TEMPLATES;}
+
+/* ══ v6: CONTENT REQUESTS ══ */
+function getRequests(){return stg("requests")||[];}
+const REQUEST_STATUSES=["pending","approved","in_progress","done","declined"];
+const REQUEST_LABELS={pending:"⏳ Pending",approved:"✅ Approved",in_progress:"🔧 In Progress",done:"✓ Done",declined:"✗ Declined"};
+
+
 function gp(id){const b=POSTS.find(p=>p.id===id),e=ge(id);return Object.keys(e).length?{...b,...e}:b;}
 function getActs(){return stg("acts")||[];}
 function logAct(a){const acts=getActs();acts.unshift(a);if(acts.length>200)acts.splice(200);sto("acts",acts);}
@@ -638,7 +905,17 @@ async function saveGithubToken(){
 }
 
 function buildSyncPayload(){
-  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs(),media:{},slides:{}};
+  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs(),media:{},slides:{},brandDNA:null,campaigns:[],knowledge:[],hooks:[],templates:[],requests:[]};
+  // v5: brand DNA (single object) and campaigns (array)
+  const dna=stg("brandDNA");
+  if(dna)data.brandDNA=dna;
+  const camps=stg("campaigns")||[];
+  if(camps.length)data.campaigns=camps;
+  // v6: knowledge / hook library / templates / requests
+  const kn=stg("knowledge")||[];if(kn.length)data.knowledge=kn;
+  const hk=stg("hooks")||[];if(hk.length)data.hooks=hk;
+  const tp=stg("templates")||[];if(tp.length)data.templates=tp;
+  const rq=stg("requests")||[];if(rq.length)data.requests=rq;
   POSTS.forEach(p=>{
     const st=gs(p.id);
     if(st!=="pending")data.statuses[p.id]=st;
@@ -670,6 +947,14 @@ function buildSyncPayload(){
 
 function applySyncPayload(data){
   if(!data)return;
+  // v5: pull brand DNA + campaigns. Last-write-wins; admin updates these.
+  if(data.brandDNA)sto("brandDNA",data.brandDNA);
+  if(Array.isArray(data.campaigns))sto("campaigns",data.campaigns);
+  // v6: pull knowledge / hooks / templates / requests
+  if(Array.isArray(data.knowledge))sto("knowledge",data.knowledge);
+  if(Array.isArray(data.hooks))sto("hooks",data.hooks);
+  if(Array.isArray(data.templates))sto("templates",data.templates);
+  if(Array.isArray(data.requests))sto("requests",data.requests);
   if(data.statuses)Object.keys(data.statuses).forEach(id=>{sto("st-"+id,data.statuses[id]);});
   if(data.edits)Object.keys(data.edits).forEach(id=>{sto("ed-"+id,data.edits[id]);});
   if(data.rejections)Object.keys(data.rejections).forEach(id=>{sto("rn-"+id,data.rejections[id]);});
@@ -694,9 +979,10 @@ function applySyncPayload(data){
       const remote=data.media[id];
       if(!remote||!remote.url)return;
       const local=gm(id);
-      // v3: A real URL from GitHub always beats stale local base64.
-      // The earlier guard (skip if local.data && !local.url) protected in-progress uploads
-      // but also caused stale test-run blobs to hide team uploads. Trust the remote URL.
+      // v4: Protect FRESH local in-progress uploads (data, no url, recent ts).
+      // Stale base64 from old test runs has no ts → falls through and gets replaced by remote URL.
+      const FRESH_MS=120000; // 2 minutes
+      if(local && local.data && !local.url && local.ts && (Date.now()-local.ts)<FRESH_MS) return;
       // Only keep local if it's a newer real URL.
       if(local && local.url && local.ts && remote.ts && local.ts > remote.ts) return;
       sto("md-"+id, remote);
@@ -712,7 +998,9 @@ function applySyncPayload(data){
         const r=remote[idx];
         const l=local[idx];
         if(!r||!r.url)return;
-        // v3: Same as above — remote URL wins over stale local base64.
+        // v4: Same fresh-upload protection as above.
+        const FRESH_MS=120000;
+        if(l && l.data && !l.url && l.ts && (Date.now()-l.ts)<FRESH_MS) return;
         if(l && l.url && l.ts && r.ts && l.ts > r.ts) return;
         merged[idx]=r;
       });
@@ -744,10 +1032,12 @@ async function pullFromGitHub(){
       cache:"no-store"
     });
     if(res.status===401||res.status===403){
-      clearGhToken();
-      toast("⚠ GitHub token rejected — please re-enter it","err");
-      setSyncStatus("offline","");
-      openSetupModal();
+      // v6.2 FIX: Don't auto-clear the token. A single 401 might be a transient
+      // GitHub blip, rate limit, or brief auth issue. Wiping the token would force
+      // the user back through full setup unnecessarily. Just surface the error
+      // and let the user decide via the ⚙️ Sync Settings nav if they want to re-enter.
+      toast("⚠ GitHub rejected the request — will retry","err");
+      setSyncStatus("error","Auth error — click ⚙️ to check");
       return;
     }
     if(res.status===404){setSyncStatus("synced","Connected · no data yet");return;}
@@ -793,10 +1083,9 @@ async function pushToGitHub(retry=0){
       return true;
     }
     if(res.status===401||res.status===403){
-      clearGhToken();
-      toast("⚠ GitHub token rejected — please re-enter it","err");
-      setSyncStatus("offline","");
-      openSetupModal();
+      // v6.2 FIX: Don't auto-clear. See pullFromGitHub for rationale.
+      toast("⚠ GitHub rejected the save — will retry on next sync","err");
+      setSyncStatus("error","Auth error — click ⚙️ to check");
       isSyncing=false;
       return false;
     }
@@ -895,7 +1184,50 @@ function doLogout(){
 }
 
 /* ══ MODALS ══ */
-function openSetupModal(){document.getElementById("setupModalBg").classList.add("open");}
+function openSetupModal(){
+  // v6.2 FIX: When opening the modal, show "already connected" state if a token exists,
+  // so the user can test the connection or disconnect — instead of being forced to re-enter.
+  const tok=getGhToken();
+  const banner=document.getElementById("setupConnectedBanner");
+  if(banner){
+    if(tok){
+      const last4=tok.slice(-4);
+      banner.style.display="block";
+      banner.innerHTML=`<div style="background:rgba(15,110,86,.12);border-left:3px solid var(--g);padding:10px 12px;border-radius:6px;margin:8px 0 12px;font-size:12px;line-height:1.6;">
+        <strong style="color:var(--g);">✓ Already connected.</strong> Token ending in <code>...${last4}</code> is saved on this device.<br>
+        If sync is failing, try <button onclick="testGhToken()" style="background:transparent;border:1px solid var(--g);color:var(--g);padding:2px 8px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;margin:0 3px;">🔄 Test connection</button> first. Only re-enter the token below if test confirms it's truly invalid.
+        &nbsp;·&nbsp;<button onclick="manualDisconnect()" style="background:transparent;border:1px solid var(--mid);color:var(--mid);padding:2px 8px;border-radius:5px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;">Disconnect</button>
+      </div>`;
+    }else{
+      banner.style.display="none";
+    }
+  }
+  document.getElementById("setupModalBg").classList.add("open");
+}
+async function testGhToken(){
+  const tok=getGhToken();
+  if(!tok){toast("No token saved","err");return;}
+  toast("Testing connection...","info");
+  const v=await validateToken(tok);
+  if(v.ok){
+    toast("✓ Token works perfectly. Sync issues were likely transient.","ok");
+    setSyncStatus("synced","Synced just now");
+    if(syncInterval){clearInterval(syncInterval);}
+    startSync();
+    closeSetupModal();
+  }else{
+    toast(v.msg,"err");
+  }
+}
+function manualDisconnect(){
+  if(!confirm("Disconnect from GitHub? You'll need to paste a token again to sync."))return;
+  clearGhToken();
+  toast("Disconnected","ok");
+  setSyncStatus("offline","");
+  // Refresh the modal banner state
+  const banner=document.getElementById("setupConnectedBanner");
+  if(banner)banner.style.display="none";
+}
 function closeSetupModal(){document.getElementById("setupModalBg").classList.remove("open");}
 
 /* ══ NAV ══ */
@@ -903,9 +1235,16 @@ function navTo(page,el){
   curPage=page;
   document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active"));
   if(el)el.classList.add("active");
-  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log"};
+  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log",campaigns:"Campaigns",brandDNA:"Brand DNA",knowledge:"Knowledge Base",hooks:"Hooks & Scripts",templates:"Post Templates",requests:"Content Requests"};
   document.getElementById("tbTitle").textContent=titles[page]||"Posts";
-  if(page==="activity")renderActivity();else render();
+  if(page==="activity")renderActivity();
+  else if(page==="campaigns")renderCampaigns();
+  else if(page==="brandDNA")renderBrandDNA();
+  else if(page==="knowledge")renderKnowledge();
+  else if(page==="hooks")renderHooks();
+  else if(page==="templates")renderTemplates();
+  else if(page==="requests")renderRequests();
+  else render();
 }
 
 /* ══ COUNTS ══ */
@@ -933,6 +1272,17 @@ function updateCounts(){
   POSTS.forEach(p=>{const s=gs(p.id);c[s]=(c[s]||0)+1;});
   document.getElementById("nc-all").textContent=27;
   [["pend","pending"],["app","approved"],["rev","revision"],["rej","rejected"],["pub","published"]].forEach(([k,v])=>{document.getElementById("nc-"+k).textContent=c[v]||0;});
+  // v5: campaigns counter
+  const camps=getCampaigns();
+  const nc=document.getElementById("nc-camp");if(nc)nc.textContent=camps.length;
+  // v6: knowledge / hooks / templates / requests counters
+  const ncK=document.getElementById("nc-know");if(ncK)ncK.textContent=getKnowledge().length;
+  const ncH=document.getElementById("nc-hook");if(ncH)ncH.textContent=getHooks().length;
+  const ncT=document.getElementById("nc-tpl");if(ncT)ncT.textContent=getTemplates().length;
+  const ncR=document.getElementById("nc-req");if(ncR){
+    const pendingRq=getRequests().filter(r=>r.status==="pending").length;
+    ncR.textContent=pendingRq;
+  }
   return c;
 }
 
@@ -1042,12 +1392,15 @@ function renderCard(p,isAdmin){
   actions+=`<button class="ab ab-copy" onclick="quickCopy(${p.id},this)">Copy</button>`;
   if(m||(p.type==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
 
+  const camp=getCampaignForPost(p.id);
+  const campBadge=camp?`<span class="badge-camp">📅 ${camp.name.length>20?camp.name.substring(0,20)+"…":camp.name}</span>`:"";
   return `<div class="pc ${stcls}${isToday?" today-post":""}">
     <div class="tw">
       ${isVid?`<video src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;"></video>`:`<img src="${imgSrc}" loading="lazy">`}
       <div class="tov"><button class="to-btn" onclick="openReview(${p.id})">REVIEW POST</button></div>
       <span class="badge-type ${tcls}">${editedType.toUpperCase()}</span>
       <span class="badge-status ${sbcls}">${ST_LABELS[st]}</span>
+      ${campBadge}
       ${mediaBadge}${slideDots}
       ${isToday?'<span class="badge-today">TODAY</span>':""}
     </div>
@@ -1127,7 +1480,17 @@ function openReview(id){
   const notes=gNotes(id);
   const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
 
-  let body=`
+  // v5: Brand DNA + Campaign reference at top of review modal
+  const dna=getBrandDNA();
+  const camp=getCampaignForPost(id);
+  const brandRef=`<div class="fg"><div class="brand-ref">
+    <div class="br-row"><span class="br-l">🎨 Voice:</span><span class="br-v">${(dna.voice||"").substring(0,90)}${(dna.voice||"").length>90?"…":""}</span></div>
+    <div class="br-row"><span class="br-l">🏷 Core tags:</span><span class="br-v">${dna.hashtags_core||""}</span></div>
+    <div class="br-row"><span class="br-l">📞 CTAs:</span><span class="br-v">${dna.cta_phrases||""}</span></div>
+    ${camp?`<div class="br-row br-camp"><span class="br-l">📅 Campaign:</span><span class="br-v"><b>${camp.name}</b>${camp.theme?" — "+camp.theme:""}</span></div>`:""}
+  </div></div>`;
+
+  let body=brandRef+`
     <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
     <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${pp.hook.replace(/"/g,"&quot;")}"></div>
     <div class="fg">
@@ -1187,6 +1550,10 @@ function buildModalLeft(p,m){
     }).join("");
     const dotsHtml=p.slides.map((_,i)=>`<div class="cv-d${i===0?" on":""}" onclick="goSlide(${i})"></div>`).join("");
     const upBtns=p.slides.map((_,i)=>`<button class="su-btn${ups[i]?" has":""}" onclick="trigSUp(${i})" title="Upload slide ${i+1}">${ups[i]?"✓ ":""}S${i+1}</button>`).join("");
+    const totalSlides=p.slides.length;
+    const filledCnt=Object.keys(ups).filter(k=>ups[k]&&(ups[k].url||ups[k].data)).length;
+    const allDone=filledCnt===totalSlides;
+    const primaryLabel=filledCnt===0?`📷 Upload All ${totalSlides} Slides`:allDone?`✓ All ${totalSlides} slides uploaded — Replace all?`:`📷 Upload remaining ${totalSlides-filledCnt} slide${totalSlides-filledCnt>1?"s":""}`;
     left.innerHTML=`<div class="cv"><div class="cv-main">${slidesHtml}</div>
       <div class="cv-nav">
         <button class="cv-arr" onclick="prevSlide()">‹</button>
@@ -1194,7 +1561,11 @@ function buildModalLeft(p,m){
         <span class="cv-ctr" id="cvCtr">1 / ${count}</span>
         <button class="cv-arr" onclick="nextSlide()">›</button>
       </div>
-      <div class="slide-ups"><span class="su-lbl">Upload each slide:</span>${upBtns}</div>
+      <div class="mub">
+        <button class="mub-btn mub-img" onclick="trigMultiSUp()" style="flex:1;">${primaryLabel}</button>
+        <button class="mub-btn mub-ai" onclick="openAIPrompts(${p.id},${typeof curSlide!=='undefined'?'curSlide':0})" title="Generate AI image prompts for current slide">🎨 AI Prompts</button>
+      </div>
+      <div class="slide-ups"><span class="su-lbl">Or replace one slide:</span>${upBtns}</div>
     </div>`;
   }else{
     const isVid=m&&m.type==="video";
@@ -1205,6 +1576,7 @@ function buildModalLeft(p,m){
     <div class="mub">
       <button class="mub-btn mub-img" onclick="trigUpImg()">📷 Upload Photo</button>
       ${p.type==="Reel"?'<button class="mub-btn mub-vid" onclick="trigUpVid()">🎬 Upload Video</button>':""}
+      ${p.type!=="Reel"?`<button class="mub-btn mub-ai" onclick="openAIPrompts(${p.id},null)" title="Generate AI image prompts">🎨 AI Prompts</button>`:""}
       ${m?'<button class="mub-btn mub-rst" onclick="resetMedia()">↺ Reset</button>':""}
     </div>`;
   }
@@ -1221,6 +1593,86 @@ function nextSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;go
 function prevSlide(){const p=POSTS.find(x=>x.id===revId);if(!p?.slides)return;goSlide((curSlide-1+p.slides.length)%p.slides.length);}
 
 function trigSUp(idx){uploadSlideIdx=idx;document.getElementById("slideInp").click();}
+
+/* v4: multi-file upload — pick all slide images at once. They fill empty slides
+   in order, leftover files overflow into already-filled slides (replacing them). */
+function trigMultiSUp(){document.getElementById("slideMultiInp").click();}
+
+async function handleMultiSlideUpload(inp){
+  const files=Array.from(inp.files||[]);
+  if(!files.length)return;
+  const p=POSTS.find(x=>x.id===revId);
+  if(!p||!p.slides){inp.value="";return;}
+  const totalSlides=p.slides.length;
+  const ups=gsl(revId);
+  // Decide which slide each file fills: empty slots first (in order), then overflow into 0,1,2...
+  const emptyIdxs=[];
+  for(let i=0;i<totalSlides;i++) if(!ups[i]||!(ups[i].url||ups[i].data)) emptyIdxs.push(i);
+  const targetIdxs=[];
+  files.forEach((_,i)=>{
+    if(i<emptyIdxs.length) targetIdxs.push(emptyIdxs[i]);
+    else targetIdxs.push(i % totalSlides);
+  });
+  const toUse=Math.min(files.length,Math.max(totalSlides,emptyIdxs.length));
+  if(files.length>totalSlides){
+    toast(`Picked ${files.length} files but post only has ${totalSlides} slides — extras ignored`,"info");
+  }
+  toast(`Processing ${Math.min(files.length,totalSlides)} slide${Math.min(files.length,totalSlides)>1?"s":""}...`,"info");
+  // Process sequentially so localStorage and GitHub stay consistent
+  for(let i=0;i<Math.min(files.length,totalSlides);i++){
+    const file=files[i];
+    const slotIdx=targetIdxs[i];
+    try{
+      const compressed=await compressImageFile(file,600,0.75);
+      const upsNow=gsl(revId);
+      upsNow[slotIdx]={data:compressed,ts:Date.now()};
+      sto("slides-"+revId,upsNow);
+      // Re-render the modal so the user sees progress
+      buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
+      goSlide(slotIdx);
+      render();
+      // Push to GitHub
+      if(getGhToken()){
+        const result=await pushImageToGitHub(`post-${revId}-slide-${slotIdx}.jpg`,compressed);
+        if(result){
+          const upsAfter=gsl(revId);
+          upsAfter[slotIdx]={url:result.url,ts:Date.now()};
+          sto("slides-"+revId,upsAfter);
+          buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
+        }
+      }
+    }catch(e){console.error("Slide upload failed",e);}
+  }
+  if(getGhToken()){
+    await pushToGitHub();
+    toast(`✓ ${Math.min(files.length,totalSlides)} slide${Math.min(files.length,totalSlides)>1?"s":""} synced to team`,"ok");
+  }else{
+    toast("⚠ Not connected to GitHub — slides saved on your device only","err");
+  }
+  inp.value="";
+}
+
+/* v4: shared image compressor helper used by single + multi upload */
+function compressImageFile(file,maxW,quality){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img2=new Image();
+      img2.onload=()=>{
+        const canvas=document.createElement("canvas");
+        const scale=Math.min(1,maxW/img2.width);
+        canvas.width=img2.width*scale;canvas.height=img2.height*scale;
+        canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
+        resolve(canvas.toDataURL("image/jpeg",quality));
+      };
+      img2.onerror=reject;
+      img2.src=e.target.result;
+    };
+    reader.onerror=reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 function handleSlideUpload(inp){
   const file=inp.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1232,8 +1684,8 @@ function handleSlideUpload(inp){
       canvas.width=img2.width*scale;canvas.height=img2.height*scale;
       canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
       const compressed=canvas.toDataURL("image/jpeg",0.75);
-      // Save locally for instant display
-      const ups=gsl(revId);ups[uploadSlideIdx]={data:compressed};
+      // Save locally for instant display (v4: include ts so sync protection works)
+      const ups=gsl(revId);ups[uploadSlideIdx]={data:compressed,ts:Date.now()};
       sto("slides-"+revId,ups);
       buildModalLeft(POSTS.find(x=>x.id===revId),gm(revId));
       goSlide(uploadSlideIdx);
@@ -1279,7 +1731,7 @@ function handleUpload(inp,type){
         canvas.getContext("2d").drawImage(img2,0,0,canvas.width,canvas.height);
         const compressed=canvas.toDataURL("image/jpeg",0.8);
         // Save base64 locally for instant display
-        try{sto("md-"+revId,{type:"img",data:compressed});}catch(ex){toast("Image too large","err");inp.value="";return;}
+        try{sto("md-"+revId,{type:"img",data:compressed,ts:Date.now()});}catch(ex){toast("Image too large","err");inp.value="";return;}
         buildModalLeft(POSTS.find(x=>x.id===revId),{type:"img",data:compressed});
         render();toast("Photo saved — uploading to team...","info");inp.value="";
         // Push image to GitHub as a separate file
@@ -1299,7 +1751,7 @@ function handleUpload(inp,type){
       img2.src=e.target.result;
     }else{
       // Video — no compression, just save and push
-      try{sto("md-"+revId,{type:"video",data:e.target.result});}catch(ex){toast("Video too large — try a shorter clip","err");inp.value="";return;}
+      try{sto("md-"+revId,{type:"video",data:e.target.result,ts:Date.now()});}catch(ex){toast("Video too large — try a shorter clip","err");inp.value="";return;}
       buildModalLeft(POSTS.find(x=>x.id===revId),{type:"video",data:e.target.result});
       render();toast("Video saved — uploading to team...","info");inp.value="";
       if(!getGhToken()){toast("⚠ Not connected to GitHub. Video will only show on your device.","err");return;}
@@ -1393,11 +1845,693 @@ function renderActivity(){
   html+=`</div></div>`;document.getElementById("mainContent").innerHTML=html;
 }
 
+/* ══ v5: BRAND DNA ══ */
+const DNA_FIELDS=[
+  {k:"brand_name",lbl:"Brand name",hint:""},
+  {k:"tagline",lbl:"Tagline / one-liner",hint:"What we say in one breath"},
+  {k:"voice",lbl:"Voice & tone",hint:"How we sound. Adjectives are useful."},
+  {k:"audience",lbl:"Target audience",hint:"Who we're talking to. Be specific — age, city, life-stage."},
+  {k:"hero_offerings",lbl:"Hero offerings",hint:"Main products/services we sell"},
+  {k:"price_range",lbl:"Price range / tiers",hint:"Helps team write honest captions"},
+  {k:"cities",lbl:"Cities served",hint:""},
+  {k:"do_use",lbl:"Do use",hint:"What we lean into — content elements, visual cues, language"},
+  {k:"dont_use",lbl:"Don't use",hint:"What we avoid"},
+  {k:"hashtags_core",lbl:"Core hashtags",hint:"Always include these"},
+  {k:"hashtags_topical",lbl:"Topical hashtags",hint:"Mix in based on post content"},
+  {k:"cta_phrases",lbl:"Common CTAs",hint:"Approved call-to-action phrases"},
+  {k:"visual_style",lbl:"Visual style guide",hint:"Colors, lighting, framing, mood. This will also feed AI image prompts later."},
+  {k:"notes",lbl:"Other notes",hint:"Anything else the team should know"},
+];
+function renderBrandDNA(){
+  const dna=getBrandDNA();
+  const isAdmin=user?.role==="admin";
+  const fields=DNA_FIELDS.map(f=>{
+    const val=(dna[f.k]||"").replace(/"/g,"&quot;");
+    const isLong=["voice","audience","do_use","dont_use","visual_style","notes"].includes(f.k);
+    const inp=isLong
+      ? `<textarea class="dna-i" id="dna-${f.k}" rows="3"${isAdmin?"":" disabled"}>${dna[f.k]||""}</textarea>`
+      : `<input class="dna-i" id="dna-${f.k}" value="${val}"${isAdmin?"":" disabled"}>`;
+    return `<div class="dna-row"><label class="dna-l">${f.lbl}</label>${f.hint?`<div class="dna-h">${f.hint}</div>`:""}${inp}</div>`;
+  }).join("");
+  const adminBar=isAdmin
+    ? `<div class="dna-bar"><button class="dna-save" onclick="saveBrandDNA()">💾 Save Brand DNA</button><button class="dna-reset" onclick="resetBrandDNA()">Reset to defaults</button></div>`
+    : `<div class="dna-bar dna-readonly">📖 Read-only — Admin owns the Brand DNA. Ask Nilesh to update if needed.</div>`;
+  document.getElementById("mainContent").innerHTML=`
+    <div class="dna-wrap">
+      <div class="dna-intro">Your team uses this as a reference whenever they write captions, design carousels, or pick imagery. Keep it tight and current.</div>
+      ${fields}
+      ${adminBar}
+    </div>`;
+}
+async function saveBrandDNA(){
+  const cur=getBrandDNA();
+  const next={...cur};
+  DNA_FIELDS.forEach(f=>{const el=document.getElementById("dna-"+f.k);if(el)next[f.k]=el.value;});
+  sto("brandDNA",next);
+  logAct({action:"edited",postId:0,user:user?.name,time:new Date().toISOString(),detail:"Brand DNA"});
+  toast("Brand DNA saved — pushing to team...","info");
+  await pushToGitHub();
+  toast("✓ Brand DNA synced","ok");
+}
+function resetBrandDNA(){
+  if(!confirm("Reset Brand DNA to default values? This won't delete it on GitHub until you click Save."))return;
+  sto("brandDNA",DEFAULT_BRAND_DNA);
+  renderBrandDNA();
+}
+
+/* ══ v5: CAMPAIGNS ══ */
+function renderCampaigns(){
+  updateCounts();
+  const camps=getCampaigns();
+  const isAdmin=user?.role==="admin";
+  const list=camps.length
+    ? camps.map(c=>{
+        const cnt=(c.post_ids||[]).length;
+        const postPills=(c.post_ids||[]).map(pid=>{
+          const p=POSTS.find(x=>x.id===pid);if(!p)return "";
+          return `<span class="cmp-pill">${p.d} · ${p.title.substring(0,28)}</span>`;
+        }).join("");
+        return `<div class="cmp-card">
+          <div class="cmp-hd">
+            <div><div class="cmp-name">${c.name}</div><div class="cmp-dates">${c.start} → ${c.end} · ${cnt} post${cnt!==1?"s":""}</div></div>
+            ${isAdmin?`<div class="cmp-acts">
+              <button class="cmp-edit" onclick="openCampaignEdit('${c.id}')">Edit</button>
+              <button class="cmp-del" onclick="deleteCampaign('${c.id}')">Delete</button>
+            </div>`:""}
+          </div>
+          ${c.description?`<div class="cmp-desc">${c.description}</div>`:""}
+          ${c.theme?`<div class="cmp-theme"><b>Theme:</b> ${c.theme}</div>`:""}
+          <div class="cmp-pills">${postPills||'<span class="cmp-empty">No posts assigned yet</span>'}</div>
+        </div>`;
+      }).join("")
+    : `<div class="cmp-empty-big">No campaigns yet.${isAdmin?" Click <b>+ New Campaign</b> to group related posts under one storyline.":""}</div>`;
+  const newBtn=isAdmin?`<button class="cmp-new" onclick="openCampaignEdit(null)">+ New Campaign</button>`:"";
+  document.getElementById("mainContent").innerHTML=`
+    <div class="cmp-wrap">
+      <div class="cmp-intro">Group related posts into a storyline — festivals, product launches, seasonal pushes. Posts can belong to one campaign.</div>
+      ${newBtn}
+      <div class="cmp-list">${list}</div>
+    </div>`;
+  // Update sidebar counter
+  const ncEl=document.getElementById("nc-camp");if(ncEl)ncEl.textContent=camps.length;
+}
+function openCampaignEdit(id){
+  const camps=getCampaigns();
+  const c=id?camps.find(x=>x.id===id):{id:uid(),name:"",start:"",end:"",description:"",theme:"",post_ids:[]};
+  if(!c)return;
+  const allPosts=POSTS.map(p=>{
+    const checked=(c.post_ids||[]).includes(p.id)?"checked":"";
+    const otherCamp=getCampaigns().find(x=>x.id!==c.id&&(x.post_ids||[]).includes(p.id));
+    const lock=otherCamp?` <span class="cmp-lock">(in: ${otherCamp.name})</span>`:"";
+    return `<label class="cmp-pcheck"><input type="checkbox" value="${p.id}" ${checked} ${otherCamp?"disabled":""}> #${p.id} · ${p.d} · ${p.type} · ${p.title.substring(0,40)}${lock}</label>`;
+  }).join("");
+  const html=`<div class="cmp-modal-bg" id="cmpModalBg">
+    <div class="cmp-modal">
+      <div class="cmp-mhd"><b>${id?"Edit":"New"} Campaign</b><button onclick="closeCampaignEdit()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <label class="cmp-fl">Name</label>
+        <input class="cmp-fi" id="cmpName" value="${(c.name||"").replace(/"/g,"&quot;")}" placeholder="e.g. Akshaya Tritiya 2026 push">
+        <div class="cmp-fr">
+          <div style="flex:1"><label class="cmp-fl">Start</label><input class="cmp-fi" id="cmpStart" value="${c.start||""}" placeholder="e.g. May 9"></div>
+          <div style="flex:1"><label class="cmp-fl">End</label><input class="cmp-fi" id="cmpEnd" value="${c.end||""}" placeholder="e.g. May 11"></div>
+        </div>
+        <label class="cmp-fl">Description</label>
+        <textarea class="cmp-fi" id="cmpDesc" rows="2" placeholder="What's the story this campaign tells?">${c.description||""}</textarea>
+        <label class="cmp-fl">Theme / visual direction</label>
+        <textarea class="cmp-fi" id="cmpTheme" rows="2" placeholder="e.g. Gold + maroon palette, festive iconography, auspicious tone">${c.theme||""}</textarea>
+        <label class="cmp-fl">Posts in this campaign</label>
+        <div class="cmp-plist" id="cmpPlist">${allPosts}</div>
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-save" onclick="saveCampaign('${c.id}')">${id?"Save":"Create"}</button>
+        <button class="cmp-cancel" onclick="closeCampaignEdit()">Cancel</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeCampaignEdit(){const m=document.getElementById("cmpModalBg");if(m)m.remove();}
+async function saveCampaign(id){
+  const camps=getCampaigns();
+  const idx=camps.findIndex(x=>x.id===id);
+  const post_ids=Array.from(document.querySelectorAll('#cmpPlist input[type=checkbox]:checked')).map(i=>+i.value);
+  const data={
+    id,
+    name:document.getElementById("cmpName").value.trim(),
+    start:document.getElementById("cmpStart").value.trim(),
+    end:document.getElementById("cmpEnd").value.trim(),
+    description:document.getElementById("cmpDesc").value.trim(),
+    theme:document.getElementById("cmpTheme").value.trim(),
+    post_ids
+  };
+  if(!data.name){toast("Campaign needs a name","err");return;}
+  if(idx>=0)camps[idx]=data;else camps.push(data);
+  sto("campaigns",camps);
+  logAct({action:"edited",postId:0,user:user?.name,time:new Date().toISOString(),detail:"Campaign: "+data.name});
+  closeCampaignEdit();renderCampaigns();render();
+  toast("Saved — pushing to team...","info");
+  await pushToGitHub();
+  toast("✓ Campaign synced","ok");
+}
+async function deleteCampaign(id){
+  if(!confirm("Delete this campaign? Posts inside will be unassigned but not lost."))return;
+  const camps=getCampaigns().filter(x=>x.id!==id);
+  sto("campaigns",camps);
+  renderCampaigns();render();
+  await pushToGitHub();
+  toast("Campaign deleted","ok");
+}
+
+/* ══ v6: KNOWLEDGE BASE — render + actions ══ */
+let _knowFilter="all",_knowSearch="",_knowFocusSearch=false;
+function renderKnowledge(){
+  updateCounts();
+  const all=getKnowledge();
+  const isAdmin=user?.role==="admin";
+  const cats=["all",...KNOWLEDGE_CATEGORIES];
+  const filterPills=cats.map(c=>{
+    const cnt=c==="all"?all.length:all.filter(k=>k.cat===c).length;
+    return `<button class="kf-pill${_knowFilter===c?" on":""}" onclick="setKnowFilter('${c}')">${c==="all"?"All":c} <span class="kf-c">${cnt}</span></button>`;
+  }).join("");
+  let entries=all.filter(k=>_knowFilter==="all"||k.cat===_knowFilter);
+  if(_knowSearch){
+    const q=_knowSearch.toLowerCase();
+    entries=entries.filter(k=>(k.title+" "+k.content+" "+(k.tags||"")).toLowerCase().includes(q));
+  }
+  const list=entries.length
+    ? entries.map(k=>`<div class="k-card">
+        <div class="k-hd">
+          <div><span class="k-cat-pill">${k.cat}</span><span class="k-title">${k.title}</span></div>
+          ${isAdmin?`<div class="k-acts">
+            <button class="k-edit" onclick="openKnowEdit('${k.id}')">Edit</button>
+            <button class="k-del" onclick="deleteKnow('${k.id}')">Delete</button>
+          </div>`:""}
+        </div>
+        <div class="k-body">${(k.content||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>
+        ${k.tags?`<div class="k-tags">${k.tags.split(",").map(t=>`<span class="k-tag">#${t.trim()}</span>`).join("")}</div>`:""}
+      </div>`).join("")
+    : `<div class="k-empty">No entries match. ${isAdmin?"Click <b>+ New Entry</b> to add one.":""}</div>`;
+  const adminBtns=isAdmin?`<button class="k-new" onclick="openKnowEdit(null)">+ New Entry</button>`:"";
+  document.getElementById("mainContent").innerHTML=`
+    <div class="k-wrap">
+      <div class="k-intro">Living reference for the team. Look here BEFORE asking. ${isAdmin?"Add what you find yourself explaining repeatedly.":""}</div>
+      <div class="k-toolbar">
+        <input class="k-search" id="kSearchInp" placeholder="🔍 Search knowledge..." value="${_knowSearch.replace(/"/g,"&quot;")}" oninput="_knowSearch=this.value;_knowFocusSearch=true;renderKnowledge();" />
+        ${adminBtns}
+      </div>
+      <div class="k-filters">${filterPills}</div>
+      <div class="k-list">${list}</div>
+    </div>`;
+  // v6.1 FIX: refocus search after re-render so the user can keep typing
+  if(_knowFocusSearch){
+    _knowFocusSearch=false;
+    setTimeout(()=>{
+      const el=document.getElementById("kSearchInp");
+      if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}
+    },0);
+  }
+}
+function setKnowFilter(c){_knowFilter=c;renderKnowledge();}
+function openKnowEdit(id){
+  const all=getKnowledge();
+  const k=id?all.find(x=>x.id===id):{id:uid(),cat:"FAQs",title:"",content:"",tags:""};
+  if(!k)return;
+  const catOpts=KNOWLEDGE_CATEGORIES.map(c=>`<option value="${c}"${k.cat===c?" selected":""}>${c}</option>`).join("");
+  const html=`<div class="cmp-modal-bg" id="knowModalBg">
+    <div class="cmp-modal">
+      <div class="cmp-mhd"><b>${id?"Edit":"New"} Knowledge Entry</b><button onclick="closeKnowEdit()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <label class="cmp-fl">Category</label>
+        <select class="cmp-fi" id="kCat">${catOpts}</select>
+        <label class="cmp-fl">Title</label>
+        <input class="cmp-fi" id="kTitle" value="${(k.title||"").replace(/"/g,"&quot;")}" placeholder="Short, searchable">
+        <label class="cmp-fl">Content</label>
+        <textarea class="cmp-fi" id="kContent" rows="8" placeholder="Full answer. Multi-line OK.">${k.content||""}</textarea>
+        <label class="cmp-fl">Tags (comma-separated)</label>
+        <input class="cmp-fi" id="kTags" value="${(k.tags||"").replace(/"/g,"&quot;")}" placeholder="vastu,placement">
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-save" onclick="saveKnow('${k.id}')">${id?"Save":"Create"}</button>
+        <button class="cmp-cancel" onclick="closeKnowEdit()">Cancel</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeKnowEdit(){const m=document.getElementById("knowModalBg");if(m)m.remove();}
+async function saveKnow(id){
+  const all=getKnowledge();
+  const idx=all.findIndex(x=>x.id===id);
+  const data={
+    id,
+    cat:document.getElementById("kCat").value,
+    title:document.getElementById("kTitle").value.trim(),
+    content:document.getElementById("kContent").value.trim(),
+    tags:document.getElementById("kTags").value.trim(),
+    updated_at:new Date().toISOString()
+  };
+  if(!data.title){toast("Entry needs a title","err");return;}
+  if(idx>=0)all[idx]=data;else all.push(data);
+  sto("knowledge",all);
+  closeKnowEdit();renderKnowledge();
+  toast("Saving...","info");
+  await pushToGitHub();
+  toast("✓ Knowledge synced","ok");
+}
+async function deleteKnow(id){
+  if(!confirm("Delete this entry? This cannot be undone."))return;
+  const all=getKnowledge().filter(x=>x.id!==id);
+  sto("knowledge",all);
+  renderKnowledge();
+  await pushToGitHub();
+  toast("Deleted","ok");
+}
+
+/* ══ v6: HOOKS & SCRIPTS — render + actions ══ */
+let _hookType="hook",_hookSearch="",_hookFocusSearch=false;
+function renderHooks(){
+  updateCounts();
+  const all=getHooks();
+  const isAdmin=user?.role==="admin";
+  const tabs=HOOK_TYPES.map(t=>{
+    const cnt=all.filter(h=>h.type===t).length;
+    const lbl={hook:"🎯 Hooks",script:"📝 Scripts",cta:"📞 CTAs","caption-opener":"✍️ Caption Openers"}[t];
+    return `<button class="hk-tab${_hookType===t?" on":""}" onclick="setHookType('${t}')">${lbl} <span class="hk-c">${cnt}</span></button>`;
+  }).join("");
+  let entries=all.filter(h=>h.type===_hookType);
+  if(_hookSearch){
+    const q=_hookSearch.toLowerCase();
+    entries=entries.filter(h=>(h.content+" "+(h.tags||"")+" "+(h.cat||"")).toLowerCase().includes(q));
+  }
+  const list=entries.length
+    ? entries.map(h=>`<div class="hk-card">
+        <div class="hk-hd">
+          <span class="hk-cat">${h.cat||""}</span>
+          <div class="hk-acts">
+            <button class="hk-copy" onclick="copyHook('${h.id}',this)">📋 Copy</button>
+            ${isAdmin?`<button class="hk-edit" onclick="openHookEdit('${h.id}')">Edit</button><button class="hk-del" onclick="deleteHook('${h.id}')">×</button>`:""}
+          </div>
+        </div>
+        <div class="hk-body">${(h.content||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>
+        ${h.tags?`<div class="hk-tags">${h.tags.split(",").map(t=>`<span class="hk-tag">#${t.trim()}</span>`).join("")}</div>`:""}
+      </div>`).join("")
+    : `<div class="k-empty">No ${_hookType}s yet. ${isAdmin?"Click <b>+ New</b>.":""}</div>`;
+  const adminBtns=isAdmin?`<button class="k-new" onclick="openHookEdit(null)">+ New entry</button>`:"";
+  document.getElementById("mainContent").innerHTML=`
+    <div class="k-wrap">
+      <div class="k-intro">Reusable starting points. Don't write from blank — pick one, customize, ship.</div>
+      <div class="hk-tabs">${tabs}</div>
+      <div class="k-toolbar">
+        <input class="k-search" id="hSearchInp" placeholder="🔍 Search..." value="${_hookSearch.replace(/"/g,"&quot;")}" oninput="_hookSearch=this.value;_hookFocusSearch=true;renderHooks();" />
+        ${adminBtns}
+      </div>
+      <div class="hk-list">${list}</div>
+    </div>`;
+  // v6.1 FIX: refocus search after re-render
+  if(_hookFocusSearch){
+    _hookFocusSearch=false;
+    setTimeout(()=>{
+      const el=document.getElementById("hSearchInp");
+      if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}
+    },0);
+  }
+}
+function setHookType(t){_hookType=t;renderHooks();}
+function copyHook(id,btn){
+  const h=getHooks().find(x=>x.id===id);
+  if(!h)return;
+  navigator.clipboard.writeText(h.content).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓ Copied";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("ok");},1500);
+  });
+}
+function openHookEdit(id){
+  const all=getHooks();
+  const h=id?all.find(x=>x.id===id):{id:uid(),type:_hookType,cat:"Educational",content:"",tags:""};
+  if(!h)return;
+  const typeOpts=HOOK_TYPES.map(t=>`<option value="${t}"${h.type===t?" selected":""}>${t}</option>`).join("");
+  const catOpts=HOOK_CATEGORIES.map(c=>`<option value="${c}"${h.cat===c?" selected":""}>${c}</option>`).join("");
+  const html=`<div class="cmp-modal-bg" id="hookModalBg">
+    <div class="cmp-modal">
+      <div class="cmp-mhd"><b>${id?"Edit":"New"} Entry</b><button onclick="closeHookEdit()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="cmp-fr">
+          <div style="flex:1"><label class="cmp-fl">Type</label><select class="cmp-fi" id="hType">${typeOpts}</select></div>
+          <div style="flex:1"><label class="cmp-fl">Category</label><select class="cmp-fi" id="hCat">${catOpts}</select></div>
+        </div>
+        <label class="cmp-fl">Content</label>
+        <textarea class="cmp-fi" id="hContent" rows="6">${h.content||""}</textarea>
+        <label class="cmp-fl">Tags</label>
+        <input class="cmp-fi" id="hTags" value="${(h.tags||"").replace(/"/g,"&quot;")}">
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-save" onclick="saveHook('${h.id}')">${id?"Save":"Create"}</button>
+        <button class="cmp-cancel" onclick="closeHookEdit()">Cancel</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeHookEdit(){const m=document.getElementById("hookModalBg");if(m)m.remove();}
+async function saveHook(id){
+  const all=getHooks();
+  const idx=all.findIndex(x=>x.id===id);
+  const data={
+    id,
+    type:document.getElementById("hType").value,
+    cat:document.getElementById("hCat").value,
+    content:document.getElementById("hContent").value.trim(),
+    tags:document.getElementById("hTags").value.trim()
+  };
+  if(!data.content){toast("Content can't be empty","err");return;}
+  if(idx>=0)all[idx]=data;else all.push(data);
+  sto("hooks",all);
+  closeHookEdit();renderHooks();
+  toast("Saving...","info");
+  await pushToGitHub();
+  toast("✓ Synced","ok");
+}
+async function deleteHook(id){
+  if(!confirm("Delete this entry?"))return;
+  const all=getHooks().filter(x=>x.id!==id);
+  sto("hooks",all);renderHooks();
+  await pushToGitHub();
+  toast("Deleted","ok");
+}
+
+/* ══ v6: POST TEMPLATES — render + actions ══ */
+function renderTemplates(){
+  updateCounts();
+  const all=getTemplates();
+  const isAdmin=user?.role==="admin";
+  const list=all.length
+    ? all.map(t=>`<div class="tpl-card">
+        <div class="tpl-hd">
+          <div><div class="tpl-name">${t.name}</div><div class="tpl-fw">${t.framework||""}</div></div>
+          ${isAdmin?`<div class="hk-acts">
+            <button class="hk-edit" onclick="openTplEdit('${t.id}')">Edit</button>
+            <button class="hk-del" onclick="deleteTpl('${t.id}')">×</button>
+          </div>`:""}
+        </div>
+        <div class="tpl-section"><div class="tpl-l">HOOK</div><div class="tpl-v">${(t.hook||"").replace(/</g,"&lt;")}<button class="tpl-copy" onclick="copyTplField('${t.id}','hook',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">CAPTION</div><div class="tpl-v">${(t.caption||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}<button class="tpl-copy" onclick="copyTplField('${t.id}','caption',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">DESIGN BRIEF</div><div class="tpl-v tpl-brief">${(t.brief||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}<button class="tpl-copy" onclick="copyTplField('${t.id}','brief',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">CTA</div><div class="tpl-v">${(t.cta||"").replace(/</g,"&lt;")}<button class="tpl-copy" onclick="copyTplField('${t.id}','cta',this)">📋</button></div></div>
+      </div>`).join("")
+    : `<div class="k-empty">No templates yet.</div>`;
+  const adminBtns=isAdmin?`<button class="k-new" onclick="openTplEdit(null)">+ New Template</button>`:"";
+  document.getElementById("mainContent").innerHTML=`
+    <div class="k-wrap">
+      <div class="k-intro">Pre-built frameworks. Pick one, fill in the [bracketed] parts, ship in 10 minutes.</div>
+      <div class="k-toolbar">${adminBtns}</div>
+      <div class="tpl-list">${list}</div>
+    </div>`;
+}
+function copyText(txt,btn){
+  navigator.clipboard.writeText(txt).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓";
+    setTimeout(()=>{btn.innerHTML=orig;},1200);
+  });
+}
+function copyTplField(id,field,btn){
+  const t=getTemplates().find(x=>x.id===id);
+  if(t&&t[field])copyText(t[field],btn);
+}
+function openTplEdit(id){
+  const all=getTemplates();
+  const t=id?all.find(x=>x.id===id):{id:uid(),name:"",framework:"",hook:"",caption:"",brief:"",cta:"",tags:""};
+  if(!t)return;
+  const html=`<div class="cmp-modal-bg" id="tplModalBg">
+    <div class="cmp-modal">
+      <div class="cmp-mhd"><b>${id?"Edit":"New"} Template</b><button onclick="closeTplEdit()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <label class="cmp-fl">Name</label><input class="cmp-fi" id="tName" value="${(t.name||"").replace(/"/g,"&quot;")}" placeholder="e.g. Material Comparison Carousel">
+        <label class="cmp-fl">Framework (type · length · vibe)</label><input class="cmp-fi" id="tFw" value="${(t.framework||"").replace(/"/g,"&quot;")}" placeholder="e.g. Carousel · 6 slides · Educational">
+        <label class="cmp-fl">Hook template</label><textarea class="cmp-fi" id="tHook" rows="2">${t.hook||""}</textarea>
+        <label class="cmp-fl">Caption template (use [brackets] for placeholders)</label><textarea class="cmp-fi" id="tCap" rows="6">${t.caption||""}</textarea>
+        <label class="cmp-fl">Design brief template</label><textarea class="cmp-fi" id="tBrief" rows="4">${t.brief||""}</textarea>
+        <label class="cmp-fl">CTA template</label><input class="cmp-fi" id="tCta" value="${(t.cta||"").replace(/"/g,"&quot;")}">
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-save" onclick="saveTpl('${t.id}')">${id?"Save":"Create"}</button>
+        <button class="cmp-cancel" onclick="closeTplEdit()">Cancel</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeTplEdit(){const m=document.getElementById("tplModalBg");if(m)m.remove();}
+async function saveTpl(id){
+  const all=getTemplates();
+  const idx=all.findIndex(x=>x.id===id);
+  const data={
+    id,
+    name:document.getElementById("tName").value.trim(),
+    framework:document.getElementById("tFw").value.trim(),
+    hook:document.getElementById("tHook").value.trim(),
+    caption:document.getElementById("tCap").value.trim(),
+    brief:document.getElementById("tBrief").value.trim(),
+    cta:document.getElementById("tCta").value.trim()
+  };
+  if(!data.name){toast("Template needs a name","err");return;}
+  if(idx>=0)all[idx]=data;else all.push(data);
+  sto("templates",all);
+  closeTplEdit();renderTemplates();
+  toast("Saving...","info");
+  await pushToGitHub();
+  toast("✓ Synced","ok");
+}
+async function deleteTpl(id){
+  if(!confirm("Delete this template?"))return;
+  const all=getTemplates().filter(x=>x.id!==id);
+  sto("templates",all);renderTemplates();
+  await pushToGitHub();
+  toast("Deleted","ok");
+}
+
+/* ══ v6: CONTENT REQUESTS — render + actions ══ */
+let _reqFilter="all";
+function renderRequests(){
+  updateCounts();
+  const all=getRequests();
+  const isAdmin=user?.role==="admin";
+  const filters=["all","pending","approved","in_progress","done","declined"];
+  const filterPills=filters.map(f=>{
+    const cnt=f==="all"?all.length:all.filter(r=>r.status===f).length;
+    const lbl=f==="all"?"All":REQUEST_LABELS[f];
+    return `<button class="kf-pill${_reqFilter===f?" on":""}" onclick="_reqFilter='${f}';renderRequests();">${lbl} <span class="kf-c">${cnt}</span></button>`;
+  }).join("");
+  const entries=_reqFilter==="all"?all:all.filter(r=>r.status===_reqFilter);
+  // newest first
+  entries.sort((a,b)=>new Date(b.created_at||0)-new Date(a.created_at||0));
+  const list=entries.length
+    ? entries.map(r=>{
+        const adminBar=isAdmin&&r.status==="pending"?`<div class="rq-admin">
+          <button class="rq-app" onclick="setReqStatus('${r.id}','approved')">Approve</button>
+          <button class="rq-prog" onclick="setReqStatus('${r.id}','in_progress')">Start work</button>
+          <button class="rq-dec" onclick="setReqStatus('${r.id}','declined')">Decline</button>
+        </div>`:isAdmin?`<div class="rq-admin">
+          <select class="rq-status-sel" onchange="setReqStatus('${r.id}',this.value)">${REQUEST_STATUSES.map(s=>`<option value="${s}"${r.status===s?" selected":""}>${REQUEST_LABELS[s]}</option>`).join("")}</select>
+          <button class="rq-dec" onclick="deleteReq('${r.id}')">Delete</button>
+        </div>`:"";
+        return `<div class="rq-card">
+          <div class="rq-hd">
+            <div>
+              <span class="rq-status-pill rq-st-${r.status}">${REQUEST_LABELS[r.status]||r.status}</span>
+              <span class="rq-type">${r.type||"?"}</span>
+              <span class="rq-when">for ${r.date_wanted||"—"}</span>
+            </div>
+            <div class="rq-meta">${r.requester||"?"} · ${relTime(r.created_at)}</div>
+          </div>
+          <div class="rq-obj"><b>Goal:</b> ${(r.objective||"").replace(/</g,"&lt;")}</div>
+          ${r.brief?`<div class="rq-brief"><b>Brief:</b> ${r.brief.replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>`:""}
+          <div class="rq-grid">
+            ${r.platform?`<div><b>Platform:</b> ${r.platform}</div>`:""}
+            ${r.offer?`<div><b>Offer/CTA:</b> ${r.offer}</div>`:""}
+            ${r.deadline?`<div><b>Deadline:</b> ${r.deadline}</div>`:""}
+            ${r.reference?`<div><b>Reference:</b> ${r.reference}</div>`:""}
+          </div>
+          ${adminBar}
+        </div>`;
+      }).join("")
+    : `<div class="k-empty">No requests${_reqFilter!=="all"?" matching this filter":""}.</div>`;
+  document.getElementById("mainContent").innerHTML=`
+    <div class="k-wrap">
+      <div class="k-intro">Anyone on the team can request new content (extra reel, ad, story). Admin approves and adds to the calendar.</div>
+      <div class="k-toolbar">
+        <button class="k-new" onclick="openReqForm()">+ New Request</button>
+      </div>
+      <div class="k-filters">${filterPills}</div>
+      <div class="rq-list">${list}</div>
+    </div>`;
+}
+function openReqForm(){
+  const html=`<div class="cmp-modal-bg" id="reqModalBg">
+    <div class="cmp-modal">
+      <div class="cmp-mhd"><b>New Content Request</b><button onclick="closeReqForm()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="cmp-fr">
+          <div style="flex:1"><label class="cmp-fl">Type</label>
+            <select class="cmp-fi" id="rqType"><option>Reel</option><option>Carousel</option><option>Static</option><option>Story</option><option>Ad</option><option>WhatsApp Status</option><option>Other</option></select></div>
+          <div style="flex:1"><label class="cmp-fl">Platform</label>
+            <select class="cmp-fi" id="rqPlat"><option>IG</option><option>FB</option><option>IG+FB</option><option>Pinterest</option><option>YouTube Shorts</option><option>WhatsApp</option><option>Multi</option></select></div>
+        </div>
+        <div class="cmp-fr">
+          <div style="flex:1"><label class="cmp-fl">Date wanted</label><input class="cmp-fi" id="rqDate" placeholder="e.g. May 14"></div>
+          <div style="flex:1"><label class="cmp-fl">Deadline</label><input class="cmp-fi" id="rqDeadline" placeholder="e.g. May 12"></div>
+        </div>
+        <label class="cmp-fl">Goal / Objective <span style="color:var(--r);">*</span></label>
+        <input class="cmp-fi" id="rqObj" placeholder="What should this post achieve? e.g. Drive DMs for free site visit">
+        <label class="cmp-fl">Offer / CTA</label>
+        <input class="cmp-fi" id="rqOffer" placeholder="e.g. Free 3D concept on DM">
+        <label class="cmp-fl">Brief / Notes</label>
+        <textarea class="cmp-fi" id="rqBrief" rows="3" placeholder="Anything else the designer needs to know..."></textarea>
+        <label class="cmp-fl">Reference (URL or description)</label>
+        <input class="cmp-fi" id="rqRef" placeholder="Link to a reference post / image">
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-save" onclick="submitReq()">Submit Request</button>
+        <button class="cmp-cancel" onclick="closeReqForm()">Cancel</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeReqForm(){const m=document.getElementById("reqModalBg");if(m)m.remove();}
+async function submitReq(){
+  const obj=document.getElementById("rqObj").value.trim();
+  if(!obj){toast("Goal/objective is required","err");return;}
+  const r={
+    id:uid(),
+    requester:user?.name||"?",
+    type:document.getElementById("rqType").value,
+    platform:document.getElementById("rqPlat").value,
+    date_wanted:document.getElementById("rqDate").value.trim(),
+    deadline:document.getElementById("rqDeadline").value.trim(),
+    objective:obj,
+    offer:document.getElementById("rqOffer").value.trim(),
+    brief:document.getElementById("rqBrief").value.trim(),
+    reference:document.getElementById("rqRef").value.trim(),
+    status:"pending",
+    created_at:new Date().toISOString()
+  };
+  const all=getRequests();all.unshift(r);sto("requests",all);
+  closeReqForm();renderRequests();
+  toast("Request submitted — pushing...","info");
+  await pushToGitHub();
+  toast("✓ Synced — admin will review","ok");
+}
+async function setReqStatus(id,status){
+  const all=getRequests();
+  const r=all.find(x=>x.id===id);
+  if(!r)return;
+  r.status=status;
+  sto("requests",all);renderRequests();
+  await pushToGitHub();
+  toast(`Marked ${REQUEST_LABELS[status]||status}`,"ok");
+}
+async function deleteReq(id){
+  if(!confirm("Delete this request? It will not be recoverable."))return;
+  const all=getRequests().filter(x=>x.id!==id);
+  sto("requests",all);renderRequests();
+  await pushToGitHub();
+  toast("Deleted","ok");
+}
+
+/* ══ v6: AI PROMPT GENERATOR (free path) — modal triggered from review post ══ */
+function openAIPrompts(postId,slideIdx){
+  const p=POSTS.find(x=>x.id===postId);if(!p)return;
+  const pp=gp(postId);
+  const dna=getBrandDNA();
+  // Build context for prompts
+  const subject=slideIdx!=null&&p.slides?p.slides[slideIdx]:pp.title;
+  const briefText=pp.brief||pp.title;
+  const visualStyle=dna.visual_style||"warm gold tones, soft maroon accents, natural daylight";
+  // 4 different prompt angles
+  const prompts=[
+    {
+      title:"📷 Hero product shot",
+      hint:"Best for product spotlights, material posts, premium reveals",
+      text:`Photorealistic hero product photograph of a ${subject.toLowerCase().includes("mandir")?subject.toLowerCase():"custom Indian mandir (home temple) — "+subject}. Centred composition, ${visualStyle}. Studio-quality lighting. Sharp focus on the mandir, soft background blur. Indian aesthetic, devotional tone. No text overlays. Vertical 4:5 format for Instagram.`
+    },
+    {
+      title:"🏠 Lifestyle / in-home scene",
+      hint:"Best for emotional, before/after, family-focused content",
+      text:`Cinematic photograph of an Indian family home with a beautiful custom mandir in the corner of a modern living room. Subject: ${subject}. Soft morning light streaming through a window, warm golden glow from the mandir's LED, a single brass diya lit. Family member silhouetted from behind, in respectful prayer pose. ${visualStyle}. Authentic Indian middle-class to upper-middle-class home aesthetic. Vertical 4:5 format. No text.`
+    },
+    {
+      title:"📊 Diagram / infographic",
+      hint:"Best for educational carousels, Vastu guides, comparisons",
+      text:`Clean minimal infographic illustration. Subject: ${subject}. Style: flat vector with subtle gradients, ${visualStyle}. Indian devotional motifs as accents (lotus, om, diya silhouettes). Clear visual hierarchy. Sans-serif typography, headline + 2-3 short labels. 1:1 square format for Instagram carousel slide. White or warm cream background.`
+    },
+    {
+      title:"🪔 Festival / devotional mood",
+      hint:"Best for festival greetings, devotional posts, special occasions",
+      text:`Devotional festival mood photograph. Subject: ${subject}. Foreground: lit brass diyas, marigold flowers, traditional Indian rangoli pattern. Background: soft glow of a custom mandir with gold + maroon palette. ${visualStyle}. Warm low-light cinematography, shallow depth of field. Spiritual, calming, auspicious atmosphere. Vertical 4:5 format. Leave space top-right for greeting text overlay.`
+    }
+  ];
+  const promptCards=prompts.map((pr,i)=>{
+    const enc=encodeURIComponent(pr.text);
+    return `<div class="ai-card">
+      <div class="ai-title">${pr.title}</div>
+      <div class="ai-hint">${pr.hint}</div>
+      <textarea class="ai-prompt" id="aiPrompt${i}" rows="6" readonly>${pr.text}</textarea>
+      <div class="ai-actions">
+        <button class="ai-btn ai-copy" onclick="copyAIPrompt(${i},this)">📋 Copy</button>
+        <button class="ai-btn ai-chatgpt" onclick="openAITool('chatgpt',${i})">ChatGPT</button>
+        <button class="ai-btn ai-gemini" onclick="openAITool('gemini',${i})">Gemini</button>
+        <button class="ai-btn ai-grok" onclick="openAITool('grok',${i})">Grok</button>
+        <button class="ai-btn ai-claude" onclick="openAITool('claude',${i})">Claude</button>
+      </div>
+    </div>`;
+  }).join("");
+  const html=`<div class="cmp-modal-bg" id="aiModalBg">
+    <div class="cmp-modal" style="max-width:680px;">
+      <div class="cmp-mhd"><b>🎨 AI Image Prompts — ${slideIdx!=null?"Slide "+(slideIdx+1):"Post"}</b><button onclick="closeAIPrompts()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="ai-intro">4 prompt angles below — each tuned to your Brand DNA. <b>Click "Copy" then click your preferred AI tool</b> to paste &amp; generate. Compare results across tools, download the best, then upload to this slide.</div>
+        ${promptCards}
+        <div class="ai-foot-note">💡 Tip: paste the same prompt into 2-3 tools to compare. AI image quality varies a lot for marble/Indian iconography — testing pays off.</div>
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-cancel" onclick="closeAIPrompts()">Close</button>
+      </div>
+    </div></div>`;
+  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+}
+function closeAIPrompts(){const m=document.getElementById("aiModalBg");if(m)m.remove();}
+function copyAIPrompt(i,btn){
+  const el=document.getElementById("aiPrompt"+i);
+  navigator.clipboard.writeText(el.value).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓ Copied — paste in AI tool";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("ok");},2200);
+  });
+}
+function openAITool(tool,i){
+  const el=document.getElementById("aiPrompt"+i);
+  navigator.clipboard.writeText(el.value);
+  const urls={chatgpt:"https://chatgpt.com/",gemini:"https://gemini.google.com/app",grok:"https://grok.com/",claude:"https://claude.ai/new"};
+  const url=urls[tool]||urls.chatgpt;
+  window.open(url,"_blank");
+  toast("Prompt copied — paste it in the AI tool tab","ok");
+}
+
+
 function relTime(iso){const d=Math.floor((Date.now()-new Date(iso))/1000);if(d<60)return "just now";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago";}
 function toast(msg,type=""){const t=document.getElementById("toast");t.textContent=msg;t.className="toast"+(type?" "+type:"");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2800);}
 document.getElementById("revBg").addEventListener("click",e=>{if(e.target===document.getElementById("revBg"))closeModal();});
 document.getElementById("rejOv").addEventListener("click",e=>{if(e.target===document.getElementById("rejOv"))closeRejOv();});
 document.getElementById("setupModalBg").addEventListener("click",e=>{if(e.target===document.getElementById("setupModalBg"))closeSetupModal();});
+
+/* v6.1 FIX: Unified backdrop-click + Escape close for all v5/v6 dynamic modals.
+   These modals (campaign edit, knowledge edit, hook edit, template edit, request form, AI prompts)
+   are appended to <body> at runtime, so we use event delegation on document. */
+document.addEventListener("click",e=>{
+  const t=e.target;
+  if(t&&t.classList&&t.classList.contains("cmp-modal-bg")){t.remove();}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"){
+    // Close newest dynamic modal (last in DOM)
+    const modals=document.querySelectorAll(".cmp-modal-bg");
+    if(modals.length){modals[modals.length-1].remove();}
+  }
+});
 
 // Auto-restore session on page load / refresh
 (function(){
