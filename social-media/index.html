@@ -458,16 +458,44 @@ input[type=file]{display:none;}
 .br-camp{background:rgba(123,53,148,.08);margin:5px -12px -9px;padding:6px 12px;border-radius:0 0 8px 8px;border-top:1px solid rgba(123,53,148,.15);}
 
 /* v5: Brand DNA */
-.dna-wrap{max-width:780px;margin:0 auto;padding:14px 16px 80px;}
-.dna-intro{font-size:12px;color:var(--mid);background:var(--w);padding:11px 14px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.5;}
-.dna-row{margin-bottom:13px;}
-.dna-l{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--dark);margin-bottom:4px;}
-.dna-h{font-size:11px;color:var(--mid);margin-bottom:5px;line-height:1.4;}
-.dna-i{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:13px;color:var(--dark);outline:none;transition:border-color .15s;box-sizing:border-box;}
-.dna-i:focus{border-color:var(--o);}
+.dna-wrap{max-width:840px;margin:0 auto;padding:14px 16px 80px;}
+.dna-intro{font-size:12.5px;color:var(--dark);background:linear-gradient(135deg,rgba(232,119,34,.08),rgba(123,53,148,.06));padding:13px 16px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.6;}
+
+/* v6.7: Progress bar */
+.dna-progress{background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:11px 14px;margin-bottom:13px;display:flex;align-items:center;gap:13px;}
+.dna-prog-bar{flex:1;height:8px;background:#f1eee8;border-radius:99px;overflow:hidden;}
+.dna-prog-fill{height:100%;background:linear-gradient(90deg,var(--o),#cf6a1d);border-radius:99px;transition:width .3s ease;}
+.dna-prog-txt{font-size:11px;color:var(--mid);white-space:nowrap;}
+.dna-prog-txt b{color:var(--dark);}
+
+/* v6.7: Section card */
+.dna-section{background:var(--w);border:1px solid var(--bdr);border-radius:10px;margin-bottom:9px;overflow:hidden;}
+.dna-section.open{border-color:rgba(232,119,34,.35);}
+.dna-sec-hd{padding:13px 16px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;transition:background .15s;}
+.dna-sec-hd:hover{background:#faf8f4;}
+.dna-section.open .dna-sec-hd{border-bottom:1px solid var(--bdr);background:rgba(232,119,34,.04);}
+.dna-sec-l{display:flex;align-items:center;gap:10px;flex:1;}
+.dna-sec-arr{font-size:10px;color:var(--mid);width:14px;}
+.dna-sec-title{font-size:14px;font-weight:700;color:var(--dark);}
+.dna-sec-prog{font-size:10.5px;color:var(--mid);background:#f1eee8;padding:2px 8px;border-radius:99px;font-weight:600;margin-left:auto;}
+.dna-section.open .dna-sec-prog{background:rgba(232,119,34,.15);color:var(--o);}
+.dna-sec-intro{padding:11px 16px 5px;font-size:12px;color:var(--mid);line-height:1.55;font-style:italic;}
+
+/* v6.7: Field row */
+.dna-row{padding:11px 16px;border-top:1px solid #f4ede0;}
+.dna-row:first-of-type{border-top:none;}
+.dna-l{display:block;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dark);margin-bottom:3px;}
+.dna-filled{color:var(--g);font-size:13px;font-weight:bold;}
+.dna-q{font-size:11.5px;color:var(--mid);margin-bottom:7px;line-height:1.55;}
+.dna-q i{font-style:normal;}
+.dna-i{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:9px 12px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--dark);outline:none;transition:border-color .15s;box-sizing:border-box;line-height:1.55;}
+.dna-i:focus{border-color:var(--o);box-shadow:0 0 0 3px rgba(232,119,34,.12);}
 .dna-i:disabled{background:#f7f6f3;color:var(--mid);cursor:not-allowed;}
-textarea.dna-i{resize:vertical;min-height:54px;font-family:'Inter',sans-serif;line-height:1.5;}
-.dna-bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0;display:flex;gap:10px;border-top:1px solid var(--bdr);margin-top:18px;}
+textarea.dna-i{resize:vertical;min-height:62px;font-family:'Inter',sans-serif;}
+.dna-i::placeholder{color:#bdb6a8;}
+
+/* v6.7: Bottom action bar */
+.dna-bar{position:sticky;bottom:0;background:var(--bg);padding:13px 0;display:flex;gap:10px;border-top:1px solid var(--bdr);margin-top:14px;}
 .dna-bar.dna-readonly{justify-content:center;color:var(--mid);font-size:12px;background:transparent;border:none;}
 .dna-save{flex:1;background:var(--o);color:#fff;border:none;border-radius:8px;padding:11px;font-weight:600;font-size:13px;cursor:pointer;}
 .dna-save:hover{background:#cf6a1d;}
@@ -757,21 +785,13 @@ function gNotes(id){return stg("notes-"+id)||[];}
 /* v5: Brand DNA + Campaigns helpers.
    Brand DNA is a single object describing voice, audience, visuals, hashtags, etc.
    Campaigns is an array of period-bound groupings of posts. */
+/* ══ v6.7: BRAND DNA — proper framework ══
+   Restructured from flat 14-field reference card into a 7-section Brand DNA framework.
+   The DEFAULT_BRAND_DNA is intentionally mostly empty. Real content is the admin's work.
+   Each field has a `q` (prompting question) — that's what guides the thinking. */
 const DEFAULT_BRAND_DNA={
   brand_name:"MakeMyMandir",
-  tagline:"Custom mandirs, crafted to last a lifetime",
-  voice:"Devotional yet modern. Warm, professional, honest. Not pushy.",
-  audience:"Indian families, 30–55, homeowners in Pune / Mumbai / Nashik / Aurangabad / Kolhapur. Decision-makers planning a custom pooja space.",
-  hero_offerings:"Corian mandirs · Marble mandirs · Wall-mount mandirs · Cabinet mandirs · Full pooja rooms",
-  price_range:"₹30,000 – ₹2,00,000+ (Essential / Premium / Signature tiers)",
-  cities:"Pune (free site visit), Mumbai, Nashik, Aurangabad, Kolhapur (video consult + delivery)",
-  do_use:"Real client photos · Honest pricing · Spiritual emojis 🙏 · Sanskrit/devotional terms · Soft warm lighting · Gold + maroon palette",
-  dont_use:"Stock photos · Aggressive sales language · Naming competitors · Exaggerated claims · Cold/blue tones",
-  hashtags_core:"#makemymandir #corianmandir #custommandir #mandirpune",
-  hashtags_topical:"#mandirdesign #poojaroomdesign #vastuformandir #homemandir #mandirinpune",
-  cta_phrases:"DM us · DM your floor plan · WhatsApp for free site visit · Comment your style",
-  visual_style:"Warm gold tones, soft maroon accents, natural daylight or warm LED, real product photography preferred. Minimal text overlay. Hero product centred.",
-  notes:""
+  // Everything else starts blank. The team fills in over time.
 };
 function getBrandDNA(){return stg("brandDNA")||DEFAULT_BRAND_DNA;}
 function getCampaigns(){
@@ -1600,15 +1620,21 @@ function openReview(id){
   const notes=gNotes(id);
   const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
 
-  // v5: Brand DNA + Campaign reference at top of review modal
+  // v6.7: Brand DNA + Campaign reference at top of review modal.
+  // Only shows fields that have been filled in. Degrades gracefully — if empty, shows a gentle nudge.
   const dna=getBrandDNA();
   const camp=getCampaignForPost(id);
-  const brandRef=`<div class="fg"><div class="brand-ref">
-    <div class="br-row"><span class="br-l">🎨 Voice:</span><span class="br-v">${esc((dna.voice||"").substring(0,90))}${(dna.voice||"").length>90?"…":""}</span></div>
-    <div class="br-row"><span class="br-l">🏷 Core tags:</span><span class="br-v">${esc(dna.hashtags_core||"")}</span></div>
-    <div class="br-row"><span class="br-l">📞 CTAs:</span><span class="br-v">${esc(dna.cta_phrases||"")}</span></div>
-    ${camp?`<div class="br-row br-camp"><span class="br-l">📅 Campaign:</span><span class="br-v"><b>${esc(camp.name)}</b>${camp.theme?" — "+esc(camp.theme):""}</span></div>`:""}
-  </div></div>`;
+  const brandRefRows=[];
+  if(dna.voice_attributes)brandRefRows.push(`<div class="br-row"><span class="br-l">🎨 Voice:</span><span class="br-v">${esc((dna.voice_attributes||"").substring(0,120))}${(dna.voice_attributes||"").length>120?"…":""}</span></div>`);
+  if(dna.brand_promise)brandRefRows.push(`<div class="br-row"><span class="br-l">🤝 Promise:</span><span class="br-v">${esc(dna.brand_promise)}</span></div>`);
+  if(dna.vocab_avoid)brandRefRows.push(`<div class="br-row"><span class="br-l">🚫 Avoid:</span><span class="br-v">${esc((dna.vocab_avoid||"").substring(0,120))}${(dna.vocab_avoid||"").length>120?"…":""}</span></div>`);
+  if(dna.usps)brandRefRows.push(`<div class="br-row"><span class="br-l">⭐ USPs:</span><span class="br-v">${esc((dna.usps||"").substring(0,120))}${(dna.usps||"").length>120?"…":""}</span></div>`);
+  if(camp)brandRefRows.push(`<div class="br-row br-camp"><span class="br-l">📅 Campaign:</span><span class="br-v"><b>${esc(camp.name)}</b>${camp.theme?" — "+esc(camp.theme.substring(0,60)):""}</span></div>`);
+  const brandRef=brandRefRows.length
+    ? `<div class="fg"><div class="brand-ref">${brandRefRows.join("")}</div></div>`
+    : (user?.role==="admin"
+        ? `<div class="fg"><div class="brand-ref" style="background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2);"><div class="br-row" style="font-style:italic;color:var(--mid);">Brand DNA hasn't been filled in yet — go to <a href="javascript:closeModal();navTo('brandDNA',null);" style="color:var(--o);">🎨 Brand DNA</a> to add voice, promise, USPs etc. They'll show here as a quick reference while reviewing posts.</div></div></div>`
+        : "");
 
   let body=brandRef+`
     <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);" onchange="onTypeChange(this.value)"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
@@ -2033,55 +2059,195 @@ function renderActivity(){
 }
 
 /* ══ v5: BRAND DNA ══ */
-const DNA_FIELDS=[
-  {k:"brand_name",lbl:"Brand name",hint:""},
-  {k:"tagline",lbl:"Tagline / one-liner",hint:"What we say in one breath"},
-  {k:"voice",lbl:"Voice & tone",hint:"How we sound. Adjectives are useful."},
-  {k:"audience",lbl:"Target audience",hint:"Who we're talking to. Be specific — age, city, life-stage."},
-  {k:"hero_offerings",lbl:"Hero offerings",hint:"Main products/services we sell"},
-  {k:"price_range",lbl:"Price range / tiers",hint:"Helps team write honest captions"},
-  {k:"cities",lbl:"Cities served",hint:""},
-  {k:"do_use",lbl:"Do use",hint:"What we lean into — content elements, visual cues, language"},
-  {k:"dont_use",lbl:"Don't use",hint:"What we avoid"},
-  {k:"hashtags_core",lbl:"Core hashtags",hint:"Always include these"},
-  {k:"hashtags_topical",lbl:"Topical hashtags",hint:"Mix in based on post content"},
-  {k:"cta_phrases",lbl:"Common CTAs",hint:"Approved call-to-action phrases"},
-  {k:"visual_style",lbl:"Visual style guide",hint:"Colors, lighting, framing, mood. This will also feed AI image prompts later."},
-  {k:"notes",lbl:"Other notes",hint:"Anything else the team should know"},
+/* ══ v6.7: BRAND DNA — sectioned structure ══
+   7 sections. Each field has:
+     k = storage key
+     lbl = label shown to user
+     q = the actual prompting question (this is what makes it useful — italic in UI)
+     ph = optional placeholder for the textarea
+     long = boolean, render as textarea instead of input
+*/
+const BRAND_DNA_SECTIONS=[
+  {
+    id:"foundation",
+    title:"1. Foundation — Why we exist",
+    intro:"The deepest layer. If your team understands these 5 fields, everything else falls into place. This is the section that takes the longest to write — don't rush it.",
+    fields:[
+      {k:"brand_name",lbl:"Brand name",q:"What is the legal/trading name of the brand?"},
+      {k:"founder_story",lbl:"Founder story",q:"How did MakeMyMandir start? What was the moment, the problem, the realization that began this? Write 4–6 sentences. Tell it like you'd tell a friend over chai, not like a corporate bio.",long:true,ph:"It started when..."},
+      {k:"purpose",lbl:"Purpose / Mission",q:"Beyond making money, why does this business exist? Complete this sentence: 'We exist so that ___'. One sentence. The hardest 20 words you'll write.",long:true,ph:"We exist so that..."},
+      {k:"vision",lbl:"Vision",q:"If MakeMyMandir succeeds wildly over the next 10 years, what does the world look like? What changes because we existed?",long:true,ph:"In 10 years..."},
+      {k:"core_values",lbl:"Core values",q:"3–5 non-negotiable principles. Not vague words like 'quality' — specific behaviors. Format: 'VALUE: what it means in practice.' Example: 'CRAFTSMANSHIP: We don't ship a mandir we wouldn't put in our own home.'",long:true,ph:"VALUE 1: ...\nVALUE 2: ...\nVALUE 3: ..."},
+      {k:"brand_promise",lbl:"Brand promise",q:"What can EVERY customer expect from us, every time, no exceptions? One sentence. If we ever fail to deliver this, we apologize and make it right.",long:true,ph:"Every customer can expect..."},
+      {k:"positioning_statement",lbl:"Positioning statement",q:"Fill in this template: 'For [audience], MakeMyMandir is the [category] that [unique value] because [proof point].' This single line should make a competitor uncomfortable.",long:true,ph:"For ___, MakeMyMandir is the ___ that ___ because ___."},
+    ]
+  },
+  {
+    id:"personality",
+    title:"2. Personality — Who we are",
+    intro:"If MakeMyMandir walked into a room, who would it be? This section makes the brand feel human and distinguishable.",
+    fields:[
+      {k:"archetype",lbl:"Brand archetype",q:"Which of these fits best: SAGE (wise teacher), CAREGIVER (nurturing protector), CREATOR (artisan), MAGICIAN (transformer), RULER (premium authority), EVERYMAN (for everyone)? Pick one. Then explain why in 1–2 sentences."},
+      {k:"personality_traits",lbl:"Personality traits",q:"If MakeMyMandir were a person, describe them in 4–6 adjectives. Then write one sentence: 'They are the kind of person who...'",long:true,ph:"Adjectives: ...\nThey are the kind of person who..."},
+      {k:"personality_donts",lbl:"Personality DON'Ts",q:"What is MakeMyMandir explicitly NOT? List 4–6 things. Examples: 'NOT a discount retailer.' 'NOT a salesman.' 'NOT trendy or seasonal.'",long:true,ph:"NOT ___\nNOT ___\nNOT ___"},
+      {k:"brand_age_metaphor",lbl:"Age & life metaphor",q:"If the brand were a person, how old are they? What life stage? Why does this matter for how we communicate?"},
+    ]
+  },
+  {
+    id:"audience",
+    title:"3. Audience — Who we serve",
+    intro:"Specific is powerful. 'Everyone in India' is useless. 'Pradeep, 42, Pune-based engineer with two kids and parents living with him' is gold.",
+    fields:[
+      {k:"primary_persona",lbl:"Primary persona",q:"Build one detailed person. Give them: name, age, family setup, occupation, monthly household income, what they value most about their home, what they Google before buying a mandir, and what scares them about getting it wrong.",long:true,ph:"Name: \nAge: \nFamily: \nWork: \nIncome: \nValues: \nGoogles: \nFears: "},
+      {k:"primary_persona_quote",lbl:"What this persona would say",q:"Write a quote from this persona explaining why they chose MakeMyMandir. In their words, not yours."},
+      {k:"secondary_personas",lbl:"Secondary personas",q:"Briefly describe 2–3 other people we serve: e.g., interior designers buying for clients, NRIs gifting parents, dealers reselling. One paragraph each.",long:true,ph:"Persona 2 (Interior Designer): ...\nPersona 3 (NRI gifting): ..."},
+      {k:"anti_persona",lbl:"Anti-persona — Who we DON'T serve",q:"Describe someone we should politely turn away. Saves the team hours chasing wrong leads. Example: 'Anyone shopping primarily on price, comparing us with ₹8,000 wood mandirs from local carpenters.'",long:true,ph:"We do NOT serve..."},
+      {k:"audience_pain_points",lbl:"Top 3 pain points we solve",q:"What 3 specific frustrations does our customer have BEFORE they find us? Be concrete — not 'they want a nice mandir' but 'they've been quoted 4 prices ranging from ₹15k to ₹80k and have no idea why.'",long:true,ph:"Pain 1: ...\nPain 2: ...\nPain 3: ..."},
+    ]
+  },
+  {
+    id:"differentiation",
+    title:"4. Differentiation — Why us, not them",
+    intro:"If a customer asks 'why should I choose you over [Competitor X]?' your team should have a confident answer in their pocket.",
+    fields:[
+      {k:"competitors",lbl:"Who customers compare us with",q:"List the 3–5 competitors customers actually mention. Not just 'other mandir makers' — specific names. Local carpenters, [Brand X], [Brand Y], DIY from Pinterest, etc."},
+      {k:"competitive_position",lbl:"How we're positioned vs. them",q:"Where do we sit on the price/quality/customization spectrum compared to those competitors? One paragraph.",long:true},
+      {k:"usps",lbl:"Unique Selling Propositions (3–5)",q:"What 3–5 things can ONLY MakeMyMandir say truthfully? Specific, defensible. Not 'great quality' — every brand says that. Maybe: 'Only Corian mandir maker in Pune that does on-site CNC milling for custom shapes.'",long:true,ph:"USP 1: ...\nUSP 2: ...\nUSP 3: ..."},
+      {k:"never_compromise",lbl:"What we'd never compromise on",q:"Even if a customer asked, even if it cost us the deal — what are the things we say no to? Examples: 'We don't use particle board even if asked.' 'We don't promise <7-day delivery even when pushed.'",long:true},
+      {k:"proof_points",lbl:"Proof points & credentials",q:"Hard facts that back up our claims. Years in business, projects delivered, materials we're certified for, awards, press mentions, partnerships, repeat client %, anything verifiable.",long:true},
+    ]
+  },
+  {
+    id:"voice",
+    title:"5. Voice & Messaging — How we sound",
+    intro:"Voice is constant — who we are. Tone shifts — how we sound in different situations. Capture both, with examples.",
+    fields:[
+      {k:"voice_attributes",lbl:"Voice attributes (3–5 adjectives)",q:"How do we sound when we write? Pick 3–5 words. For each, give one positive example sentence and one we'd reject. Example: 'WARM — yes: \"We'll take care of the details\" — no: \"As per the agreement clause.\"'",long:true,ph:"WARM: yes... no...\nHONEST: yes... no..."},
+      {k:"tone_festival",lbl:"Tone — Festival posts",q:"How do we sound on Diwali / Akshaya Tritiya / Janmashtami? More devotional, more emotional? Show with one example caption opener."},
+      {k:"tone_pricing",lbl:"Tone — Price inquiries (DMs)",q:"How do we sound when a customer DMs asking 'how much for X?' Confident? Educational? What do we always include in a price reply?",long:true},
+      {k:"tone_complaint",lbl:"Tone — Complaints / problems",q:"When something goes wrong (delayed delivery, defect, miscommunication), how do we respond? First sentence template?",long:true},
+      {k:"tone_followup",lbl:"Tone — Follow-up after no response",q:"Customer didn't respond after our quote. Two days later, we check in. What does that message sound like? Example."},
+      {k:"vocab_use",lbl:"Words we USE",q:"Specific words & phrases that feel right. e.g., 'craft' not 'manufacture'; 'devotion' not 'religion'; 'home' not 'house'; 'pooja corner' not 'temple area'.",long:true},
+      {k:"vocab_avoid",lbl:"Words we AVOID",q:"Words that don't fit the brand. e.g., 'cheap', 'discount', 'limited time offer', 'best in class', 'guaranteed lowest price'.",long:true},
+      {k:"sentence_patterns",lbl:"Sentence patterns",q:"Do we write short and direct? Long and storytelling? Both? Show 2 example openers we love and 2 we'd reject.",long:true},
+    ]
+  },
+  {
+    id:"visual",
+    title:"6. Visual System — How we look",
+    intro:"This is what makes designers' lives easier. Specific colors, fonts, photo rules — not 'warm and devotional'.",
+    fields:[
+      {k:"color_primary",lbl:"Primary colors (with hex codes)",q:"What 1–2 colors are the brand backbone? Hex codes please. Where they're used.",long:true,ph:"Primary: #______ (used for ___)"},
+      {k:"color_secondary",lbl:"Secondary / accent colors",q:"Supporting palette. 2–4 colors with hex codes and usage rules.",long:true},
+      {k:"color_dont",lbl:"Colors to AVOID",q:"What colors don't fit the brand? Why? E.g., 'No bright primary blue — feels corporate, breaks devotional warmth.'"},
+      {k:"typography",lbl:"Typography",q:"Headline font + body font + any decorative font. Where each is used. If you don't know, write 'TBD — consult designer'.",long:true},
+      {k:"logo_rules",lbl:"Logo usage rules",q:"Min size, clear space around it, what NOT to do (don't stretch, don't recolor, etc.). Where the logo lives in posts (corner? watermark?)",long:true},
+      {k:"photography_style",lbl:"Photography style",q:"What kind of photos do we take/use? Real client homes vs. studio? Lighting (natural daylight, warm LED, etc.)? Composition (tight detail vs. wide context)? People in frame or not?",long:true},
+      {k:"photography_donts",lbl:"Photography DON'Ts",q:"What photo styles we never use. Stock photos? Cold lighting? Heavy filters? Cluttered backgrounds?",long:true},
+      {k:"iconography",lbl:"Iconography style",q:"What icons/motifs do we use? Lotus, om, diya, swastika? Line weight? When are they used and when overused?",long:true},
+    ]
+  },
+  {
+    id:"messaging",
+    title:"7. Customer Journey Messaging — Stage-by-stage",
+    intro:"What we say at each step of the customer's journey. This is the operational layer — your team uses these directly.",
+    fields:[
+      {k:"awareness_message",lbl:"Awareness — How we introduce ourselves",q:"First time someone sees a MakeMyMandir post or ad. They don't know us. What 1–2 sentences make them stop scrolling?",long:true},
+      {k:"consideration_message",lbl:"Consideration — How we educate",q:"They've followed us, they're researching. What do we teach them? What posts/content moves them from 'interested' to 'convinced'?",long:true},
+      {k:"decision_message",lbl:"Decision — How we help them buy",q:"They've decided MakeMyMandir is right but haven't pulled the trigger. What removes the last objection? Example DM script for closing.",long:true},
+      {k:"retention_message",lbl:"Retention — Post-purchase",q:"After delivery & install, what's our follow-up? At 1 week, 1 month, 6 months? How do we turn one mandir into referrals?",long:true},
+      {k:"referral_ask",lbl:"How we ask for referrals & reviews",q:"What's the exact moment we ask? What's the exact ask? Done well, every happy client = 2 more leads.",long:true},
+    ]
+  },
+  {
+    id:"operations",
+    title:"8. Internal Culture & Standards",
+    intro:"How the team treats clients and each other. This is how brand consistency survives as you grow past 2 people.",
+    fields:[
+      {k:"client_treatment",lbl:"How we treat every client",q:"Specific behaviors. Examples: 'We always reply to a DM within 4 hours, even if just to say we'll get back tomorrow.' 'We never blame the client for delays.' 'Site visits start with removing shoes, end with a clear next step.'",long:true},
+      {k:"team_culture",lbl:"How team treats each other",q:"Internal values. What's encouraged, what's not tolerated. Examples: 'We give honest design feedback in private, never criticize work in client meetings.'",long:true},
+      {k:"quality_bar",lbl:"Quality standard — when something is 'ready'",q:"For a post: when is it ready to publish? For a mandir: when is it ready to deliver? Specific checks.",long:true},
+      {k:"escalation",lbl:"What goes to founder, what doesn't",q:"What decisions can the team make without checking with you? What must come to you? Saves bottlenecks.",long:true},
+    ]
+  },
 ];
+function getAllDnaFields(){return BRAND_DNA_SECTIONS.flatMap(s=>s.fields);}
+/* v6.7: Track which DNA sections are expanded. Default: only first section open. */
+let _dnaOpenSections={foundation:true};
 function renderBrandDNA(){
   const dna=getBrandDNA();
   const isAdmin=user?.role==="admin";
-  const fields=DNA_FIELDS.map(f=>{
-    const raw=dna[f.k]||"";
-    const isLong=["voice","audience","do_use","dont_use","visual_style","notes"].includes(f.k);
-    const inp=isLong
-      ? `<textarea class="dna-i" id="dna-${f.k}" rows="3"${isAdmin?"":" disabled"}>${esc(raw)}</textarea>`
-      : `<input class="dna-i" id="dna-${f.k}" value="${esc(raw)}"${isAdmin?"":" disabled"}>`;
-    return `<div class="dna-row"><label class="dna-l">${esc(f.lbl)}</label>${f.hint?`<div class="dna-h">${esc(f.hint)}</div>`:""}${inp}</div>`;
+  const allFields=getAllDnaFields();
+  // Progress: how many fields have non-empty content
+  const filledCount=allFields.filter(f=>(dna[f.k]||"").trim().length>0).length;
+  const totalCount=allFields.length;
+  const pct=Math.round((filledCount/totalCount)*100);
+  const sectionsHtml=BRAND_DNA_SECTIONS.map(sec=>{
+    const isOpen=_dnaOpenSections[sec.id]===true;
+    const filledInSec=sec.fields.filter(f=>(dna[f.k]||"").trim().length>0).length;
+    const fieldsHtml=isOpen?sec.fields.map(f=>{
+      const raw=dna[f.k]||"";
+      const inp=f.long
+        ? `<textarea class="dna-i" id="dna-${f.k}" rows="${f.k==="founder_story"||f.k==="primary_persona"?5:3}" placeholder="${esc(f.ph||"")}"${isAdmin?"":" disabled"}>${esc(raw)}</textarea>`
+        : `<input class="dna-i" id="dna-${f.k}" value="${esc(raw)}" placeholder="${esc(f.ph||"")}"${isAdmin?"":" disabled"}>`;
+      return `<div class="dna-row">
+        <label class="dna-l">${esc(f.lbl)}${raw?' <span class="dna-filled">✓</span>':""}</label>
+        <div class="dna-q"><i>${esc(f.q)}</i></div>
+        ${inp}
+      </div>`;
+    }).join(""):"";
+    return `<div class="dna-section${isOpen?" open":""}">
+      <div class="dna-sec-hd" onclick="toggleDnaSection('${sec.id}')">
+        <div class="dna-sec-l">
+          <span class="dna-sec-arr">${isOpen?"▼":"▶"}</span>
+          <span class="dna-sec-title">${esc(sec.title)}</span>
+          <span class="dna-sec-prog">${filledInSec}/${sec.fields.length}</span>
+        </div>
+      </div>
+      ${isOpen?`<div class="dna-sec-intro">${esc(sec.intro)}</div>${fieldsHtml}`:""}
+    </div>`;
   }).join("");
   const adminBar=isAdmin
-    ? `<div class="dna-bar"><button class="dna-save" onclick="saveBrandDNA()">💾 Save Brand DNA</button><button class="dna-reset" onclick="resetBrandDNA()">Reset to defaults</button></div>`
+    ? `<div class="dna-bar"><button class="dna-save" onclick="saveBrandDNA()">💾 Save Brand DNA</button><button class="dna-reset" onclick="resetBrandDNA()">Reset (clear all fields)</button></div>`
     : `<div class="dna-bar dna-readonly">📖 Read-only — Admin owns the Brand DNA. Ask Nilesh to update if needed.</div>`;
   document.getElementById("mainContent").innerHTML=`
     <div class="dna-wrap">
-      <div class="dna-intro">Your team uses this as a reference whenever they write captions, design carousels, or pick imagery. Keep it tight and current.</div>
-      ${fields}
+      <div class="dna-intro">
+        <b>This isn't a form to rush through.</b> A real Brand DNA takes 2–4 hours of thinking, often spread over a week. Each section has prompting questions in italics — read them, sit with them, then write. Save anytime; come back later. Your team will read this. New hires will onboard from this. Take it seriously.
+      </div>
+      <div class="dna-progress">
+        <div class="dna-prog-bar"><div class="dna-prog-fill" style="width:${pct}%"></div></div>
+        <div class="dna-prog-txt"><b>${filledCount}/${totalCount}</b> fields complete · <b>${pct}%</b></div>
+      </div>
+      ${sectionsHtml}
       ${adminBar}
     </div>`;
+}
+function toggleDnaSection(id){
+  _dnaOpenSections[id]=!_dnaOpenSections[id];
+  renderBrandDNA();
 }
 async function saveBrandDNA(){
   const cur=getBrandDNA();
   const next={...cur};
-  DNA_FIELDS.forEach(f=>{const el=document.getElementById("dna-"+f.k);if(el)next[f.k]=el.value;});
-  sto("brandDNA",next);
+  const allFields=getAllDnaFields();
+  // v6.7: only collect from fields that are currently rendered (i.e., in open sections)
+  // To preserve hidden values, we keep the prior value if the input doesn't exist in DOM.
+  allFields.forEach(f=>{
+    const el=document.getElementById("dna-"+f.k);
+    if(el)next[f.k]=el.value;
+    // else leave next[f.k] as it was (preserved from cur via spread)
+  });
+  if(!sto("brandDNA",next)){toast("Save failed — try again","err");return;}
   logAct({action:"edited",postId:0,user:user?.name,time:new Date().toISOString(),detail:"Brand DNA"});
   toast("Brand DNA saved — pushing to team...","info");
-  await pushToGitHub();
-  toast("✓ Brand DNA synced","ok");
+  const ok=await pushToGitHub();
+  if(ok)toast("✓ Brand DNA synced","ok");
+  // Re-render to update progress bar + ✓ markers
+  renderBrandDNA();
 }
 function resetBrandDNA(){
-  if(!confirm("Reset Brand DNA to default values? This won't delete it on GitHub until you click Save."))return;
+  if(!confirm("Clear ALL Brand DNA fields? This empties everything you've written. (Unsaved until you click Save.)"))return;
   sto("brandDNA",DEFAULT_BRAND_DNA);
   renderBrandDNA();
 }
@@ -2632,7 +2798,8 @@ function openAIPrompts(postId,slideIdx){
   // Build context for prompts
   const subject=slideIdx!=null&&p.slides?p.slides[slideIdx]:pp.title;
   const briefText=pp.brief||pp.title;
-  const visualStyle=dna.visual_style||"warm gold tones, soft maroon accents, natural daylight";
+  // v6.7: Prefer the new photography_style field; fall back to color_primary or generic default
+  const visualStyle=dna.photography_style||dna.color_primary||"warm gold tones, soft maroon accents, natural daylight, real product photography";
   // 4 different prompt angles
   const prompts=[
     {
