@@ -728,7 +728,24 @@ let user=null,curPage="all",revId=null,rejectTargetId=null,curSlide=0,uploadSlid
 let ghToken=null,syncInterval=null,lastSyncTime=null,isSyncing=false;
 
 /* ══ LOCAL STORAGE ══ */
-function sto(k,v){try{localStorage.setItem("mmm5-"+k,JSON.stringify(v));}catch(e){}}
+/* v6.6 FIX: sto() now returns true/false and surfaces quota errors via toast.
+   Previously it silently swallowed errors — leading to fake "saved" toasts when localStorage was full. */
+function sto(k,v){
+  try{
+    localStorage.setItem("mmm5-"+k,JSON.stringify(v));
+    return true;
+  }catch(e){
+    console.error("Storage failed for key",k,e);
+    if(e&&(e.name==="QuotaExceededError"||(e.code===22)||/quota/i.test(e.message||""))){
+      // Use direct DOM toast so we don't recurse via toast()
+      try{
+        const t=document.getElementById("toast");
+        if(t){t.textContent="⚠ Browser storage full — could not save. Try removing old uploads.";t.className="toast err show";setTimeout(()=>t.classList.remove("show"),4500);}
+      }catch(_){}
+    }
+    return false;
+  }
+}
 function stg(k){try{const v=localStorage.getItem("mmm5-"+k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function gs(id){return stg("st-"+id)||"pending";}
 function ge(id){return stg("ed-"+id)||{};}
@@ -757,11 +774,57 @@ const DEFAULT_BRAND_DNA={
   notes:""
 };
 function getBrandDNA(){return stg("brandDNA")||DEFAULT_BRAND_DNA;}
-function getCampaigns(){return stg("campaigns")||[];}
+function getCampaigns(){
+  const c=stg("campaigns");
+  if(!c||!Array.isArray(c))return [];
+  return c.filter(x=>x&&typeof x==="object"&&x.id&&x.name);
+}
 function getCampaignForPost(postId){
   return getCampaigns().find(c=>(c.post_ids||[]).includes(postId));
 }
 function uid(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+/* v6.5: HTML escape helper. Used everywhere user/admin-typed text is rendered into innerHTML.
+   Prevents broken layout when text contains <, >, &, " or '. */
+function esc(s){
+  if(s==null)return"";
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+/* v6.5: Multi-line escape — same as esc() but converts \n to <br> for display in HTML cards */
+function escMl(s){
+  return esc(s).replace(/\n/g,"<br>");
+}
+
+/* v6.6 FIX: Mount a dynamic modal safely.
+   - Removes any modal with the same ID first (prevents duplicate DOM nodes from double-clicks)
+   - Removes ALL other dynamic modals first (only one open at a time — prevents stacking confusion)
+   - Returns the mounted root element so callers can hook into it. */
+function mountDynModal(html){
+  // Remove all existing dynamic modals first
+  document.querySelectorAll(".cmp-modal-bg").forEach(el=>el.remove());
+  const wrap=document.createElement("div");
+  wrap.innerHTML=html;
+  const root=wrap.firstChild;
+  document.body.appendChild(root);
+  // v6.6: track dirty state — user typed something. Used by close handlers to warn before discarding.
+  root.dataset.dirty="0";
+  // Mark dirty on any input change inside the modal
+  root.addEventListener("input",e=>{
+    if(e.target.matches("input, textarea, select"))root.dataset.dirty="1";
+  });
+  return root;
+}
+
+/* v6.6 FIX: Confirm-before-close helper for the X button + escape + backdrop.
+   If modal has unsaved input changes, ask before dismissing. */
+function tryCloseDynModal(root, force){
+  if(!root)return false;
+  if(!force && root.dataset.dirty==="1"){
+    if(!confirm("You have unsaved changes. Discard them?"))return false;
+  }
+  root.remove();
+  return true;
+}
 
 /* ══ v6: KNOWLEDGE BASE ══ */
 const KNOWLEDGE_CATEGORIES=["Vastu","Materials","Pricing","FAQs","Objections","Manufacturing","Premium Clients","Lighting","Process"];
@@ -782,7 +845,13 @@ const SEED_KNOWLEDGE=[
   {id:"k14",cat:"Lighting",title:"LED specifications",content:"We use 3000K warm white LED strips (12V, 14.4W/m) for ambient mandir lighting. Spot accent: 2700K, 5W. Always run dimmer switches — clients want different intensity for daily prayer vs festivals. Never use cool white (>4000K) — looks clinical, kills the devotional mood.",tags:"led,lighting",updated_at:""},
   {id:"k15",cat:"Premium Clients",title:"Site visit etiquette",content:"Arrive 5 min early. Carry: tape measure, brand portfolio (printed), 3 material samples (Corian/marble/wood), business cards. Remove shoes before entering pooja area. Don't photograph idols without permission. Take floor plan measurements yourself — never trust verbal dimensions. End with a clear next step + timeline commitment.",tags:"client,site-visit",updated_at:""},
 ];
-function getKnowledge(){const k=stg("knowledge");return (k&&k.length)?k:SEED_KNOWLEDGE;}
+function getKnowledge(){
+  const k=stg("knowledge");
+  if(!k||!Array.isArray(k))return SEED_KNOWLEDGE;
+  // v6.6 FIX: drop malformed entries (must have id and title at minimum)
+  const clean=k.filter(x=>x&&typeof x==="object"&&x.id&&x.title);
+  return clean.length?clean:SEED_KNOWLEDGE;
+}
 
 /* ══ v6: HOOK & SCRIPT LIBRARY ══ */
 const HOOK_TYPES=["hook","script","cta","caption-opener"];
@@ -807,7 +876,12 @@ const SEED_HOOKS=[
   {id:"h17",type:"caption-opener",cat:"Educational",content:"Three things nobody tells you before buying a custom mandir:",tags:"caption,list"},
   {id:"h18",type:"caption-opener",cat:"Emotional",content:"There's something about a home where the diya is lit every morning.",tags:"caption,emotional"},
 ];
-function getHooks(){const h=stg("hooks");return (h&&h.length)?h:SEED_HOOKS;}
+function getHooks(){
+  const h=stg("hooks");
+  if(!h||!Array.isArray(h))return SEED_HOOKS;
+  const clean=h.filter(x=>x&&typeof x==="object"&&x.id&&x.content);
+  return clean.length?clean:SEED_HOOKS;
+}
 
 /* ══ v6: POST TEMPLATES ══ */
 const SEED_TEMPLATES=[
@@ -818,10 +892,19 @@ const SEED_TEMPLATES=[
   {id:"t5",name:"Problem-Solution Carousel",framework:"Carousel · 7 slides · Educational",hook:"5 pooja room mistakes people always make.",caption:"Renovating? Save this BEFORE the walls go up.\n\nMistake 1: [...]\nMistake 2: [...]\n\nDM us your floor plan — free design audit.\n\n#PoojaRoomDesign #VastuTips #makemymandir",brief:"Slide 1: Hook · Slides 2-6: One mistake per slide with fix · Slide 7: CTA · Style: clean infographic, gold accents on dark warm bg",cta:"DM your floor plan",tags:"mistakes,educational"},
   {id:"t6",name:"Mandir Reveal Reel",framework:"Reel · 15-20 sec · Cinematic",hook:"This took 18 days. The first diya took 3 seconds.",caption:"Every mandir we build is a different story. This one belonged to the [Family Name] family.\n\nDM us yours.\n\n#MandirReveal #CustomMandir #makemymandir",brief:"0-3s: Closed/concealed mandir · 3-6s: Hands opening doors or LED switching on · 6-12s: Slow detail pans (carving, idol, light) · 12-17s: Wide of finished mandir in context · 17-20s: CTA card",cta:"DM us yours",tags:"reveal,cinematic"},
 ];
-function getTemplates(){const t=stg("templates");return (t&&t.length)?t:SEED_TEMPLATES;}
+function getTemplates(){
+  const t=stg("templates");
+  if(!t||!Array.isArray(t))return SEED_TEMPLATES;
+  const clean=t.filter(x=>x&&typeof x==="object"&&x.id&&x.name);
+  return clean.length?clean:SEED_TEMPLATES;
+}
 
 /* ══ v6: CONTENT REQUESTS ══ */
-function getRequests(){return stg("requests")||[];}
+function getRequests(){
+  const r=stg("requests");
+  if(!r||!Array.isArray(r))return [];
+  return r.filter(x=>x&&typeof x==="object"&&x.id&&x.objective);
+}
 const REQUEST_STATUSES=["pending","approved","in_progress","done","declined"];
 const REQUEST_LABELS={pending:"⏳ Pending",approved:"✅ Approved",in_progress:"🔧 In Progress",done:"✓ Done",declined:"✗ Declined"};
 
@@ -1047,11 +1130,39 @@ async function pullFromGitHub(){
     applySyncPayload(content);
     lastSyncTime=new Date();
     setSyncStatus("synced","Synced "+relTime(lastSyncTime.toISOString()));
-    render();
+    // v6.4 FIX: Re-render whatever page the user is currently viewing, not always the home grid.
+    // Was forcing the user back to All Posts every 30 seconds when reading Knowledge / Hooks / Templates.
+    rerenderCurrent();
   }catch(e){
     setSyncStatus("error","Offline — check internet");
     console.error("Pull error:",e);
   }
+}
+
+/* v6.4: Refresh the current page in place without blowing away the user's reading state.
+   For pages where the user is mid-scroll/mid-read, only update counters silently. */
+function rerenderCurrent(){
+  // v6.6 FIX: If a modal (edit / AI prompts / review / reject) is open, don't rebuild the page underneath.
+  // Doing so can leak state and create glitches when the modal closes.
+  const modalOpen=document.querySelector(".cmp-modal-bg")
+                 ||document.getElementById("revBg")?.classList.contains("open")
+                 ||document.getElementById("rejOv")?.classList.contains("open")
+                 ||document.getElementById("setupModalBg")?.classList.contains("open");
+  if(modalOpen){
+    // Sidebar counters are still safe to refresh
+    updateCounts();
+    return;
+  }
+  // Pages where re-rendering would wipe what the user is reading — only update sidebar counters
+  const readingPages=["knowledge","hooks","templates","brandDNA","activity"];
+  if(readingPages.includes(curPage)){
+    updateCounts();
+    return;
+  }
+  // Pages that show live data the user expects to refresh — re-render
+  if(curPage==="campaigns")renderCampaigns();
+  else if(curPage==="requests")renderRequests();
+  else render();
 }
 
 async function pushToGitHub(retry=0){
@@ -1402,7 +1513,7 @@ function renderCard(p,isAdmin){
   if(m||(effType==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
 
   const camp=getCampaignForPost(p.id);
-  const campBadge=camp?`<span class="badge-camp">📅 ${camp.name.length>20?camp.name.substring(0,20)+"…":camp.name}</span>`:"";
+  const campBadge=camp?`<span class="badge-camp">📅 ${esc(camp.name.length>20?camp.name.substring(0,20)+"…":camp.name)}</span>`:"";
   return `<div class="pc ${stcls}${isToday?" today-post":""}">
     <div class="tw">
       ${isVid?`<video src="${imgSrc}" style="width:100%;height:100%;object-fit:cover;"></video>`:`<img src="${imgSrc}" loading="lazy">`}
@@ -1493,15 +1604,15 @@ function openReview(id){
   const dna=getBrandDNA();
   const camp=getCampaignForPost(id);
   const brandRef=`<div class="fg"><div class="brand-ref">
-    <div class="br-row"><span class="br-l">🎨 Voice:</span><span class="br-v">${(dna.voice||"").substring(0,90)}${(dna.voice||"").length>90?"…":""}</span></div>
-    <div class="br-row"><span class="br-l">🏷 Core tags:</span><span class="br-v">${dna.hashtags_core||""}</span></div>
-    <div class="br-row"><span class="br-l">📞 CTAs:</span><span class="br-v">${dna.cta_phrases||""}</span></div>
-    ${camp?`<div class="br-row br-camp"><span class="br-l">📅 Campaign:</span><span class="br-v"><b>${camp.name}</b>${camp.theme?" — "+camp.theme:""}</span></div>`:""}
+    <div class="br-row"><span class="br-l">🎨 Voice:</span><span class="br-v">${esc((dna.voice||"").substring(0,90))}${(dna.voice||"").length>90?"…":""}</span></div>
+    <div class="br-row"><span class="br-l">🏷 Core tags:</span><span class="br-v">${esc(dna.hashtags_core||"")}</span></div>
+    <div class="br-row"><span class="br-l">📞 CTAs:</span><span class="br-v">${esc(dna.cta_phrases||"")}</span></div>
+    ${camp?`<div class="br-row br-camp"><span class="br-l">📅 Campaign:</span><span class="br-v"><b>${esc(camp.name)}</b>${camp.theme?" — "+esc(camp.theme):""}</span></div>`:""}
   </div></div>`;
 
   let body=brandRef+`
     <div class="fg"><span class="fl">Post Title</span><input class="fi" id="fTitle" value="${pp.title.replace(/"/g,'&quot;')}"></div><div class="fg"><span class="fl">Post Type</span><select class="fi" id="fType" style="cursor:pointer;background:var(--w);" onchange="onTypeChange(this.value)"><option value="Reel"${pp.type==="Reel"?" selected":""}>🎬 Reel</option><option value="Carousel"${pp.type==="Carousel"?" selected":""}>🎠 Carousel</option><option value="Static"${pp.type==="Static"?" selected":""}>🖼 Static</option></select></div>
-    <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${pp.hook.replace(/"/g,"&quot;")}"></div>
+    <div class="fg"><span class="fl">Hook</span><input class="fi" id="fHook" value="${esc(pp.hook)}"></div>
     <div class="fg">
       <span class="fl">Caption <span class="fl-cnt ${cCls}">${chars}/2200 chars · ${hashes} hashtags</span></span>
       <textarea class="fi" id="fCaption" oninput="upCapStats(this)">${cap}</textarea>
@@ -1512,7 +1623,7 @@ function openReview(id){
       <button class="copy-cap-btn" onclick="copyCaption(this)">📋 Copy caption for Meta Business Suite</button>
     </div>
     <div class="fg"><span class="fl">Image / Video brief</span><textarea class="fi" id="fBrief" style="min-height:58px;">${pp.brief}</textarea></div>
-    <div class="fg"><span class="fl">Call to action</span><input class="fi" id="fCta" value="${pp.cta.replace(/"/g,"&quot;")}"></div>`;
+    <div class="fg"><span class="fl">Call to action</span><input class="fi" id="fCta" value="${esc(pp.cta)}"></div>`;
 
   if(st==="rejected"&&reason)body+=`<div class="fg"><div class="rej-box"><div class="rej-box-t">❌ Rejection reason</div><p style="font-size:13px;color:var(--r);line-height:1.7;">${reason}</p></div></div>`;
   if(st==="revision"&&reason)body+=`<div class="fg"><div class="rev-box"><div class="rev-box-t">🔄 Revision notes</div><p style="font-size:13px;color:var(--am);line-height:1.7;">${reason}</p></div></div>`;
@@ -1942,12 +2053,12 @@ function renderBrandDNA(){
   const dna=getBrandDNA();
   const isAdmin=user?.role==="admin";
   const fields=DNA_FIELDS.map(f=>{
-    const val=(dna[f.k]||"").replace(/"/g,"&quot;");
+    const raw=dna[f.k]||"";
     const isLong=["voice","audience","do_use","dont_use","visual_style","notes"].includes(f.k);
     const inp=isLong
-      ? `<textarea class="dna-i" id="dna-${f.k}" rows="3"${isAdmin?"":" disabled"}>${dna[f.k]||""}</textarea>`
-      : `<input class="dna-i" id="dna-${f.k}" value="${val}"${isAdmin?"":" disabled"}>`;
-    return `<div class="dna-row"><label class="dna-l">${f.lbl}</label>${f.hint?`<div class="dna-h">${f.hint}</div>`:""}${inp}</div>`;
+      ? `<textarea class="dna-i" id="dna-${f.k}" rows="3"${isAdmin?"":" disabled"}>${esc(raw)}</textarea>`
+      : `<input class="dna-i" id="dna-${f.k}" value="${esc(raw)}"${isAdmin?"":" disabled"}>`;
+    return `<div class="dna-row"><label class="dna-l">${esc(f.lbl)}</label>${f.hint?`<div class="dna-h">${esc(f.hint)}</div>`:""}${inp}</div>`;
   }).join("");
   const adminBar=isAdmin
     ? `<div class="dna-bar"><button class="dna-save" onclick="saveBrandDNA()">💾 Save Brand DNA</button><button class="dna-reset" onclick="resetBrandDNA()">Reset to defaults</button></div>`
@@ -1985,18 +2096,18 @@ function renderCampaigns(){
         const cnt=(c.post_ids||[]).length;
         const postPills=(c.post_ids||[]).map(pid=>{
           const p=POSTS.find(x=>x.id===pid);if(!p)return "";
-          return `<span class="cmp-pill">${p.d} · ${p.title.substring(0,28)}</span>`;
+          return `<span class="cmp-pill">${esc(p.d)} · ${esc(p.title.substring(0,28))}</span>`;
         }).join("");
         return `<div class="cmp-card">
           <div class="cmp-hd">
-            <div><div class="cmp-name">${c.name}</div><div class="cmp-dates">${c.start} → ${c.end} · ${cnt} post${cnt!==1?"s":""}</div></div>
+            <div><div class="cmp-name">${esc(c.name)}</div><div class="cmp-dates">${esc(c.start)} → ${esc(c.end)} · ${cnt} post${cnt!==1?"s":""}</div></div>
             ${isAdmin?`<div class="cmp-acts">
               <button class="cmp-edit" onclick="openCampaignEdit('${c.id}')">Edit</button>
               <button class="cmp-del" onclick="deleteCampaign('${c.id}')">Delete</button>
             </div>`:""}
           </div>
-          ${c.description?`<div class="cmp-desc">${c.description}</div>`:""}
-          ${c.theme?`<div class="cmp-theme"><b>Theme:</b> ${c.theme}</div>`:""}
+          ${c.description?`<div class="cmp-desc">${escMl(c.description)}</div>`:""}
+          ${c.theme?`<div class="cmp-theme"><b>Theme:</b> ${escMl(c.theme)}</div>`:""}
           <div class="cmp-pills">${postPills||'<span class="cmp-empty">No posts assigned yet</span>'}</div>
         </div>`;
       }).join("")
@@ -2018,23 +2129,23 @@ function openCampaignEdit(id){
   const allPosts=POSTS.map(p=>{
     const checked=(c.post_ids||[]).includes(p.id)?"checked":"";
     const otherCamp=getCampaigns().find(x=>x.id!==c.id&&(x.post_ids||[]).includes(p.id));
-    const lock=otherCamp?` <span class="cmp-lock">(in: ${otherCamp.name})</span>`:"";
-    return `<label class="cmp-pcheck"><input type="checkbox" value="${p.id}" ${checked} ${otherCamp?"disabled":""}> #${p.id} · ${p.d} · ${p.type} · ${p.title.substring(0,40)}${lock}</label>`;
+    const lock=otherCamp?` <span class="cmp-lock">(in: ${esc(otherCamp.name)})</span>`:"";
+    return `<label class="cmp-pcheck"><input type="checkbox" value="${p.id}" ${checked} ${otherCamp?"disabled":""}> #${p.id} · ${esc(p.d)} · ${esc(p.type)} · ${esc(p.title.substring(0,40))}${lock}</label>`;
   }).join("");
   const html=`<div class="cmp-modal-bg" id="cmpModalBg">
     <div class="cmp-modal">
       <div class="cmp-mhd"><b>${id?"Edit":"New"} Campaign</b><button onclick="closeCampaignEdit()" class="cmp-mclose">×</button></div>
       <div class="cmp-mbody">
         <label class="cmp-fl">Name</label>
-        <input class="cmp-fi" id="cmpName" value="${(c.name||"").replace(/"/g,"&quot;")}" placeholder="e.g. Akshaya Tritiya 2026 push">
+        <input class="cmp-fi" id="cmpName" value="${esc(c.name||"")}" placeholder="e.g. Akshaya Tritiya 2026 push">
         <div class="cmp-fr">
           <div style="flex:1"><label class="cmp-fl">Start</label><input class="cmp-fi" id="cmpStart" value="${c.start||""}" placeholder="e.g. May 9"></div>
           <div style="flex:1"><label class="cmp-fl">End</label><input class="cmp-fi" id="cmpEnd" value="${c.end||""}" placeholder="e.g. May 11"></div>
         </div>
         <label class="cmp-fl">Description</label>
-        <textarea class="cmp-fi" id="cmpDesc" rows="2" placeholder="What's the story this campaign tells?">${c.description||""}</textarea>
+        <textarea class="cmp-fi" id="cmpDesc" rows="2" placeholder="What's the story this campaign tells?">${esc(c.description||"")}</textarea>
         <label class="cmp-fl">Theme / visual direction</label>
-        <textarea class="cmp-fi" id="cmpTheme" rows="2" placeholder="e.g. Gold + maroon palette, festive iconography, auspicious tone">${c.theme||""}</textarea>
+        <textarea class="cmp-fi" id="cmpTheme" rows="2" placeholder="e.g. Gold + maroon palette, festive iconography, auspicious tone">${esc(c.theme||"")}</textarea>
         <label class="cmp-fl">Posts in this campaign</label>
         <div class="cmp-plist" id="cmpPlist">${allPosts}</div>
       </div>
@@ -2043,9 +2154,9 @@ function openCampaignEdit(id){
         <button class="cmp-cancel" onclick="closeCampaignEdit()">Cancel</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
-function closeCampaignEdit(){const m=document.getElementById("cmpModalBg");if(m)m.remove();}
+function closeCampaignEdit(force){const m=document.getElementById("cmpModalBg");if(m)tryCloseDynModal(m,force);}
 async function saveCampaign(id){
   const camps=getCampaigns();
   const idx=camps.findIndex(x=>x.id===id);
@@ -2063,7 +2174,7 @@ async function saveCampaign(id){
   if(idx>=0)camps[idx]=data;else camps.push(data);
   sto("campaigns",camps);
   logAct({action:"edited",postId:0,user:user?.name,time:new Date().toISOString(),detail:"Campaign: "+data.name});
-  closeCampaignEdit();renderCampaigns();render();
+  closeCampaignEdit(true);renderCampaigns();render();
   toast("Saved — pushing to team...","info");
   await pushToGitHub();
   toast("✓ Campaign synced","ok");
@@ -2084,9 +2195,11 @@ function renderKnowledge(){
   const all=getKnowledge();
   const isAdmin=user?.role==="admin";
   const cats=["all",...KNOWLEDGE_CATEGORIES];
+  // v6.5 FIX: Filter pill counts now respect the active search so they match what the user actually sees.
+  const searchPool=_knowSearch?all.filter(k=>(k.title+" "+k.content+" "+(k.tags||"")).toLowerCase().includes(_knowSearch.toLowerCase())):all;
   const filterPills=cats.map(c=>{
-    const cnt=c==="all"?all.length:all.filter(k=>k.cat===c).length;
-    return `<button class="kf-pill${_knowFilter===c?" on":""}" onclick="setKnowFilter('${c}')">${c==="all"?"All":c} <span class="kf-c">${cnt}</span></button>`;
+    const cnt=c==="all"?searchPool.length:searchPool.filter(k=>k.cat===c).length;
+    return `<button class="kf-pill${_knowFilter===c?" on":""}" onclick="setKnowFilter('${c}')">${c==="all"?"All":esc(c)} <span class="kf-c">${cnt}</span></button>`;
   }).join("");
   let entries=all.filter(k=>_knowFilter==="all"||k.cat===_knowFilter);
   if(_knowSearch){
@@ -2096,14 +2209,14 @@ function renderKnowledge(){
   const list=entries.length
     ? entries.map(k=>`<div class="k-card">
         <div class="k-hd">
-          <div><span class="k-cat-pill">${k.cat}</span><span class="k-title">${k.title}</span></div>
+          <div><span class="k-cat-pill">${esc(k.cat)}</span><span class="k-title">${esc(k.title)}</span></div>
           ${isAdmin?`<div class="k-acts">
             <button class="k-edit" onclick="openKnowEdit('${k.id}')">Edit</button>
             <button class="k-del" onclick="deleteKnow('${k.id}')">Delete</button>
           </div>`:""}
         </div>
-        <div class="k-body">${(k.content||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>
-        ${k.tags?`<div class="k-tags">${k.tags.split(",").map(t=>`<span class="k-tag">#${t.trim()}</span>`).join("")}</div>`:""}
+        <div class="k-body">${escMl(k.content||"")}</div>
+        ${k.tags?`<div class="k-tags">${k.tags.split(",").map(t=>`<span class="k-tag">#${esc(t.trim())}</span>`).join("")}</div>`:""}
       </div>`).join("")
     : `<div class="k-empty">No entries match. ${isAdmin?"Click <b>+ New Entry</b> to add one.":""}</div>`;
   const adminBtns=isAdmin?`<button class="k-new" onclick="openKnowEdit(null)">+ New Entry</button>`:"";
@@ -2111,7 +2224,7 @@ function renderKnowledge(){
     <div class="k-wrap">
       <div class="k-intro">Living reference for the team. Look here BEFORE asking. ${isAdmin?"Add what you find yourself explaining repeatedly.":""}</div>
       <div class="k-toolbar">
-        <input class="k-search" id="kSearchInp" placeholder="🔍 Search knowledge..." value="${_knowSearch.replace(/"/g,"&quot;")}" oninput="_knowSearch=this.value;_knowFocusSearch=true;renderKnowledge();" />
+        <input class="k-search" id="kSearchInp" placeholder="🔍 Search knowledge..." value="${esc(_knowSearch)}" oninput="_knowSearch=this.value;_knowFocusSearch=true;renderKnowledge();" />
         ${adminBtns}
       </div>
       <div class="k-filters">${filterPills}</div>
@@ -2139,20 +2252,20 @@ function openKnowEdit(id){
         <label class="cmp-fl">Category</label>
         <select class="cmp-fi" id="kCat">${catOpts}</select>
         <label class="cmp-fl">Title</label>
-        <input class="cmp-fi" id="kTitle" value="${(k.title||"").replace(/"/g,"&quot;")}" placeholder="Short, searchable">
+        <input class="cmp-fi" id="kTitle" value="${esc(k.title||"")}" placeholder="Short, searchable">
         <label class="cmp-fl">Content</label>
-        <textarea class="cmp-fi" id="kContent" rows="8" placeholder="Full answer. Multi-line OK.">${k.content||""}</textarea>
+        <textarea class="cmp-fi" id="kContent" rows="8" placeholder="Full answer. Multi-line OK.">${esc(k.content||"")}</textarea>
         <label class="cmp-fl">Tags (comma-separated)</label>
-        <input class="cmp-fi" id="kTags" value="${(k.tags||"").replace(/"/g,"&quot;")}" placeholder="vastu,placement">
+        <input class="cmp-fi" id="kTags" value="${esc(k.tags||"")}" placeholder="vastu,placement">
       </div>
       <div class="cmp-mfoot">
         <button class="cmp-save" onclick="saveKnow('${k.id}')">${id?"Save":"Create"}</button>
         <button class="cmp-cancel" onclick="closeKnowEdit()">Cancel</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
-function closeKnowEdit(){const m=document.getElementById("knowModalBg");if(m)m.remove();}
+function closeKnowEdit(force){const m=document.getElementById("knowModalBg");if(m)tryCloseDynModal(m,force);}
 async function saveKnow(id){
   const all=getKnowledge();
   const idx=all.findIndex(x=>x.id===id);
@@ -2167,7 +2280,7 @@ async function saveKnow(id){
   if(!data.title){toast("Entry needs a title","err");return;}
   if(idx>=0)all[idx]=data;else all.push(data);
   sto("knowledge",all);
-  closeKnowEdit();renderKnowledge();
+  closeKnowEdit(true);renderKnowledge();
   toast("Saving...","info");
   await pushToGitHub();
   toast("✓ Knowledge synced","ok");
@@ -2187,8 +2300,10 @@ function renderHooks(){
   updateCounts();
   const all=getHooks();
   const isAdmin=user?.role==="admin";
+  // v6.5 FIX: Tab counts respect the active search so they match the visible list
+  const searchPool=_hookSearch?all.filter(h=>(h.content+" "+(h.tags||"")+" "+(h.cat||"")).toLowerCase().includes(_hookSearch.toLowerCase())):all;
   const tabs=HOOK_TYPES.map(t=>{
-    const cnt=all.filter(h=>h.type===t).length;
+    const cnt=searchPool.filter(h=>h.type===t).length;
     const lbl={hook:"🎯 Hooks",script:"📝 Scripts",cta:"📞 CTAs","caption-opener":"✍️ Caption Openers"}[t];
     return `<button class="hk-tab${_hookType===t?" on":""}" onclick="setHookType('${t}')">${lbl} <span class="hk-c">${cnt}</span></button>`;
   }).join("");
@@ -2200,14 +2315,14 @@ function renderHooks(){
   const list=entries.length
     ? entries.map(h=>`<div class="hk-card">
         <div class="hk-hd">
-          <span class="hk-cat">${h.cat||""}</span>
+          <span class="hk-cat">${esc(h.cat||"")}</span>
           <div class="hk-acts">
             <button class="hk-copy" onclick="copyHook('${h.id}',this)">📋 Copy</button>
             ${isAdmin?`<button class="hk-edit" onclick="openHookEdit('${h.id}')">Edit</button><button class="hk-del" onclick="deleteHook('${h.id}')">×</button>`:""}
           </div>
         </div>
-        <div class="hk-body">${(h.content||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>
-        ${h.tags?`<div class="hk-tags">${h.tags.split(",").map(t=>`<span class="hk-tag">#${t.trim()}</span>`).join("")}</div>`:""}
+        <div class="hk-body">${escMl(h.content||"")}</div>
+        ${h.tags?`<div class="hk-tags">${h.tags.split(",").map(t=>`<span class="hk-tag">#${esc(t.trim())}</span>`).join("")}</div>`:""}
       </div>`).join("")
     : `<div class="k-empty">No ${_hookType}s yet. ${isAdmin?"Click <b>+ New</b>.":""}</div>`;
   const adminBtns=isAdmin?`<button class="k-new" onclick="openHookEdit(null)">+ New entry</button>`:"";
@@ -2216,7 +2331,7 @@ function renderHooks(){
       <div class="k-intro">Reusable starting points. Don't write from blank — pick one, customize, ship.</div>
       <div class="hk-tabs">${tabs}</div>
       <div class="k-toolbar">
-        <input class="k-search" id="hSearchInp" placeholder="🔍 Search..." value="${_hookSearch.replace(/"/g,"&quot;")}" oninput="_hookSearch=this.value;_hookFocusSearch=true;renderHooks();" />
+        <input class="k-search" id="hSearchInp" placeholder="🔍 Search..." value="${esc(_hookSearch)}" oninput="_hookSearch=this.value;_hookFocusSearch=true;renderHooks();" />
         ${adminBtns}
       </div>
       <div class="hk-list">${list}</div>
@@ -2254,18 +2369,18 @@ function openHookEdit(id){
           <div style="flex:1"><label class="cmp-fl">Category</label><select class="cmp-fi" id="hCat">${catOpts}</select></div>
         </div>
         <label class="cmp-fl">Content</label>
-        <textarea class="cmp-fi" id="hContent" rows="6">${h.content||""}</textarea>
+        <textarea class="cmp-fi" id="hContent" rows="6">${esc(h.content||"")}</textarea>
         <label class="cmp-fl">Tags</label>
-        <input class="cmp-fi" id="hTags" value="${(h.tags||"").replace(/"/g,"&quot;")}">
+        <input class="cmp-fi" id="hTags" value="${esc(h.tags||"")}">
       </div>
       <div class="cmp-mfoot">
         <button class="cmp-save" onclick="saveHook('${h.id}')">${id?"Save":"Create"}</button>
         <button class="cmp-cancel" onclick="closeHookEdit()">Cancel</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
-function closeHookEdit(){const m=document.getElementById("hookModalBg");if(m)m.remove();}
+function closeHookEdit(force){const m=document.getElementById("hookModalBg");if(m)tryCloseDynModal(m,force);}
 async function saveHook(id){
   const all=getHooks();
   const idx=all.findIndex(x=>x.id===id);
@@ -2279,7 +2394,7 @@ async function saveHook(id){
   if(!data.content){toast("Content can't be empty","err");return;}
   if(idx>=0)all[idx]=data;else all.push(data);
   sto("hooks",all);
-  closeHookEdit();renderHooks();
+  closeHookEdit(true);renderHooks();
   toast("Saving...","info");
   await pushToGitHub();
   toast("✓ Synced","ok");
@@ -2300,16 +2415,16 @@ function renderTemplates(){
   const list=all.length
     ? all.map(t=>`<div class="tpl-card">
         <div class="tpl-hd">
-          <div><div class="tpl-name">${t.name}</div><div class="tpl-fw">${t.framework||""}</div></div>
+          <div><div class="tpl-name">${esc(t.name)}</div><div class="tpl-fw">${esc(t.framework||"")}</div></div>
           ${isAdmin?`<div class="hk-acts">
             <button class="hk-edit" onclick="openTplEdit('${t.id}')">Edit</button>
             <button class="hk-del" onclick="deleteTpl('${t.id}')">×</button>
           </div>`:""}
         </div>
-        <div class="tpl-section"><div class="tpl-l">HOOK</div><div class="tpl-v">${(t.hook||"").replace(/</g,"&lt;")}<button class="tpl-copy" onclick="copyTplField('${t.id}','hook',this)">📋</button></div></div>
-        <div class="tpl-section"><div class="tpl-l">CAPTION</div><div class="tpl-v">${(t.caption||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}<button class="tpl-copy" onclick="copyTplField('${t.id}','caption',this)">📋</button></div></div>
-        <div class="tpl-section"><div class="tpl-l">DESIGN BRIEF</div><div class="tpl-v tpl-brief">${(t.brief||"").replace(/</g,"&lt;").replace(/\n/g,"<br>")}<button class="tpl-copy" onclick="copyTplField('${t.id}','brief',this)">📋</button></div></div>
-        <div class="tpl-section"><div class="tpl-l">CTA</div><div class="tpl-v">${(t.cta||"").replace(/</g,"&lt;")}<button class="tpl-copy" onclick="copyTplField('${t.id}','cta',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">HOOK</div><div class="tpl-v">${esc(t.hook||"")}<button class="tpl-copy" onclick="copyTplField('${t.id}','hook',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">CAPTION</div><div class="tpl-v">${escMl(t.caption||"")}<button class="tpl-copy" onclick="copyTplField('${t.id}','caption',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">DESIGN BRIEF</div><div class="tpl-v tpl-brief">${escMl(t.brief||"")}<button class="tpl-copy" onclick="copyTplField('${t.id}','brief',this)">📋</button></div></div>
+        <div class="tpl-section"><div class="tpl-l">CTA</div><div class="tpl-v">${esc(t.cta||"")}<button class="tpl-copy" onclick="copyTplField('${t.id}','cta',this)">📋</button></div></div>
       </div>`).join("")
     : `<div class="k-empty">No templates yet.</div>`;
   const adminBtns=isAdmin?`<button class="k-new" onclick="openTplEdit(null)">+ New Template</button>`:"";
@@ -2338,21 +2453,21 @@ function openTplEdit(id){
     <div class="cmp-modal">
       <div class="cmp-mhd"><b>${id?"Edit":"New"} Template</b><button onclick="closeTplEdit()" class="cmp-mclose">×</button></div>
       <div class="cmp-mbody">
-        <label class="cmp-fl">Name</label><input class="cmp-fi" id="tName" value="${(t.name||"").replace(/"/g,"&quot;")}" placeholder="e.g. Material Comparison Carousel">
-        <label class="cmp-fl">Framework (type · length · vibe)</label><input class="cmp-fi" id="tFw" value="${(t.framework||"").replace(/"/g,"&quot;")}" placeholder="e.g. Carousel · 6 slides · Educational">
-        <label class="cmp-fl">Hook template</label><textarea class="cmp-fi" id="tHook" rows="2">${t.hook||""}</textarea>
-        <label class="cmp-fl">Caption template (use [brackets] for placeholders)</label><textarea class="cmp-fi" id="tCap" rows="6">${t.caption||""}</textarea>
-        <label class="cmp-fl">Design brief template</label><textarea class="cmp-fi" id="tBrief" rows="4">${t.brief||""}</textarea>
-        <label class="cmp-fl">CTA template</label><input class="cmp-fi" id="tCta" value="${(t.cta||"").replace(/"/g,"&quot;")}">
+        <label class="cmp-fl">Name</label><input class="cmp-fi" id="tName" value="${esc(t.name||"")}" placeholder="e.g. Material Comparison Carousel">
+        <label class="cmp-fl">Framework (type · length · vibe)</label><input class="cmp-fi" id="tFw" value="${esc(t.framework||"")}" placeholder="e.g. Carousel · 6 slides · Educational">
+        <label class="cmp-fl">Hook template</label><textarea class="cmp-fi" id="tHook" rows="2">${esc(t.hook||"")}</textarea>
+        <label class="cmp-fl">Caption template (use [brackets] for placeholders)</label><textarea class="cmp-fi" id="tCap" rows="6">${esc(t.caption||"")}</textarea>
+        <label class="cmp-fl">Design brief template</label><textarea class="cmp-fi" id="tBrief" rows="4">${esc(t.brief||"")}</textarea>
+        <label class="cmp-fl">CTA template</label><input class="cmp-fi" id="tCta" value="${esc(t.cta||"")}">
       </div>
       <div class="cmp-mfoot">
         <button class="cmp-save" onclick="saveTpl('${t.id}')">${id?"Save":"Create"}</button>
         <button class="cmp-cancel" onclick="closeTplEdit()">Cancel</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
-function closeTplEdit(){const m=document.getElementById("tplModalBg");if(m)m.remove();}
+function closeTplEdit(force){const m=document.getElementById("tplModalBg");if(m)tryCloseDynModal(m,force);}
 async function saveTpl(id){
   const all=getTemplates();
   const idx=all.findIndex(x=>x.id===id);
@@ -2368,7 +2483,7 @@ async function saveTpl(id){
   if(!data.name){toast("Template needs a name","err");return;}
   if(idx>=0)all[idx]=data;else all.push(data);
   sto("templates",all);
-  closeTplEdit();renderTemplates();
+  closeTplEdit(true);renderTemplates();
   toast("Saving...","info");
   await pushToGitHub();
   toast("✓ Synced","ok");
@@ -2409,19 +2524,19 @@ function renderRequests(){
         return `<div class="rq-card">
           <div class="rq-hd">
             <div>
-              <span class="rq-status-pill rq-st-${r.status}">${REQUEST_LABELS[r.status]||r.status}</span>
-              <span class="rq-type">${r.type||"?"}</span>
-              <span class="rq-when">for ${r.date_wanted||"—"}</span>
+              <span class="rq-status-pill rq-st-${esc(r.status)}">${REQUEST_LABELS[r.status]||esc(r.status)}</span>
+              <span class="rq-type">${esc(r.type||"?")}</span>
+              <span class="rq-when">for ${esc(r.date_wanted||"—")}</span>
             </div>
-            <div class="rq-meta">${r.requester||"?"} · ${relTime(r.created_at)}</div>
+            <div class="rq-meta">${esc(r.requester||"?")} · ${esc(relTime(r.created_at))}</div>
           </div>
-          <div class="rq-obj"><b>Goal:</b> ${(r.objective||"").replace(/</g,"&lt;")}</div>
-          ${r.brief?`<div class="rq-brief"><b>Brief:</b> ${r.brief.replace(/</g,"&lt;").replace(/\n/g,"<br>")}</div>`:""}
+          <div class="rq-obj"><b>Goal:</b> ${esc(r.objective||"")}</div>
+          ${r.brief?`<div class="rq-brief"><b>Brief:</b> ${escMl(r.brief)}</div>`:""}
           <div class="rq-grid">
-            ${r.platform?`<div><b>Platform:</b> ${r.platform}</div>`:""}
-            ${r.offer?`<div><b>Offer/CTA:</b> ${r.offer}</div>`:""}
-            ${r.deadline?`<div><b>Deadline:</b> ${r.deadline}</div>`:""}
-            ${r.reference?`<div><b>Reference:</b> ${r.reference}</div>`:""}
+            ${r.platform?`<div><b>Platform:</b> ${esc(r.platform)}</div>`:""}
+            ${r.offer?`<div><b>Offer/CTA:</b> ${esc(r.offer)}</div>`:""}
+            ${r.deadline?`<div><b>Deadline:</b> ${esc(r.deadline)}</div>`:""}
+            ${r.reference?`<div><b>Reference:</b> ${esc(r.reference)}</div>`:""}
           </div>
           ${adminBar}
         </div>`;
@@ -2466,9 +2581,9 @@ function openReqForm(){
         <button class="cmp-cancel" onclick="closeReqForm()">Cancel</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
-function closeReqForm(){const m=document.getElementById("reqModalBg");if(m)m.remove();}
+function closeReqForm(force){const m=document.getElementById("reqModalBg");if(m)tryCloseDynModal(m,force);}
 async function submitReq(){
   const obj=document.getElementById("rqObj").value.trim();
   if(!obj){toast("Goal/objective is required","err");return;}
@@ -2487,7 +2602,7 @@ async function submitReq(){
     created_at:new Date().toISOString()
   };
   const all=getRequests();all.unshift(r);sto("requests",all);
-  closeReqForm();renderRequests();
+  closeReqForm(true);renderRequests();
   toast("Request submitted — pushing...","info");
   await pushToGitHub();
   toast("✓ Synced — admin will review","ok");
@@ -2568,7 +2683,7 @@ function openAIPrompts(postId,slideIdx){
         <button class="cmp-cancel" onclick="closeAIPrompts()">Close</button>
       </div>
     </div></div>`;
-  const wrap=document.createElement("div");wrap.innerHTML=html;document.body.appendChild(wrap.firstChild);
+  mountDynModal(html);
 }
 function closeAIPrompts(){const m=document.getElementById("aiModalBg");if(m)m.remove();}
 function copyAIPrompt(i,btn){
@@ -2595,17 +2710,18 @@ document.getElementById("rejOv").addEventListener("click",e=>{if(e.target===docu
 document.getElementById("setupModalBg").addEventListener("click",e=>{if(e.target===document.getElementById("setupModalBg"))closeSetupModal();});
 
 /* v6.1 FIX: Unified backdrop-click + Escape close for all v5/v6 dynamic modals.
-   These modals (campaign edit, knowledge edit, hook edit, template edit, request form, AI prompts)
-   are appended to <body> at runtime, so we use event delegation on document. */
+   v6.6 FIX: Now uses tryCloseDynModal which warns about unsaved input changes. */
 document.addEventListener("click",e=>{
   const t=e.target;
-  if(t&&t.classList&&t.classList.contains("cmp-modal-bg")){t.remove();}
+  if(t&&t.classList&&t.classList.contains("cmp-modal-bg")){
+    tryCloseDynModal(t);
+  }
 });
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){
     // Close newest dynamic modal (last in DOM)
     const modals=document.querySelectorAll(".cmp-modal-bg");
-    if(modals.length){modals[modals.length-1].remove();}
+    if(modals.length){tryCloseDynModal(modals[modals.length-1]);}
   }
 });
 
