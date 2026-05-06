@@ -641,11 +641,6 @@
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-1.jpg",
       "ts": 1778061633504
     },
-    "3": {
-      "type": "img",
-      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-3.jpg",
-      "ts": 1778068730284
-    },
     "5": {
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5.jpg",
@@ -655,11 +650,6 @@
       "type": "img",
       "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-6.jpg",
       "ts": 1777878188998
-    },
-    "7": {
-      "type": "img",
-      "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-7.jpg",
-      "ts": 1778068783202
     }
   },
   "slides": {
