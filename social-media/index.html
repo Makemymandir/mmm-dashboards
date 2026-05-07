@@ -457,6 +457,34 @@ input[type=file]{display:none;}
 .br-v{color:var(--dark);flex:1;word-break:break-word;}
 .br-camp{background:rgba(123,53,148,.08);margin:5px -12px -9px;padding:6px 12px;border-radius:0 0 8px 8px;border-top:1px solid rgba(123,53,148,.15);}
 
+/* v6.8: AI STUDIO */
+.ais-wrap{max-width:880px;margin:0 auto;padding:14px 16px 80px;}
+.ais-intro{font-size:12.5px;color:var(--dark);background:linear-gradient(135deg,rgba(123,53,148,.08),rgba(232,119,34,.06));padding:13px 16px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.6;}
+.ais-tabs{display:flex;gap:5px;background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:4px;margin-bottom:14px;flex-wrap:wrap;}
+.ais-tab{flex:1;min-width:130px;background:transparent;border:none;color:var(--mid);font-size:12px;font-weight:600;padding:9px 11px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;}
+.ais-tab:hover{color:var(--dark);}
+.ais-tab.on{background:var(--dark);color:#fff;}
+.ais-body{background:var(--w);border:1px solid var(--bdr);border-radius:10px;padding:18px;}
+.ais-form{display:flex;flex-direction:column;gap:13px;}
+.ais-fr{display:flex;flex-direction:column;gap:5px;}
+.ais-fr label{font-size:11.5px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:.5px;}
+.ais-opt{font-weight:400;color:var(--mid);text-transform:none;letter-spacing:0;font-size:11px;}
+/* When ais-fr contains multiple inner divs (dual-column layout for Length+Goal) */
+.ais-fr > div{display:flex;flex-direction:column;gap:5px;}
+/* If the parent ais-fr has multiple direct >div children, lay them out as columns */
+.ais-fr:has(> div + div){flex-direction:row;gap:10px;}
+.ais-i{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:9px 12px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--dark);outline:none;transition:border-color .15s;box-sizing:border-box;line-height:1.5;}
+.ais-i:focus{border-color:var(--o);box-shadow:0 0 0 3px rgba(232,119,34,.12);}
+textarea.ais-i{resize:vertical;min-height:60px;}
+.ais-go{margin-top:6px;background:linear-gradient(135deg,var(--o),#cf6a1d);color:#fff;border:none;border-radius:8px;padding:12px 18px;font-weight:600;font-size:13px;cursor:pointer;letter-spacing:.3px;}
+.ais-go:hover{filter:brightness(1.08);}
+.ais-output-hd{font-size:12px;color:var(--g);font-weight:600;margin:14px 0 10px;padding:8px 12px;background:rgba(15,110,86,.08);border-radius:7px;border-left:3px solid var(--g);}
+@media(max-width:768px){
+  .ais-fr{flex-direction:column;}
+  .ais-tabs{flex-wrap:wrap;}
+  .ais-tab{min-width:48%;}
+}
+
 /* v5: Brand DNA */
 .dna-wrap{max-width:840px;margin:0 auto;padding:14px 16px 80px;}
 .dna-intro{font-size:12.5px;color:var(--dark);background:linear-gradient(135deg,rgba(232,119,34,.08),rgba(123,53,148,.06));padding:13px 16px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.6;}
@@ -589,6 +617,7 @@ textarea.cmp-fi{resize:vertical;min-height:42px;line-height:1.5;}
       <div class="nav-item" onclick="navTo('knowledge',this)"><span class="nav-icon">📚</span>Knowledge Base<span class="nav-cnt" id="nc-know">0</span></div>
       <div class="nav-item" onclick="navTo('hooks',this)"><span class="nav-icon">🎬</span>Hooks &amp; Scripts<span class="nav-cnt" id="nc-hook">0</span></div>
       <div class="nav-item" onclick="navTo('templates',this)"><span class="nav-icon">📋</span>Post Templates<span class="nav-cnt" id="nc-tpl">0</span></div>
+      <div class="nav-item" onclick="navTo('aiStudio',this)"><span class="nav-icon">🪄</span>AI Studio</div>
       <div class="nav-item" onclick="navTo('brandDNA',this)"><span class="nav-icon">🎨</span>Brand DNA</div>
       <div class="nav-item" id="syncSettingsNav" onclick="openSetupModal()" style="display:none"><span class="nav-icon">⚙️</span>Sync Settings</div>
     </div>
@@ -1174,7 +1203,7 @@ function rerenderCurrent(){
     return;
   }
   // Pages where re-rendering would wipe what the user is reading — only update sidebar counters
-  const readingPages=["knowledge","hooks","templates","brandDNA","activity"];
+  const readingPages=["knowledge","hooks","templates","brandDNA","activity","aiStudio"];
   if(readingPages.includes(curPage)){
     updateCounts();
     return;
@@ -1366,7 +1395,7 @@ function navTo(page,el){
   curPage=page;
   document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active"));
   if(el)el.classList.add("active");
-  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log",campaigns:"Campaigns",brandDNA:"Brand DNA",knowledge:"Knowledge Base",hooks:"Hooks & Scripts",templates:"Post Templates",requests:"Content Requests"};
+  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log",campaigns:"Campaigns",brandDNA:"Brand DNA",knowledge:"Knowledge Base",hooks:"Hooks & Scripts",templates:"Post Templates",requests:"Content Requests",aiStudio:"AI Studio"};
   document.getElementById("tbTitle").textContent=titles[page]||"Posts";
   if(page==="activity")renderActivity();
   else if(page==="campaigns")renderCampaigns();
@@ -1375,6 +1404,7 @@ function navTo(page,el){
   else if(page==="hooks")renderHooks();
   else if(page==="templates")renderTemplates();
   else if(page==="requests")renderRequests();
+  else if(page==="aiStudio")renderAiStudio();
   else render();
 }
 
@@ -2867,6 +2897,275 @@ function openAITool(tool,i){
   const url=urls[tool]||urls.chatgpt;
   window.open(url,"_blank");
   toast("Prompt copied — paste it in the AI tool tab","ok");
+}
+
+/* ══════════════════════════════════════════════════════════════
+   v6.8: AI STUDIO — dedicated page with 4 generators (free path)
+   1. Image Prompts — for Midjourney/DALL-E/Imagen
+   2. Video Prompts — for Runway/Kling/Pika
+   3. Caption Generator — drafts captions in your brand voice
+   4. Voice/Audio Prompts — for ElevenLabs/HeyGen voiceovers
+   All use free path: generate prompts → user copies → opens external AI tool
+   ══════════════════════════════════════════════════════════════ */
+let _aiStudioTab="image";
+const AI_STUDIO_TABS=[
+  {id:"image",lbl:"🖼 Image Prompts"},
+  {id:"video",lbl:"🎬 Video Prompts"},
+  {id:"caption",lbl:"✍️ Caption Generator"},
+  {id:"voice",lbl:"🎤 Voice / Audio"},
+];
+
+function renderAiStudio(){
+  updateCounts();
+  const tabs=AI_STUDIO_TABS.map(t=>`<button class="ais-tab${_aiStudioTab===t.id?" on":""}" onclick="setAiTab('${t.id}')">${t.lbl}</button>`).join("");
+  let body="";
+  if(_aiStudioTab==="image")body=renderAiImageTab();
+  else if(_aiStudioTab==="video")body=renderAiVideoTab();
+  else if(_aiStudioTab==="caption")body=renderAiCaptionTab();
+  else if(_aiStudioTab==="voice")body=renderAiVoiceTab();
+  document.getElementById("mainContent").innerHTML=`
+    <div class="ais-wrap">
+      <div class="ais-intro">
+        <b>🪄 AI Studio — your dedicated content generation space.</b><br>
+        All four generators use the <b>free path</b>: fill the inputs → we generate 4 well-crafted prompts using your Brand DNA → you copy each prompt and paste into your preferred AI tool. No API keys, no recurring cost.
+      </div>
+      <div class="ais-tabs">${tabs}</div>
+      <div class="ais-body">${body}</div>
+    </div>`;
+}
+function setAiTab(t){_aiStudioTab=t;renderAiStudio();}
+
+/* === Image Prompts tab === */
+function renderAiImageTab(){
+  return `<div class="ais-form">
+    <div class="ais-fr"><label>Subject / what to show</label>
+      <input class="ais-i" id="aiImgSubject" placeholder="e.g. floor-standing Corian mandir with carved arches in a modern living room"/>
+    </div>
+    <div class="ais-fr"><label>Mood / occasion <span class="ais-opt">(optional)</span></label>
+      <input class="ais-i" id="aiImgMood" placeholder="e.g. festive, devotional, modern, minimalist"/>
+    </div>
+    <div class="ais-fr"><label>Aspect ratio</label>
+      <select class="ais-i" id="aiImgRatio">
+        <option value="4:5">4:5 (Instagram portrait — default)</option>
+        <option value="1:1">1:1 (square)</option>
+        <option value="9:16">9:16 (Story / Reel)</option>
+        <option value="16:9">16:9 (landscape / web banner)</option>
+      </select>
+    </div>
+    <button class="ais-go" onclick="genAiImagePrompts()">✨ Generate 4 prompts</button>
+    <div id="aiOutput"></div>
+  </div>`;
+}
+function genAiImagePrompts(){
+  const subject=document.getElementById("aiImgSubject").value.trim();
+  if(!subject){toast("Please describe the subject first","err");return;}
+  const mood=document.getElementById("aiImgMood").value.trim();
+  const ratio=document.getElementById("aiImgRatio").value;
+  const dna=getBrandDNA();
+  const photoStyle=dna.photography_style||"warm gold tones, soft maroon accents, natural daylight, real product photography, minimal clutter";
+  const colorPrim=dna.color_primary||"warm gold and maroon palette";
+  const moodLine=mood?` Mood: ${mood}.`:"";
+  const ratioLine={"4:5":"Vertical 4:5 format","1:1":"Square 1:1 format","9:16":"Vertical 9:16 (story/reel)","16:9":"Horizontal 16:9 format"}[ratio]||"Vertical 4:5 format";
+  const prompts=[
+    {title:"📷 Photorealistic hero shot",hint:"Best for product spotlights, premium reveals",text:`Photorealistic hero photograph: ${subject}. Centred composition, ${photoStyle}. Studio-quality lighting, sharp focus on the subject, soft background blur. Indian aesthetic, devotional tone.${moodLine} ${ratioLine}. No text overlays.`},
+    {title:"🏠 Lifestyle in-home scene",hint:"Best for emotional, before/after, family content",text:`Cinematic lifestyle photograph: an Indian family home with ${subject} as the focal point. Soft morning light through window, warm golden glow, lit brass diya in foreground. Family member silhouetted in respectful prayer pose. ${photoStyle}.${moodLine} Authentic Indian middle-class to upper-middle-class home aesthetic. ${ratioLine}. No text.`},
+    {title:"📊 Clean infographic",hint:"Best for educational carousels, Vastu guides, comparisons",text:`Clean minimal infographic illustration: ${subject}. Style: flat vector with subtle gradients, ${colorPrim}. Indian devotional motifs as accents (lotus, om, diya silhouettes). Clear visual hierarchy. Sans-serif typography, headline + 2-3 short labels.${moodLine} ${ratioLine==="Square 1:1 format"?"1:1 square format":ratioLine}. White or warm cream background.`},
+    {title:"🪔 Festival / devotional mood",hint:"Best for festival greetings, devotional posts",text:`Devotional mood photograph: ${subject} as the centerpiece. Foreground: lit brass diyas, marigold flowers, traditional rangoli pattern. ${photoStyle}.${moodLine} Warm low-light cinematography, shallow depth of field. Spiritual, calming, auspicious atmosphere. ${ratioLine}. Leave space top-right for greeting text overlay.`}
+  ];
+  renderAiPromptCards(prompts,"image");
+}
+
+/* === Video Prompts tab === */
+function renderAiVideoTab(){
+  return `<div class="ais-form">
+    <div class="ais-fr"><label>What should the video show?</label>
+      <textarea class="ais-i" id="aiVidScene" rows="2" placeholder="e.g. a 15-second reveal of a custom Corian mandir starting from a closed cabinet, slowly opening to reveal the mandir with LED switching on"></textarea>
+    </div>
+    <div class="ais-fr">
+      <div style="flex:1"><label>Duration</label>
+        <select class="ais-i" id="aiVidDur">
+          <option>5 seconds</option><option selected>10 seconds</option><option>15 seconds</option><option>20 seconds</option><option>30 seconds</option>
+        </select>
+      </div>
+      <div style="flex:1"><label>Camera movement</label>
+        <select class="ais-i" id="aiVidCam">
+          <option value="">Auto / no preference</option>
+          <option>Slow push-in (zoom toward subject)</option>
+          <option>Slow pull-back (zoom away)</option>
+          <option>Static / locked tripod</option>
+          <option>Smooth pan left to right</option>
+          <option>Orbit around subject</option>
+          <option>Top-down reveal</option>
+        </select>
+      </div>
+    </div>
+    <button class="ais-go" onclick="genAiVideoPrompts()">✨ Generate 4 video prompts</button>
+    <div id="aiOutput"></div>
+  </div>`;
+}
+function genAiVideoPrompts(){
+  const scene=document.getElementById("aiVidScene").value.trim();
+  if(!scene){toast("Please describe the scene first","err");return;}
+  const dur=document.getElementById("aiVidDur").value;
+  const cam=document.getElementById("aiVidCam").value;
+  const dna=getBrandDNA();
+  const photoStyle=dna.photography_style||"warm gold tones, soft maroon accents, natural daylight, devotional tone";
+  const camLine=cam?` Camera: ${cam}.`:"";
+  const prompts=[
+    {title:"🎬 Cinematic reveal",hint:"Best for product reveals, mandir reveals, before/after",text:`Cinematic ${dur} video: ${scene}. ${photoStyle}. Slow build-up, peak moment near the end (e.g., LED light switching on, diya being lit). Soft warm color grade, shallow depth of field, professional cinematography quality.${camLine} No text overlays. Subtle ambient sound: temple bell or soft devotional under-track.`},
+    {title:"⚡ Fast-cut energetic",hint:"Best for BTS, time-lapse, transformation reels",text:`Energetic ${dur} reel: ${scene}. Multiple quick cuts (every 1-2 seconds), each showing a different angle or step. Fast pace, beat-driven editing rhythm. ${photoStyle}. Bright, sharp, attention-grabbing. Best for showing process or transformation in compressed time.${camLine}`},
+    {title:"🪔 Devotional ambient",hint:"Best for festival posts, worship moments, emotional content",text:`Slow contemplative ${dur} video: ${scene}. ${photoStyle}. Very slow camera movement, lingering shots. Foreground: soft glow of brass diyas, gentle smoke from incense, blurred marigold petals. Shallow focus, warm low-key lighting. Emotional, spiritual, calming pace.${camLine} Background audio: subtle bell or chant.`},
+    {title:"🏠 Lifestyle storytelling",hint:"Best for testimonials, client homes, emotional storytelling",text:`Documentary-style ${dur} video: ${scene}. Warm natural light from windows. ${photoStyle}. Real Indian home setting, lived-in feel. Show small human details: a family member's hand lighting a diya, kids walking past in soft focus. Authentic, not staged.${camLine} Cinematic but unobtrusive — like watching a real moment.`}
+  ];
+  renderAiPromptCards(prompts,"video");
+}
+
+/* === Caption Generator tab === */
+function renderAiCaptionTab(){
+  return `<div class="ais-form">
+    <div class="ais-fr"><label>Topic / what's the post about?</label>
+      <textarea class="ais-i" id="aiCapTopic" rows="2" placeholder="e.g. why Corian lasts longer than wood for mandirs"></textarea>
+    </div>
+    <div class="ais-fr">
+      <div style="flex:1"><label>Length</label>
+        <select class="ais-i" id="aiCapLength">
+          <option>Short (≤80 words)</option>
+          <option selected>Medium (80–180 words)</option>
+          <option>Long (180–300 words)</option>
+        </select>
+      </div>
+      <div style="flex:1"><label>Goal</label>
+        <select class="ais-i" id="aiCapGoal">
+          <option>Educate</option>
+          <option>Drive DMs</option>
+          <option>Build trust</option>
+          <option>Promote offer</option>
+          <option selected>Mix of education + DM</option>
+        </select>
+      </div>
+    </div>
+    <div class="ais-fr"><label>Specific points to include <span class="ais-opt">(optional)</span></label>
+      <textarea class="ais-i" id="aiCapPoints" rows="2" placeholder="e.g. mention Pune free site visit, mention 20+ year lifespan, end with DM CTA"></textarea>
+    </div>
+    <button class="ais-go" onclick="genAiCaptionPrompts()">✨ Generate 4 caption variants</button>
+    <div id="aiOutput"></div>
+  </div>`;
+}
+function genAiCaptionPrompts(){
+  const topic=document.getElementById("aiCapTopic").value.trim();
+  if(!topic){toast("Please give a topic first","err");return;}
+  const len=document.getElementById("aiCapLength").value;
+  const goal=document.getElementById("aiCapGoal").value;
+  const points=document.getElementById("aiCapPoints").value.trim();
+  const dna=getBrandDNA();
+  const brandCtx=[];
+  if(dna.brand_name)brandCtx.push(`Brand: ${dna.brand_name}`);
+  if(dna.voice_attributes)brandCtx.push(`Voice: ${dna.voice_attributes.substring(0,200)}`);
+  if(dna.audience_pain_points)brandCtx.push(`Audience pain: ${dna.audience_pain_points.substring(0,150)}`);
+  if(dna.vocab_use)brandCtx.push(`Use these words: ${dna.vocab_use.substring(0,100)}`);
+  if(dna.vocab_avoid)brandCtx.push(`Avoid these words: ${dna.vocab_avoid.substring(0,100)}`);
+  if(dna.cta_phrases)brandCtx.push(`Approved CTAs: ${dna.cta_phrases}`);
+  const ctxBlock=brandCtx.length?`\n\nBrand context:\n${brandCtx.map(b=>"- "+b).join("\n")}`:"";
+  const pointsLine=points?`\n\nMust include: ${points}`:"";
+  const prompts=[
+    {title:"📚 Educational angle",hint:"Teach first, sell second. Best for FAQs, comparisons, Vastu guides",text:`Write an Instagram caption for a post about: ${topic}.\n\nApproach: Educational. Open with a surprising fact or counterintuitive insight. Build credibility through specifics, not adjectives. End with a soft CTA.\n\nLength: ${len}. Goal: ${goal}.${pointsLine}${ctxBlock}\n\nFormat: Caption text only. Add 4-6 relevant hashtags at the end. No emojis in the body, max 1 emoji at start.`},
+    {title:"💬 Conversational / direct",hint:"Talks to one reader. Best for testimonials, BTS, direct CTAs",text:`Write an Instagram caption for: ${topic}.\n\nApproach: Conversational, like talking to one specific reader. Use "you" frequently. Short sentences. Empathy first, expertise second. End with a clear, low-friction CTA.\n\nLength: ${len}. Goal: ${goal}.${pointsLine}${ctxBlock}\n\nFormat: Caption text only. Hashtags at end. Devotional emojis (🙏) used sparingly, max 1-2 in entire caption.`},
+    {title:"📖 Story / narrative",hint:"Opens with a moment. Best for emotional, client stories, festival posts",text:`Write an Instagram caption for: ${topic}.\n\nApproach: Story-driven. Open with a specific, sensory moment ("Last Tuesday, Mr. Sharma walked in with...") that hooks the reader. Build to the broader insight. End with quiet emotional resonance + soft CTA.\n\nLength: ${len}. Goal: ${goal}.${pointsLine}${ctxBlock}\n\nFormat: Caption text only. Hashtags at end. Emotional but not melodramatic. No "industry buzzwords".`},
+    {title:"✅ List / scannable",hint:"3-5 bullet points. Best for tips, checklists, comparisons",text:`Write an Instagram caption for: ${topic}.\n\nApproach: List/scannable. Open with a one-line hook. Then 3-5 short bullet-style points (each 1-2 lines). End with a CTA.\n\nLength: ${len}. Goal: ${goal}.${pointsLine}${ctxBlock}\n\nFormat: Caption text only. Use bullet markers like → or • (NOT plain dashes). Hashtags at end.`}
+  ];
+  renderAiPromptCards(prompts,"caption");
+}
+
+/* === Voice / Audio Prompts tab === */
+function renderAiVoiceTab(){
+  return `<div class="ais-form">
+    <div class="ais-fr"><label>Script / what should the voice say?</label>
+      <textarea class="ais-i" id="aiVoiceScript" rows="4" placeholder="Type or paste your script here. Keep it under 100 words for a 15-20 second voiceover."></textarea>
+    </div>
+    <div class="ais-fr">
+      <div style="flex:1"><label>Voice gender</label>
+        <select class="ais-i" id="aiVoiceGender"><option>Male</option><option>Female</option><option>Either / no preference</option></select>
+      </div>
+      <div style="flex:1"><label>Language / accent</label>
+        <select class="ais-i" id="aiVoiceLang">
+          <option>Indian English</option>
+          <option>Hindi</option>
+          <option>Marathi</option>
+          <option>Hindi-English mix (Hinglish)</option>
+        </select>
+      </div>
+    </div>
+    <div class="ais-fr"><label>Tone</label>
+      <select class="ais-i" id="aiVoiceTone">
+        <option>Warm & devotional</option>
+        <option>Confident & professional</option>
+        <option>Friendly & conversational</option>
+        <option>Storytelling / narrative</option>
+        <option>Energetic & promotional</option>
+      </select>
+    </div>
+    <button class="ais-go" onclick="genAiVoicePrompts()">✨ Generate 4 voice direction prompts</button>
+    <div id="aiOutput"></div>
+  </div>`;
+}
+function genAiVoicePrompts(){
+  const script=document.getElementById("aiVoiceScript").value.trim();
+  if(!script){toast("Please add a script first","err");return;}
+  const gender=document.getElementById("aiVoiceGender").value;
+  const lang=document.getElementById("aiVoiceLang").value;
+  const tone=document.getElementById("aiVoiceTone").value;
+  const prompts=[
+    {title:"🎤 ElevenLabs / Voice tool — Direction",hint:"Paste this into ElevenLabs voice description or HeyGen voice settings",text:`Voice character:\n- Gender: ${gender}\n- Language/accent: ${lang}\n- Age: 30-45 (mature, trustworthy)\n- Tone: ${tone}\n- Pace: Moderate, with natural pauses at commas and full stops\n- Energy: ${tone.includes("Energetic")?"High energy throughout":tone.includes("devotional")?"Calm, reverent, never rushed":"Conversational, balanced"}\n\nScript to read:\n"${script}"\n\nDelivery notes:\n- Read with natural breathing\n- Emphasize the key emotional/factual words\n- ${tone.includes("devotional")?"Reverent pause before any deity name or sacred term":"Pause naturally before brand name and CTAs"}\n- End on a confident, complete note (not trailing off)`},
+    {title:"🎬 HeyGen / D-ID — Talking avatar",hint:"For AI talking-head videos with this script",text:`Create a talking-head video using an AI avatar.\n\nAvatar:\n- ${gender} presenter, age 30-45, Indian appearance\n- Professional but warm appearance\n- Setting: neutral warm-toned background, soft lighting\n\nVoice/delivery:\n- Language: ${lang}\n- Tone: ${tone}\n- Natural pacing with pauses\n\nScript:\n"${script}"\n\nDirection notes:\n- Make eye contact with camera\n- Natural hand gestures only at key emphasis moments\n- Slight smile during welcoming sentences\n- Serious tone for facts/specifications`},
+    {title:"📜 ChatGPT — Polish the script first",hint:"Use this BEFORE recording — refine your script",text:`I'm creating a ${tone.toLowerCase()} voiceover in ${lang} for a custom mandir business (MakeMyMandir).\n\nMy current script:\n"${script}"\n\nPlease:\n1. Tighten the script to 80-100 words max while keeping all key points\n2. Make every sentence punchy and easy to speak aloud\n3. Add natural breath-pause markers (like commas) where the voice should pause\n4. Suggest 2-3 alternative versions with different opening hooks\n5. Flag any phrases that would sound awkward when spoken vs read\n\nThe audience is Indian families considering a custom mandir for their home. The tone should be ${tone.toLowerCase()}.`},
+    {title:"🎙 Background music & SFX direction",hint:"For your video editor — what plays under the voice",text:`Background audio direction for a voiceover:\n\nVoice tone: ${tone}\nLanguage: ${lang}\nScript length: ${Math.ceil(script.split(" ").length/2.5)} seconds approx\n\nSuggested background:\n${tone.includes("devotional")?"- Soft sitar or flute under-track at -18dB\n- Single temple bell ring at start\n- Fade to silence at end for emphasis":tone.includes("Energetic")?"- Upbeat instrumental track at -12dB\n- Quick whoosh transitions between sections\n- Strong final beat for CTA":"- Subtle ambient pad at -20dB\n- No dominant melody (would compete with voice)\n- Soft fade-in over first 2 seconds, fade-out last 1 second"}\n\nSFX:\n${tone.includes("devotional")?"- Optional: very faint diya flame crackle in ambient layer":tone.includes("Energetic")?"- Whoosh at each scene/cut\n- Pop sound on CTA reveal":"- Minimal — let voice carry"}`}
+  ];
+  renderAiPromptCards(prompts,"voice");
+}
+
+/* === Shared: render the 4 generated prompt cards === */
+function renderAiPromptCards(prompts,mode){
+  const out=document.getElementById("aiOutput");
+  if(!out)return;
+  const cards=prompts.map((pr,i)=>{
+    return `<div class="ai-card">
+      <div class="ai-title">${esc(pr.title)}</div>
+      <div class="ai-hint">${esc(pr.hint)}</div>
+      <textarea class="ai-prompt" id="aisOut${i}" rows="${mode==="caption"?7:6}" readonly>${esc(pr.text)}</textarea>
+      <div class="ai-actions">
+        <button class="ai-btn ai-copy" onclick="copyAiStudioPrompt(${i},this)">📋 Copy</button>
+        <button class="ai-btn ai-chatgpt" onclick="openAiStudioTool('chatgpt',${i})">ChatGPT</button>
+        <button class="ai-btn ai-gemini" onclick="openAiStudioTool('gemini',${i})">Gemini</button>
+        <button class="ai-btn ai-grok" onclick="openAiStudioTool('grok',${i})">Grok</button>
+        <button class="ai-btn ai-claude" onclick="openAiStudioTool('claude',${i})">Claude</button>
+        ${mode==="image"?'<button class="ai-btn" onclick="openExtTool(\'midjourney\')">Midjourney</button>':""}
+        ${mode==="video"?'<button class="ai-btn" onclick="openExtTool(\'runway\')">Runway</button><button class="ai-btn" onclick="openExtTool(\'kling\')">Kling</button>':""}
+        ${mode==="voice"?'<button class="ai-btn" onclick="openExtTool(\'elevenlabs\')">ElevenLabs</button><button class="ai-btn" onclick="openExtTool(\'heygen\')">HeyGen</button>':""}
+      </div>
+    </div>`;
+  }).join("");
+  out.innerHTML=`<div class="ais-output-hd">✨ 4 prompts generated. Click <b>Copy</b>, then click your preferred AI tool.</div>${cards}`;
+  setTimeout(()=>out.scrollIntoView({behavior:"smooth",block:"start"}),50);
+}
+function copyAiStudioPrompt(i,btn){
+  const el=document.getElementById("aisOut"+i);
+  navigator.clipboard.writeText(el.value).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓ Copied — paste in AI tool";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("ok");},2200);
+  });
+}
+function openAiStudioTool(tool,i){
+  const el=document.getElementById("aisOut"+i);
+  navigator.clipboard.writeText(el.value);
+  const urls={chatgpt:"https://chatgpt.com/",gemini:"https://gemini.google.com/app",grok:"https://grok.com/",claude:"https://claude.ai/new"};
+  const url=urls[tool]||urls.chatgpt;
+  window.open(url,"_blank");
+  toast("Prompt copied — paste it in the AI tool tab","ok");
+}
+function openExtTool(tool){
+  const urls={midjourney:"https://www.midjourney.com/",runway:"https://runwayml.com/",kling:"https://klingai.com/",elevenlabs:"https://elevenlabs.io/app",heygen:"https://app.heygen.com/"};
+  window.open(urls[tool]||"https://www.google.com","_blank");
+  toast(`Opening ${tool} — paste your already-copied prompt there`,"info");
 }
 
 
