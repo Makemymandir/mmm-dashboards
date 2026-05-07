@@ -1271,8 +1271,8 @@ async function pushToGitHub(retry=0){
 
 async function manualSync(){
   await pullFromGitHub();
-  await pushToGitHub();
-  toast("Sync complete","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Sync complete":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 function startSync(){
@@ -1392,6 +1392,10 @@ function closeSetupModal(){document.getElementById("setupModalBg").classList.rem
 
 /* ══ NAV ══ */
 function navTo(page,el){
+  // v6.9 FIX: before changing pages, capture any in-flight typing on Brand DNA / AI Studio
+  // to localStorage so it survives navigation. This is a safety net — explicit Save still required to push to GitHub.
+  if(curPage==="brandDNA"&&typeof _captureDnaInputs==="function")_captureDnaInputs();
+  if(curPage==="aiStudio"&&typeof _captureAiTabInputs==="function")_captureAiTabInputs();
   curPage=page;
   document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active"));
   if(el)el.classList.add("active");
@@ -1648,7 +1652,7 @@ function openReview(id){
   const cCls=chars>2200?"over":chars>1500?"warn":"ok";
   const hCls=hashes>30?"over":hashes>25?"warn":"ok";
   const notes=gNotes(id);
-  const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${n.user}</span><span class="ni-text">${n.text}</span><span class="ni-time">${relTime(n.time)}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
+  const notesHtml=notes.length?notes.map(n=>`<div class="note-item"><span class="ni-user">${esc(n.user)}</span><span class="ni-text">${esc(n.text)}</span><span class="ni-time">${esc(relTime(n.time))}</span></div>`).join(""):`<div style="font-size:11px;color:var(--mid);padding:4px 0;">No notes yet</div>`;
 
   // v6.7: Brand DNA + Campaign reference at top of review modal.
   // Only shows fields that have been filled in. Degrades gracefully — if empty, shows a gentle nudge.
@@ -1929,8 +1933,8 @@ function handleUpload(inp,type){
           const final={type:"img",url:result.url,ts:Date.now()};
           sto("md-"+revId,final);
           buildModalLeft(POSTS.find(x=>x.id===revId),final);
-          await pushToGitHub();
-          toast("✓ Photo synced — team can see it now","ok");
+          const _ok=await pushToGitHub();
+          toast(_ok?"✓ Photo synced — team can see it now":"⚠ Saved locally — sync failed",_ok?"ok":"err");
         }else{
           toast("⚠ Photo saved locally but failed to upload. Click ⟳ Sync to retry.","err");
         }
@@ -1947,8 +1951,8 @@ function handleUpload(inp,type){
         const final={type:"video",url:result.url,ts:Date.now()};
         sto("md-"+revId,final);
         buildModalLeft(POSTS.find(x=>x.id===revId),final);
-        await pushToGitHub();
-        toast("✓ Video synced — team can see it now","ok");
+        const _ok=await pushToGitHub();
+        toast(_ok?"✓ Video synced — team can see it now":"⚠ Saved locally — sync failed",_ok?"ok":"err");
       }else{
         toast("⚠ Video saved locally but failed to upload. Click ⟳ Sync to retry.","err");
       }
@@ -2254,8 +2258,25 @@ function renderBrandDNA(){
     </div>`;
 }
 function toggleDnaSection(id){
+  // v6.9 FIX: before re-rendering, capture all currently-typed DNA values into localStorage.
+  // Without this, expanding/collapsing a section wipes any unsaved typing in OTHER currently-open sections.
+  // (Auto-save locally only — does NOT push to GitHub. Push happens on explicit Save button.)
+  _captureDnaInputs();
   _dnaOpenSections[id]=!_dnaOpenSections[id];
   renderBrandDNA();
+}
+
+/* v6.9 FIX: helper used by toggleDnaSection (and could be used by navTo if we ever auto-save on nav).
+   Reads every currently-rendered DNA input/textarea and writes the merged result to localStorage. */
+function _captureDnaInputs(){
+  const cur=getBrandDNA();
+  const next={...cur};
+  let touched=false;
+  getAllDnaFields().forEach(f=>{
+    const el=document.getElementById("dna-"+f.k);
+    if(el){next[f.k]=el.value;touched=true;}
+  });
+  if(touched)sto("brandDNA",next);
 }
 async function saveBrandDNA(){
   const cur=getBrandDNA();
@@ -2372,16 +2393,16 @@ async function saveCampaign(id){
   logAct({action:"edited",postId:0,user:user?.name,time:new Date().toISOString(),detail:"Campaign: "+data.name});
   closeCampaignEdit(true);renderCampaigns();render();
   toast("Saved — pushing to team...","info");
-  await pushToGitHub();
-  toast("✓ Campaign synced","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"✓ Campaign synced":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 async function deleteCampaign(id){
   if(!confirm("Delete this campaign? Posts inside will be unassigned but not lost."))return;
   const camps=getCampaigns().filter(x=>x.id!==id);
   sto("campaigns",camps);
   renderCampaigns();render();
-  await pushToGitHub();
-  toast("Campaign deleted","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Campaign deleted":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 /* ══ v6: KNOWLEDGE BASE — render + actions ══ */
@@ -2478,16 +2499,16 @@ async function saveKnow(id){
   sto("knowledge",all);
   closeKnowEdit(true);renderKnowledge();
   toast("Saving...","info");
-  await pushToGitHub();
-  toast("✓ Knowledge synced","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"✓ Knowledge synced":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 async function deleteKnow(id){
   if(!confirm("Delete this entry? This cannot be undone."))return;
   const all=getKnowledge().filter(x=>x.id!==id);
   sto("knowledge",all);
   renderKnowledge();
-  await pushToGitHub();
-  toast("Deleted","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Deleted":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 /* ══ v6: HOOKS & SCRIPTS — render + actions ══ */
@@ -2592,15 +2613,15 @@ async function saveHook(id){
   sto("hooks",all);
   closeHookEdit(true);renderHooks();
   toast("Saving...","info");
-  await pushToGitHub();
-  toast("✓ Synced","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"✓ Synced":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 async function deleteHook(id){
   if(!confirm("Delete this entry?"))return;
   const all=getHooks().filter(x=>x.id!==id);
   sto("hooks",all);renderHooks();
-  await pushToGitHub();
-  toast("Deleted","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Deleted":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 /* ══ v6: POST TEMPLATES — render + actions ══ */
@@ -2681,15 +2702,15 @@ async function saveTpl(id){
   sto("templates",all);
   closeTplEdit(true);renderTemplates();
   toast("Saving...","info");
-  await pushToGitHub();
-  toast("✓ Synced","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"✓ Synced":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 async function deleteTpl(id){
   if(!confirm("Delete this template?"))return;
   const all=getTemplates().filter(x=>x.id!==id);
   sto("templates",all);renderTemplates();
-  await pushToGitHub();
-  toast("Deleted","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Deleted":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 /* ══ v6: CONTENT REQUESTS — render + actions ══ */
@@ -2800,8 +2821,8 @@ async function submitReq(){
   const all=getRequests();all.unshift(r);sto("requests",all);
   closeReqForm(true);renderRequests();
   toast("Request submitted — pushing...","info");
-  await pushToGitHub();
-  toast("✓ Synced — admin will review","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"✓ Synced — admin will review":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 async function setReqStatus(id,status){
   const all=getRequests();
@@ -2816,8 +2837,8 @@ async function deleteReq(id){
   if(!confirm("Delete this request? It will not be recoverable."))return;
   const all=getRequests().filter(x=>x.id!==id);
   sto("requests",all);renderRequests();
-  await pushToGitHub();
-  toast("Deleted","ok");
+  const _ok=await pushToGitHub();
+  toast(_ok?"Deleted":"⚠ Saved locally — sync failed",_ok?"ok":"err");
 }
 
 /* ══ v6: AI PROMPT GENERATOR (free path) — modal triggered from review post ══ */
@@ -2908,12 +2929,39 @@ function openAITool(tool,i){
    All use free path: generate prompts → user copies → opens external AI tool
    ══════════════════════════════════════════════════════════════ */
 let _aiStudioTab="image";
+/* v6.9 FIX: cache the last generated prompts AND form input values per tab.
+   Without this, switching tabs wipes both the user's typed inputs and the generated output. */
+let _aiStudioCache={image:{inputs:{},output:null},video:{inputs:{},output:null},caption:{inputs:{},output:null},voice:{inputs:{},output:null}};
 const AI_STUDIO_TABS=[
   {id:"image",lbl:"🖼 Image Prompts"},
   {id:"video",lbl:"🎬 Video Prompts"},
   {id:"caption",lbl:"✍️ Caption Generator"},
   {id:"voice",lbl:"🎤 Voice / Audio"},
 ];
+
+/* v6.9: capture current tab's input field values into the cache so we can restore them
+   when the user comes back to this tab. Called from setAiTab BEFORE switching. */
+function _captureAiTabInputs(){
+  const ids={
+    image:["aiImgSubject","aiImgMood","aiImgRatio"],
+    video:["aiVidScene","aiVidDur","aiVidCam"],
+    caption:["aiCapTopic","aiCapLength","aiCapGoal","aiCapPoints"],
+    voice:["aiVoiceScript","aiVoiceGender","aiVoiceLang","aiVoiceTone"],
+  }[_aiStudioTab]||[];
+  const cache=_aiStudioCache[_aiStudioTab];
+  if(!cache)return;
+  cache.inputs={};
+  ids.forEach(id=>{const el=document.getElementById(id);if(el)cache.inputs[id]=el.value;});
+}
+/* v6.9: restore cached input values into the form on render. */
+function _restoreAiTabInputs(){
+  const cache=_aiStudioCache[_aiStudioTab];
+  if(!cache||!cache.inputs)return;
+  Object.keys(cache.inputs).forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value=cache.inputs[id];
+  });
+}
 
 function renderAiStudio(){
   updateCounts();
@@ -2932,8 +2980,20 @@ function renderAiStudio(){
       <div class="ais-tabs">${tabs}</div>
       <div class="ais-body">${body}</div>
     </div>`;
+  // v6.9 FIX: restore inputs first, THEN restore generated output if any
+  _restoreAiTabInputs();
+  const cache=_aiStudioCache[_aiStudioTab];
+  if(cache&&cache.output){
+    const out=document.getElementById("aiOutput");
+    if(out)out.innerHTML=cache.output;
+  }
 }
-function setAiTab(t){_aiStudioTab=t;renderAiStudio();}
+function setAiTab(t){
+  // v6.9 FIX: capture current tab's inputs before switching
+  _captureAiTabInputs();
+  _aiStudioTab=t;
+  renderAiStudio();
+}
 
 /* === Image Prompts tab === */
 function renderAiImageTab(){
@@ -3144,7 +3204,12 @@ function renderAiPromptCards(prompts,mode){
       </div>
     </div>`;
   }).join("");
-  out.innerHTML=`<div class="ais-output-hd">✨ 4 prompts generated. Click <b>Copy</b>, then click your preferred AI tool.</div>${cards}`;
+  const html=`<div class="ais-output-hd">✨ 4 prompts generated. Click <b>Copy</b>, then click your preferred AI tool.</div>${cards}`;
+  out.innerHTML=html;
+  // v6.9 FIX: cache the output HTML on the current tab so switching tabs preserves it
+  if(_aiStudioCache[mode]){_aiStudioCache[mode].output=html;}
+  // Also capture current input values to cache
+  _captureAiTabInputs();
   setTimeout(()=>out.scrollIntoView({behavior:"smooth",block:"start"}),50);
 }
 function copyAiStudioPrompt(i,btn){
