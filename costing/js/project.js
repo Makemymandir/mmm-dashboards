@@ -28,8 +28,38 @@ document.addEventListener('DOMContentLoaded', async function() {
     return;
   }
   
-  await loadProject(projectId);
-});
+ async function loadProject(projectId) {
+  const container = document.getElementById('projectContent');
+
+  // Show cached version instantly if available
+  var cacheKey = 'mmm_project_' + projectId;
+  var cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      currentProject = JSON.parse(cached);
+      render();
+      if (activeTab === 'rough') loadRoughEstimates();
+      if (activeTab === 'quotations') loadQuotations();
+    } catch (e) { /* ignore bad cache */ }
+  } else {
+    container.innerHTML = '<div class="loading" style="padding:60px;text-align:center;"><div style="font-size:2rem;margin-bottom:12px;">🛕</div><div style="color:var(--grey);">Loading project...</div></div>';
+  }
+
+  // Always fetch fresh data in background
+  try {
+    const result = await api.call('get_project', { project_id: projectId });
+    if (!result.ok) { showError(result.error || 'Project not found'); return; }
+    currentProject = result.project;
+    // Update cache
+    sessionStorage.setItem(cacheKey, JSON.stringify(currentProject));
+    render();
+    if (activeTab === 'rough') loadRoughEstimates();
+    if (activeTab === 'quotations') loadQuotations();
+  } catch (err) {
+    console.error(err);
+    if (!currentProject) showError('Connection error');
+  }
+}
 
 async function loadProject(projectId) {
   const container = document.getElementById('projectContent');
