@@ -301,11 +301,25 @@ function detailItem(label, value) {
 
 function switchTab(name) {
   activeTab = name;
-  render();
-  if (name === 'rough') loadRoughEstimates();
-  if (name === 'quotations') loadQuotations();
-}
 
+  // Just toggle visibility — don't re-render the whole page
+  document.querySelectorAll('.tab').forEach(function(btn) {
+    btn.classList.toggle('tab-active', btn.getAttribute('onclick').includes("'" + name + "'"));
+  });
+  document.querySelectorAll('.tab-content').forEach(function(div) {
+    div.classList.remove('tab-content-active');
+  });
+
+  if (name === 'details') {
+    document.getElementById('tabDetails').classList.add('tab-content-active');
+  } else if (name === 'rough') {
+    document.getElementById('tabRough').classList.add('tab-content-active');
+    if (roughEstimates.length === 0) loadRoughEstimates();
+  } else if (name === 'quotations') {
+    document.getElementById('tabQuotations').classList.add('tab-content-active');
+    if (quotations.length === 0) loadQuotations();
+  }
+}
 function enterEditMode() { isEditMode = true; render(); }
 function cancelEdit()    { isEditMode = false; render(); }
 
