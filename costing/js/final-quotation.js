@@ -1,16 +1,17 @@
 // ============================================
 // final-quotation.js — Final Quotation Builder
+// Phase 7.3b — Complete with all bug fixes
 // ============================================
 
-let quotation      = null;
-let lines          = [];
-let project        = null;
+let quotation       = null;
+let lines           = [];
+let project         = null;
 let materialCatalog = [];
-let suppliers      = [];
-let masterData     = {};
-let currentSection = null;
+let suppliers       = [];
+let masterData      = {};
+let currentSection  = null;
 let selectedMaterial = null;
-let selectedMaster   = null;
+let selectedMaster  = null;
 
 const SECTIONS = [
   { key: 'material',  label: 'Material',  icon: '🪵' },
@@ -29,6 +30,18 @@ const MASTER_KEYS = {
   lighting: 'lighting'
 };
 
+// Close dropdowns when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('#materialSearchGroup')) {
+    var d1 = document.getElementById('materialDropdown');
+    if (d1) d1.style.display = 'none';
+  }
+  if (!e.target.closest('#masterSearchGroup')) {
+    var d2 = document.getElementById('masterDropdown');
+    if (d2) d2.style.display = 'none';
+  }
+});
+
 document.addEventListener('DOMContentLoaded', async function() {
   if (!api.requireLogin()) return;
   const user = api.getCurrentUser();
@@ -39,7 +52,6 @@ document.addEventListener('DOMContentLoaded', async function() {
   const quotationId = params.get('quotation_id');
   const projectId   = params.get('project_id');
 
-  // Pre-load catalog and suppliers in background
   loadCatalogData();
 
   if (quotationId) {
@@ -57,14 +69,13 @@ async function loadCatalogData() {
       api.call('get_material_catalog', {}),
       api.call('get_suppliers', {})
     ]);
-    if (matResult.ok)  materialCatalog = matResult.materials || [];
+    if (matResult.ok)  materialCatalog = matResult.materials  || [];
     if (suppResult.ok) suppliers       = suppResult.suppliers || [];
 
-    // Pre-load master data for all sections
     const masterKeys = ['cnc', 'decor', 'hardware', 'lighting'];
-    for (const key of masterKeys) {
-      const r = await api.call('list_master', { master_key: key });
-      if (r.ok) masterData[key] = r.rows || [];
+    for (var i = 0; i < masterKeys.length; i++) {
+      var r = await api.call('list_master', { master_key: masterKeys[i] });
+      if (r.ok) masterData[masterKeys[i]] = r.rows || [];
     }
   } catch (err) {
     console.error('Error loading catalog data:', err);
@@ -93,14 +104,11 @@ async function createNewQuotation(projectId) {
     const projResult = await api.call('get_project', { project_id: projectId });
     if (!projResult.ok) { showError('Project not found'); return; }
     project = projResult.project;
-
     const user   = api.getCurrentUser();
     const result = await api.call('create_quotation', { project_id: projectId, username: user.username });
     if (!result.ok) { showError(result.error || 'Failed to create quotation'); return; }
-
     const qResult = await api.call('get_quotation', { quotation_id: result.quotation_id });
     if (!qResult.ok) { showError('Failed to load new quotation'); return; }
-
     quotation = qResult.quotation;
     lines     = [];
     document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=quotations';
@@ -117,10 +125,10 @@ async function createNewQuotation(projectId) {
 // ─────────────────────────────────────────
 
 function renderPage() {
-  const p = project;
-  const q = quotation;
-
+  var p = project;
+  var q = quotation;
   var html = '';
+
   html += '<div class="quotation-header-card">';
   html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">';
   html += '<div>';
@@ -130,10 +138,9 @@ function renderPage() {
   html += '</div>';
   html += '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">';
   html += '<select class="quotation-status-select" onchange="updateQuotationField(\'status\', this.value)">';
-  html += '<option value="Draft"    ' + (q.status === 'Draft'    ? 'selected' : '') + '>Draft</option>';
-  html += '<option value="Sent"     ' + (q.status === 'Sent'     ? 'selected' : '') + '>Sent</option>';
-  html += '<option value="Accepted" ' + (q.status === 'Accepted' ? 'selected' : '') + '>Accepted</option>';
-  html += '<option value="Rejected" ' + (q.status === 'Rejected' ? 'selected' : '') + '>Rejected</option>';
+  ['Draft','Sent','Accepted','Rejected'].forEach(function(s) {
+    html += '<option value="' + s + '" ' + (q.status === s ? 'selected' : '') + '>' + s + '</option>';
+  });
   html += '</select>';
   html += '<button class="btn-primary" onclick="generatePdf()">Download PDF</button>';
   html += '</div></div>';
@@ -144,10 +151,15 @@ function renderPage() {
   html += '<option value="B2C" ' + (q.customer_type === 'B2C' ? 'selected' : '') + '>B2C</option>';
   html += '<option value="B2B" ' + (q.customer_type === 'B2B' ? 'selected' : '') + '>B2B</option>';
   html += '</select></div>';
+
   html += '<div class="quotation-meta-item"><span class="quotation-meta-label">Valid Until</span>';
   html += '<input type="date" class="quotation-meta-input" value="' + formatDateInput(q.valid_until) + '" onchange="updateQuotationField(\'valid_until\', this.value)"></div>';
-  html += '<div class="quotation-meta-item"><span class="quotation-meta-label">Version</span><span class="quotation-meta-value">FQ' + q.version + '</span></div>';
-  html += '<div class="quotation-meta-item"><span class="quotation-meta-label">Created By</span><span class="quotation-meta-value">' + escapeHtml(q.created_by) + '</span></div>';
+
+  html += '<div class="quotation-meta-item"><span class="quotation-meta-label">Version</span>';
+  html += '<span class="quotation-meta-value">FQ' + q.version + '</span></div>';
+
+  html += '<div class="quotation-meta-item"><span class="quotation-meta-label">Created By</span>';
+  html += '<span class="quotation-meta-value">' + escapeHtml(q.created_by) + '</span></div>';
   html += '</div></div>';
 
   html += '<div class="quotation-layout">';
@@ -160,13 +172,17 @@ function renderPage() {
   document.getElementById('content').innerHTML = html;
 }
 
+// ─────────────────────────────────────────
+// SECTION CARDS
+// ─────────────────────────────────────────
+
 function renderSectionCard(section) {
-  const sectionLines = lines.filter(function(l) {
+  var sectionLines = lines.filter(function(l) {
     return String(l.line_type || '').toLowerCase() === section.key;
   });
-  const sectionCost  = sectionLines.reduce(function(sum, l) { return sum + (parseFloat(l.line_cost) || 0); }, 0);
-  const hasValue     = sectionCost > 0;
-  const subtotalText = hasValue ? formatINR(sectionCost) : 'No items yet';
+  var sectionCost  = sectionLines.reduce(function(sum, l) { return sum + (parseFloat(l.line_cost) || 0); }, 0);
+  var hasValue     = sectionCost > 0;
+  var subtotalText = hasValue ? formatINR(sectionCost) : 'No items yet';
 
   var html = '<div class="section-card" id="section-' + section.key + '">';
   html += '<div class="section-header" onclick="toggleSection(\'' + section.key + '\')">';
@@ -215,7 +231,7 @@ function renderSectionLines(sectionLines, lineType) {
     html += '<td style="text-align:right;padding:10px 6px;">' + formatINR(line.cost_per_unit) + '</td>';
     html += '<td style="text-align:right;padding:10px 6px;font-weight:600;">' + formatINR(line.line_cost) + '</td>';
     html += '<td style="padding:10px 6px;text-align:right;">';
-    html += '<button onclick="deleteLine(\'' + line.line_id + '\')" style="background:none;border:none;color:#E53935;cursor:pointer;font-size:1rem;">✕</button>';
+    html += '<button onclick="deleteLine(\'' + line.line_id + '\')" style="background:none;border:none;color:#E53935;cursor:pointer;font-size:1rem;" title="Remove line">✕</button>';
     html += '</td></tr>';
   });
 
@@ -224,20 +240,19 @@ function renderSectionLines(sectionLines, lineType) {
 }
 
 function renderTotalsCard() {
-  const q         = quotation;
-  const profitPct = parseFloat(q.profit_pct)    || 40;
-  const totalCost = parseFloat(q.total_cost)    || 0;
-  const profitAmt = parseFloat(q.profit_amount) || 0;
-  const preGst    = parseFloat(q.pre_gst_total) || 0;
-  const gstAmt    = parseFloat(q.gst_amount)    || 0;
-  const finalAmt  = parseFloat(q.final_amount)  || 0;
+  var q         = quotation;
+  var profitPct = parseFloat(q.profit_pct)    || 40;
+  var totalCost = parseFloat(q.total_cost)    || 0;
+  var profitAmt = parseFloat(q.profit_amount) || 0;
+  var preGst    = parseFloat(q.pre_gst_total) || 0;
+  var gstAmt    = parseFloat(q.gst_amount)    || 0;
+  var finalAmt  = parseFloat(q.final_amount)  || 0;
 
   var html = '<div class="totals-card"><h3>Quotation Summary</h3>';
-  html += '<div class="profit-input-row">';
-  html += '<label>Profit Margin</label>';
-  html += '<input type="number" class="profit-input" id="profitInput" value="' + profitPct + '" min="0" max="100" step="1" onchange="updateProfitPct(this.value)">';
-  html += '<span class="profit-pct-label">%</span>';
-  html += '</div>';
+  html += '<div class="profit-input-row"><label>Profit Margin</label>';
+  // Use onblur so it only fires when user finishes typing, not on every keystroke
+  html += '<input type="number" class="profit-input" id="profitInput" value="' + profitPct + '" min="0" max="100" step="1" onblur="updateProfitPct(this.value)">';
+  html += '<span class="profit-pct-label">%</span></div>';
 
   html += '<div class="totals-row internal"><span class="totals-label">Total Cost (internal)</span><span class="totals-value">' + formatINR(totalCost) + '</span></div>';
   html += '<div class="totals-row internal"><span class="totals-label">Profit (' + profitPct + '%)</span><span class="totals-value">' + formatINR(profitAmt) + '</span></div>';
@@ -246,35 +261,37 @@ function renderTotalsCard() {
   html += '<div class="totals-row"><span class="totals-label">GST (' + (q.gst_pct || 18) + '%)</span><span class="totals-value">' + formatINR(gstAmt) + '</span></div>';
   html += '<hr class="totals-divider">';
   html += '<div class="totals-final"><span class="label">Total</span><span class="amount">' + formatINR(finalAmt) + '</span></div>';
-  html += '<p class="totals-internal-note">⚠️ Internal view only. Client PDF hides profit — distributed proportionally across heads.</p>';
+  html += '<p class="totals-internal-note">⚠️ Internal view only. Client PDF distributes profit proportionally — not disclosed to client.</p>';
   html += '</div>';
   return html;
 }
 
 function toggleSection(key) {
-  const body   = document.getElementById('body-' + key);
-  const toggle = document.getElementById('toggle-' + key);
+  var body   = document.getElementById('body-' + key);
+  var toggle = document.getElementById('toggle-' + key);
   if (!body) return;
-  const isOpen = body.classList.contains('open');
+  var isOpen = body.classList.contains('open');
   body.classList.toggle('open', !isOpen);
   if (toggle) toggle.classList.toggle('open', !isOpen);
 }
 
 function refreshTotals() {
-  const area = document.getElementById('totalsArea');
+  var area = document.getElementById('totalsArea');
   if (area) area.innerHTML = renderTotalsCard();
 }
 
 function refreshSection(sectionKey) {
-  const card = document.getElementById('section-' + sectionKey);
+  var card = document.getElementById('section-' + sectionKey);
   if (!card) return;
-  const section = SECTIONS.find(function(s) { return s.key === sectionKey; });
+  var section = SECTIONS.find(function(s) { return s.key === sectionKey; });
   if (!section) return;
-  const wasOpen = document.getElementById('body-' + sectionKey) && document.getElementById('body-' + sectionKey).classList.contains('open');
+  // Preserve open state
+  var wasOpen = document.getElementById('body-' + sectionKey) &&
+                document.getElementById('body-' + sectionKey).classList.contains('open');
   card.outerHTML = renderSectionCard(section);
   if (wasOpen) {
-    const newBody   = document.getElementById('body-' + sectionKey);
-    const newToggle = document.getElementById('toggle-' + sectionKey);
+    var newBody   = document.getElementById('body-' + sectionKey);
+    var newToggle = document.getElementById('toggle-' + sectionKey);
     if (newBody)   newBody.classList.add('open');
     if (newToggle) newToggle.classList.add('open');
   }
@@ -288,46 +305,53 @@ function openAddLineModal(sectionKey) {
   currentSection   = sectionKey;
   selectedMaterial = null;
   selectedMaster   = null;
+  window._masterMatches = [];
 
-  document.getElementById('addLineTitle').textContent = 'Add ' + sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1) + ' Line';
+  var titleStr = sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1);
+  document.getElementById('addLineTitle').textContent = 'Add ' + titleStr + ' Line';
   document.getElementById('addLineError').style.display = 'none';
   document.getElementById('addLineSubmitBtn').disabled = false;
   document.getElementById('addLineSubmitBtn').textContent = 'Add Line';
-  document.getElementById('lineQty').value  = '1';
-  document.getElementById('lineRate').value = '';
+  document.getElementById('lineQty').value   = '1';
+  document.getElementById('lineRate').value  = '';
   document.getElementById('lineNotes').value = '';
   document.getElementById('lineTotalDisplay').textContent = '₹0';
 
-  // Show/hide correct input group
-  document.getElementById('materialSearchGroup').style.display = sectionKey === 'material' ? 'block' : 'none';
-  document.getElementById('masterSearchGroup').style.display   = MASTER_KEYS[sectionKey] ? 'block' : 'none';
-  document.getElementById('freeTextGroup').style.display       = (sectionKey === 'labour' || sectionKey === 'logistics') ? 'block' : 'none';
+  var isMaterial  = sectionKey === 'material';
+  var isMaster    = !!MASTER_KEYS[sectionKey];
+  var isFreeText  = sectionKey === 'labour' || sectionKey === 'logistics';
 
-  if (sectionKey === 'material') {
+  document.getElementById('materialSearchGroup').style.display = isMaterial  ? 'block' : 'none';
+  document.getElementById('masterSearchGroup').style.display   = isMaster    ? 'block' : 'none';
+  document.getElementById('freeTextGroup').style.display       = isFreeText  ? 'block' : 'none';
+
+  if (isMaterial) {
     document.getElementById('materialSearch').value = '';
     document.getElementById('materialDropdown').style.display = 'none';
     document.getElementById('selectedMaterialDisplay').style.display = 'none';
     document.getElementById('supplierGroup').style.display = 'none';
   }
 
-  if (MASTER_KEYS[sectionKey]) {
-    document.getElementById('masterSearchLabel').textContent = 'Search ' + sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1) + ' Item';
+  if (isMaster) {
+    document.getElementById('masterSearchLabel').textContent = 'Search ' + titleStr + ' Item';
     document.getElementById('masterSearch').value = '';
     document.getElementById('masterDropdown').style.display = 'none';
     document.getElementById('selectedMasterDisplay').style.display = 'none';
   }
 
-  // Set default unit
-  const unitDefaults = { material: 'sqft', cnc: 'sqft', decor: 'piece', hardware: 'piece', lighting: 'piece', labour: 'lot', logistics: 'lot' };
+  if (isFreeText) {
+    document.getElementById('freeTextDesc').value = '';
+  }
+
+  var unitDefaults = { material: 'sqft', cnc: 'sqft', decor: 'piece', hardware: 'piece', lighting: 'piece', labour: 'lot', logistics: 'lot' };
   document.getElementById('lineUnit').value = unitDefaults[sectionKey] || 'sqft';
 
   document.getElementById('addLineModal').style.display = 'flex';
 
-  // Focus the right input
   setTimeout(function() {
-    if (sectionKey === 'material') document.getElementById('materialSearch').focus();
-    else if (MASTER_KEYS[sectionKey]) document.getElementById('masterSearch').focus();
-    else document.getElementById('freeTextDesc').focus();
+    if (isMaterial)     document.getElementById('materialSearch').focus();
+    else if (isMaster)  document.getElementById('masterSearch').focus();
+    else                document.getElementById('freeTextDesc').focus();
   }, 100);
 }
 
@@ -336,6 +360,7 @@ function closeAddLineModal() {
   currentSection   = null;
   selectedMaterial = null;
   selectedMaster   = null;
+  window._masterMatches = [];
 }
 
 // ─────────────────────────────────────────
@@ -343,13 +368,14 @@ function closeAddLineModal() {
 // ─────────────────────────────────────────
 
 function filterMaterials() {
-  const term     = document.getElementById('materialSearch').value.toLowerCase().trim();
-  const dropdown = document.getElementById('materialDropdown');
+  var term     = document.getElementById('materialSearch').value.toLowerCase().trim();
+  var dropdown = document.getElementById('materialDropdown');
 
   if (!term) { dropdown.style.display = 'none'; return; }
 
-  const matches = materialCatalog.filter(function(m) {
-    return m.item_name.toLowerCase().includes(term) || (m.category || '').toLowerCase().includes(term);
+  var matches = materialCatalog.filter(function(m) {
+    return String(m.item_name || '').toLowerCase().includes(term) ||
+           String(m.category  || '').toLowerCase().includes(term);
   }).slice(0, 15);
 
   if (matches.length === 0) {
@@ -360,7 +386,9 @@ function filterMaterials() {
 
   var html = '';
   matches.forEach(function(m) {
-    const defaultRate = m.default_rate ? '₹' + m.default_rate.cost_per_unit + '/' + m.unit : 'No rate';
+    var defaultRate = m.default_rate
+      ? (isNaN(parseFloat(m.default_rate.cost_per_unit)) ? 'On Request' : '₹' + m.default_rate.cost_per_unit + '/' + (m.unit || 'sqft'))
+      : 'No rate set';
     html += '<div onclick="selectMaterial(\'' + m.material_id + '\')" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #F5EDE4;font-size:0.9rem;" onmouseover="this.style.background=\'#FFF7F0\'" onmouseout="this.style.background=\'white\'">';
     html += '<strong>' + escapeHtml(m.item_name) + '</strong>';
     html += '<span style="color:var(--grey);margin-left:8px;font-size:0.8rem;">' + escapeHtml(m.category || '') + '</span>';
@@ -382,20 +410,23 @@ function selectMaterial(materialId) {
   document.getElementById('selectedMaterialCategory').textContent = selectedMaterial.category || '';
   document.getElementById('selectedMaterialDisplay').style.display = 'block';
 
-  // Populate supplier dropdown
-  const suppSelect  = document.getElementById('supplierSelect');
-  const suppRates   = selectedMaterial.supplier_rates || [];
+  var suppSelect = document.getElementById('supplierSelect');
+  var suppRates  = selectedMaterial.supplier_rates || [];
 
   suppSelect.innerHTML = '<option value="">— Select Supplier —</option>';
 
   suppRates.forEach(function(rate) {
-    const supp = suppliers.find(function(s) { return s.supplier_id === rate.supplier_id; });
-    const suppName = supp ? supp.supplier_name : rate.supplier_id;
-    const costVal  = rate.cost_per_unit;
-    const costDisplay = (costVal === 'on request' || isNaN(parseFloat(costVal))) ? 'On Request' : '₹' + costVal + '/' + (selectedMaterial.unit || 'sqft');
-    const option = document.createElement('option');
+    var supp     = suppliers.find(function(s) { return s.supplier_id === rate.supplier_id; });
+    var suppName = supp ? supp.supplier_name : rate.supplier_id;
+    var costVal  = rate.cost_per_unit;
+    var costDisplay = (costVal === 'on request' || isNaN(parseFloat(costVal)))
+      ? 'On Request'
+      : '₹' + costVal + '/' + (selectedMaterial.unit || 'sqft');
+
+    var option = document.createElement('option');
     option.value = rate.supplier_id;
-    option.dataset.rate = costVal;
+    option.dataset.rate = String(costVal);
+    option.dataset.suppname = suppName;
     option.textContent = suppName + ' — ' + costDisplay;
     if (rate.is_default) option.selected = true;
     suppSelect.appendChild(option);
@@ -403,26 +434,22 @@ function selectMaterial(materialId) {
 
   document.getElementById('supplierGroup').style.display = 'block';
 
-  // Auto-fill rate from default supplier
   if (selectedMaterial.default_rate) {
-    const defaultCost = selectedMaterial.default_rate.cost_per_unit;
+    var defaultCost = selectedMaterial.default_rate.cost_per_unit;
     if (defaultCost !== 'on request' && !isNaN(parseFloat(defaultCost))) {
       document.getElementById('lineRate').value = defaultCost;
-    } else {
-      document.getElementById('lineRate').value = '';
+      calcLineTotal();
     }
-    calcLineTotal();
   }
 
   document.getElementById('lineUnit').value = selectedMaterial.unit || 'sqft';
 }
 
 function onSupplierChange() {
-  const select = document.getElementById('supplierSelect');
-  const option = select.options[select.selectedIndex];
+  var select = document.getElementById('supplierSelect');
+  var option = select.options[select.selectedIndex];
   if (!option || !option.dataset.rate) return;
-
-  const rate = option.dataset.rate;
+  var rate = option.dataset.rate;
   if (rate !== 'on request' && !isNaN(parseFloat(rate))) {
     document.getElementById('lineRate').value = rate;
     calcLineTotal();
@@ -434,25 +461,34 @@ function onSupplierChange() {
 
 // ─────────────────────────────────────────
 // MASTER SEARCH (CNC / DECOR / HARDWARE / LIGHTING)
+// Uses index-based selection to avoid JSON.stringify issues
 // ─────────────────────────────────────────
 
 function filterMasterItems() {
-  const term     = document.getElementById('masterSearch').value.toLowerCase().trim();
-  const dropdown = document.getElementById('masterDropdown');
-  const key      = MASTER_KEYS[currentSection];
-  const items    = masterData[key] || [];
+  var term     = document.getElementById('masterSearch').value.toLowerCase().trim();
+  var dropdown = document.getElementById('masterDropdown');
+  var key      = MASTER_KEYS[currentSection];
+  var items    = masterData[key] || [];
 
   if (!term) { dropdown.style.display = 'none'; return; }
 
-  // Find correct name column
-  const sampleRow = items[0] || {};
-  const nameKey   = sampleRow.hasOwnProperty('material') ? 'material' : (sampleRow.hasOwnProperty('item_name') ? 'item_name' : Object.keys(sampleRow)[1]);
-  const rateKey   = sampleRow.hasOwnProperty('rate') ? 'rate' : (sampleRow.hasOwnProperty('rate_per_sqft') ? 'rate_per_sqft' : null);
+  // Determine which column is the name column
+  var sampleRow = items[0] || {};
+  var nameKey   = sampleRow.hasOwnProperty('material')  ? 'material'
+                : sampleRow.hasOwnProperty('item_name') ? 'item_name'
+                : Object.keys(sampleRow).filter(function(k) { return k !== '_rowIndex' && k !== 'active'; })[0] || 'item_name';
+  var rateKey   = sampleRow.hasOwnProperty('rate')          ? 'rate'
+                : sampleRow.hasOwnProperty('rate_per_sqft') ? 'rate_per_sqft'
+                : null;
 
-  const matches = items.filter(function(item) {
-    const name = String(item[nameKey] || '').toLowerCase();
-    return name.includes(term);
+  var matches = items.filter(function(item) {
+    return String(item[nameKey] || '').toLowerCase().includes(term);
   }).slice(0, 15);
+
+  // Store on window so onclick can reference safely by index
+  window._masterMatches = matches;
+  window._masterNameKey = nameKey;
+  window._masterRateKey = rateKey;
 
   if (matches.length === 0) {
     dropdown.innerHTML = '<div style="padding:12px;color:var(--grey);font-size:0.9rem;">No items found</div>';
@@ -461,11 +497,11 @@ function filterMasterItems() {
   }
 
   var html = '';
-  matches.forEach(function(item) {
-    const name = item[nameKey] || '';
-    const rate = rateKey ? item[rateKey] : '';
-    const rateDisplay = rate ? '₹' + rate : '';
-    html += '<div onclick="selectMasterItem(' + JSON.stringify(item).replace(/'/g, "\\'") + ', \'' + nameKey + '\', \'' + (rateKey || '') + '\')" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #F5EDE4;font-size:0.9rem;" onmouseover="this.style.background=\'#FFF7F0\'" onmouseout="this.style.background=\'white\'">';
+  matches.forEach(function(item, idx) {
+    var name = String(item[nameKey] || '');
+    var rate = rateKey ? item[rateKey] : '';
+    var rateDisplay = (rate && rate !== 'on request' && !isNaN(parseFloat(rate))) ? '₹' + rate : (rate === 'on request' ? 'On Request' : '');
+    html += '<div onclick="selectMasterItem(' + idx + ')" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid #F5EDE4;font-size:0.9rem;" onmouseover="this.style.background=\'#FFF7F0\'" onmouseout="this.style.background=\'white\'">';
     html += '<strong>' + escapeHtml(name) + '</strong>';
     if (rateDisplay) html += '<span style="float:right;color:var(--orange);font-size:0.85rem;">' + rateDisplay + '</span>';
     html += '</div>';
@@ -475,10 +511,17 @@ function filterMasterItems() {
   dropdown.style.display = 'block';
 }
 
-function selectMasterItem(item, nameKey, rateKey) {
+function selectMasterItem(idx) {
+  var matches = window._masterMatches || [];
+  var nameKey = window._masterNameKey || 'item_name';
+  var rateKey = window._masterRateKey || null;
+
+  var item = matches[idx];
+  if (!item) return;
+
   selectedMaster = item;
-  const name = item[nameKey] || '';
-  const rate = rateKey ? item[rateKey] : '';
+  var name = String(item[nameKey] || '');
+  var rate = rateKey ? item[rateKey] : '';
 
   document.getElementById('masterSearch').value = name;
   document.getElementById('masterDropdown').style.display = 'none';
@@ -486,8 +529,10 @@ function selectMasterItem(item, nameKey, rateKey) {
   document.getElementById('selectedMasterDisplay').style.display = 'block';
 
   if (rate && rate !== 'on request' && !isNaN(parseFloat(rate))) {
-    document.getElementById('lineRate').value = rate;
+    document.getElementById('lineRate').value = parseFloat(rate);
     calcLineTotal();
+  } else {
+    document.getElementById('lineRate').value = '';
   }
 }
 
@@ -496,9 +541,9 @@ function selectMasterItem(item, nameKey, rateKey) {
 // ─────────────────────────────────────────
 
 function calcLineTotal() {
-  const qty  = parseFloat(document.getElementById('lineQty').value)  || 0;
-  const rate = parseFloat(document.getElementById('lineRate').value) || 0;
-  const total = qty * rate;
+  var qty   = parseFloat(document.getElementById('lineQty').value)  || 0;
+  var rate  = parseFloat(document.getElementById('lineRate').value) || 0;
+  var total = qty * rate;
   document.getElementById('lineTotalDisplay').textContent = formatINR(total);
 }
 
@@ -507,47 +552,43 @@ function calcLineTotal() {
 // ─────────────────────────────────────────
 
 async function submitAddLine() {
-  const errorEl = document.getElementById('addLineError');
-  const btn     = document.getElementById('addLineSubmitBtn');
+  var errorEl = document.getElementById('addLineError');
+  var btn     = document.getElementById('addLineSubmitBtn');
   errorEl.style.display = 'none';
 
-  const section      = currentSection;
-  const qty          = parseFloat(document.getElementById('lineQty').value)  || 0;
-  const rate         = parseFloat(document.getElementById('lineRate').value) || 0;
-  const unit         = document.getElementById('lineUnit').value;
-  const notes        = document.getElementById('lineNotes').value.trim();
-  const user         = api.getCurrentUser();
+  var section      = currentSection;
+  var qty          = parseFloat(document.getElementById('lineQty').value)  || 0;
+  var rate         = parseFloat(document.getElementById('lineRate').value) || 0;
+  var unit         = document.getElementById('lineUnit').value;
+  var notes        = document.getElementById('lineNotes').value.trim();
+  var user         = api.getCurrentUser();
+  var description  = '';
+  var refMasterId  = '';
+  var supplierName = '';
 
-  var description    = '';
-  var refMasterId    = '';
-  var supplierIdUsed = '';
-
-  // Validate and build description based on section type
   if (section === 'material') {
     if (!selectedMaterial) {
-      errorEl.textContent = 'Please select a material.';
+      errorEl.textContent = 'Please select a material from the search list.';
       errorEl.style.display = 'block';
       return;
     }
-    description    = selectedMaterial.item_name;
-    refMasterId    = selectedMaterial.material_id;
-    const suppSel  = document.getElementById('supplierSelect');
-    supplierIdUsed = suppSel.value || '';
-    // Get supplier name for display
-    if (supplierIdUsed) {
-      const supp = suppliers.find(function(s) { return s.supplier_id === supplierIdUsed; });
-      if (supp) supplierIdUsed = supp.supplier_name;
-    }
+    description = selectedMaterial.item_name;
+    refMasterId = selectedMaterial.material_id;
+
+    var suppSel = document.getElementById('supplierSelect');
+    var suppOpt = suppSel.options[suppSel.selectedIndex];
+    supplierName = (suppOpt && suppOpt.dataset.suppname) ? suppOpt.dataset.suppname : '';
+
   } else if (MASTER_KEYS[section]) {
     if (!selectedMaster) {
       errorEl.textContent = 'Please select an item from the list.';
       errorEl.style.display = 'block';
       return;
     }
-    const sampleRow = selectedMaster;
-    const nameKey   = sampleRow.hasOwnProperty('material') ? 'material' : (sampleRow.hasOwnProperty('item_name') ? 'item_name' : Object.keys(sampleRow)[1]);
-    description  = selectedMaster[nameKey] || '';
-    refMasterId  = selectedMaster._rowIndex ? String(selectedMaster._rowIndex) : '';
+    var nameKey = window._masterNameKey || 'item_name';
+    description = String(selectedMaster[nameKey] || '');
+    refMasterId = selectedMaster._rowIndex ? String(selectedMaster._rowIndex) : '';
+
   } else {
     // Labour / Logistics — free text
     description = document.getElementById('freeTextDesc').value.trim();
@@ -564,7 +605,9 @@ async function submitAddLine() {
     return;
   }
 
-  if (rate <= 0 && section !== 'labour' && section !== 'logistics') {
+  // Only enforce rate > 0 for sections where a master rate applies
+  var requiresRate = section === 'material' || MASTER_KEYS[section];
+  if (requiresRate && rate <= 0) {
     errorEl.textContent = 'Please enter a rate greater than 0.';
     errorEl.style.display = 'block';
     return;
@@ -574,12 +617,12 @@ async function submitAddLine() {
   btn.textContent = 'Adding...';
 
   try {
-    const result = await api.call('add_quotation_line', {
+    var result = await api.call('add_quotation_line', {
       quotation_id:     quotation.quotation_id,
       line_type:        section,
       ref_master_id:    refMasterId,
       description:      description,
-      supplier_id_used: supplierIdUsed,
+      supplier_id_used: supplierName,
       qty:              qty,
       unit:             unit,
       cost_per_unit:    rate,
@@ -588,8 +631,7 @@ async function submitAddLine() {
     });
 
     if (result.ok) {
-      // Reload quotation to get updated totals and lines
-      const qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
+      var qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
       if (qResult.ok) {
         quotation = qResult.quotation;
         lines     = qResult.lines || [];
@@ -606,7 +648,7 @@ async function submitAddLine() {
     }
   } catch (err) {
     console.error(err);
-    errorEl.textContent = 'Connection error';
+    errorEl.textContent = 'Connection error. Please try again.';
     errorEl.style.display = 'block';
     btn.disabled    = false;
     btn.textContent = 'Add Line';
@@ -620,13 +662,12 @@ async function submitAddLine() {
 async function deleteLine(lineId) {
   if (!confirm('Remove this line?')) return;
   try {
-    const lineToDelete = lines.find(function(l) { return l.line_id === lineId; });
-    const result = await api.call('delete_quotation_line', {
+    var result = await api.call('delete_quotation_line', {
       line_id:      lineId,
       quotation_id: quotation.quotation_id
     });
     if (result.ok) {
-      const qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
+      var qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
       if (qResult.ok) { quotation = qResult.quotation; lines = qResult.lines || []; }
       SECTIONS.forEach(function(s) { refreshSection(s.key); });
       refreshTotals();
@@ -646,22 +687,32 @@ async function deleteLine(lineId) {
 
 async function updateQuotationField(field, value) {
   try {
-    const updates = {};
+    var updates = {};
     updates[field] = value;
-    const result = await api.call('update_quotation', { quotation_id: quotation.quotation_id, updates: updates });
+    var result = await api.call('update_quotation', {
+      quotation_id: quotation.quotation_id,
+      updates: updates
+    });
     if (result.ok) { quotation[field] = value; toast('Saved', 'success'); }
     else toast('Save failed', 'error');
   } catch (err) { toast('Connection error', 'error'); }
 }
 
 async function updateProfitPct(value) {
-  const pct = parseFloat(value);
-  if (isNaN(pct) || pct < 0 || pct > 100) { toast('Enter a valid % between 0 and 100', 'error'); return; }
+  var pct = parseFloat(value);
+  if (isNaN(pct) || pct < 0 || pct > 100) {
+    toast('Enter a valid % between 0 and 100', 'error');
+    return;
+  }
   try {
-    const result = await api.call('update_quotation', { quotation_id: quotation.quotation_id, updates: { profit_pct: pct } });
+    var result = await api.call('update_quotation', {
+      quotation_id: quotation.quotation_id,
+      updates: { profit_pct: pct }
+    });
     if (result.ok) {
-      const qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
-      if (qResult.ok) { quotation = qResult.quotation; refreshTotals(); toast('Profit updated', 'success'); }
+      var qResult = await api.call('get_quotation', { quotation_id: quotation.quotation_id });
+      if (qResult.ok) { quotation = qResult.quotation; refreshTotals(); }
+      toast('Profit updated', 'success');
     } else toast('Save failed', 'error');
   } catch (err) { toast('Connection error', 'error'); }
 }
@@ -675,31 +726,49 @@ function generatePdf() {
 // ─────────────────────────────────────────
 
 function showError(msg) {
-  document.getElementById('content').innerHTML = '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3></div>';
+  document.getElementById('content').innerHTML =
+    '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3></div>';
 }
 
 function formatDateInput(val) {
   if (!val) return '';
-  try { const d = new Date(val); if (isNaN(d.getTime())) return ''; return d.toISOString().split('T')[0]; }
-  catch (e) { return ''; }
+  try {
+    var d = new Date(val);
+    if (isNaN(d.getTime())) return '';
+    return d.toISOString().split('T')[0];
+  } catch (e) { return ''; }
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  } catch (e) { return ''; }
 }
 
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function formatINR(num) {
-  if (num === null || num === undefined || num === '' || isNaN(num)) return '—';
+  if (num === null || num === undefined || num === '') return '—';
   if (typeof num === 'string' && isNaN(parseFloat(num))) return num;
-  return '₹' + Number(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  var n = parseFloat(num);
+  if (isNaN(n)) return '—';
+  return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
 }
 
 function toast(msg, type) {
   type = type || 'success';
-  const existing = document.querySelector('.toast');
+  var existing = document.querySelector('.toast');
   if (existing) existing.remove();
-  const t = document.createElement('div');
+  var t = document.createElement('div');
   t.className = 'toast toast-' + type;
   t.textContent = msg;
   document.body.appendChild(t);
