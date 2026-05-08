@@ -129,11 +129,25 @@
             <label for="np_completion">Expected Completion</label>
             <input type="date" id="np_completion">
           </div>
-          <div class="form-group">
-            <label for="np_notes">Notes</label>
-            <input type="text" id="np_notes" placeholder="Any extra context...">
-          </div>
-        </div>
+          <div class="form-row">
+  <div class="form-group">
+    <label for="np_completion">Expected Completion</label>
+    <input type="date" id="np_completion">
+  </div>
+  <div class="form-group">
+    <label for="np_customer_type">Customer Type</label>
+    <select id="np_customer_type">
+      <option value="B2C">B2C (Retail — 40% margin)</option>
+      <option value="B2B">B2B (Trade — adjust margin manually)</option>
+    </select>
+  </div>
+</div>
+<div class="form-row">
+  <div class="form-group">
+    <label for="np_notes">Notes</label>
+    <input type="text" id="np_notes" placeholder="Any extra context...">
+  </div>
+</div>
         
         <div id="newProjectError" class="error-message" style="display:none;"></div>
         
