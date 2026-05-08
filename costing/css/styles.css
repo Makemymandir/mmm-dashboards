@@ -550,10 +550,11 @@ body {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .form-row, .form-row-3 {
     grid-template-columns: 1fr;
   }
+   
   .toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -564,6 +565,9 @@ body {
   .topbar-title {
     display: none;
   }
+   .modal {
+    max-width: 100%;
+    margin: 10px;
 }
 
 .form-group textarea {
