@@ -50,7 +50,49 @@ document.addEventListener('DOMContentLoaded', async function() {
   const quotationId = params.get('quotation_id');
   const projectId   = params.get('project_id');
 
-  loadCatalogData();
+  async function loadCatalogData() {
+  try {
+    // Check session cache first — avoids reloading on every visit
+    var cached = sessionStorage.getItem('mmm_catalog');
+    if (cached) {
+      try {
+        var c = JSON.parse(cached);
+        materialCatalog = c.materials  || [];
+        suppliers       = c.suppliers  || [];
+        masterData      = c.masterData || {};
+        return;
+      } catch (e) { /* ignore bad cache */ }
+    }
+
+    // Load everything in parallel — not one by one
+    var results = await Promise.all([
+      api.call('get_material_catalog', {}),
+      api.call('get_suppliers', {}),
+      api.call('list_master', { master_key: 'cnc' }),
+      api.call('list_master', { master_key: 'decor' }),
+      api.call('list_master', { master_key: 'hardware' }),
+      api.call('list_master', { master_key: 'lighting' })
+    ]);
+
+    if (results[0].ok) materialCatalog   = results[0].materials  || [];
+    if (results[1].ok) suppliers         = results[1].suppliers  || [];
+    if (results[2].ok) masterData.cnc      = results[2].rows || [];
+    if (results[3].ok) masterData.decor    = results[3].rows || [];
+    if (results[4].ok) masterData.hardware = results[4].rows || [];
+    if (results[5].ok) masterData.lighting = results[5].rows || [];
+
+    // Cache for 30 minutes
+    sessionStorage.setItem('mmm_catalog', JSON.stringify({
+      materials:  materialCatalog,
+      suppliers:  suppliers,
+      masterData: masterData,
+      cachedAt:   Date.now()
+    }));
+
+  } catch (err) {
+    console.error('Error loading catalog data:', err);
+  }
+}
 
   if (quotationId) {
     await loadQuotation(quotationId);
