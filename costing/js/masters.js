@@ -22,14 +22,56 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
   });
   
-  await loadMaster('rough_rates');
-});
-
-async function switchTab(key) {
-  document.querySelectorAll('.tab-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.key === key);
-  });
-  await loadMaster(key);
+  async function loadMaster(key) {
+  currentMasterKey = key;
+  const content = document.getElementById('mastersContent');
+  content.innerHTML = '<p style="color: var(--grey);">Loading...</p>';
+  
+  try {
+    let result;
+    
+    if (key === 'suppliers') {
+      result = await api.call('get_suppliers', {});
+      if (!result.ok) {
+        content.innerHTML = '<div class="empty-state"><h3>Error</h3><p>' + escapeHtml(result.error) + '</p></div>';
+        return;
+      }
+      // Convert suppliers array to list_master format
+      result = {
+        ok: true,
+        headers: ['supplier_id', 'supplier_name', 'location', 'contact', 'categories', 'active', 'notes'],
+        rows: result.suppliers,
+        master_key: 'suppliers'
+      };
+      currentData = result;
+      renderTable(result);
+      return;
+    }
+    
+    if (key === 'cost_settings') {
+      result = await api.call('get_cost_settings', {});
+      if (!result.ok) {
+        content.innerHTML = '<div class="empty-state"><h3>Error</h3><p>' + escapeHtml(result.error) + '</p></div>';
+        return;
+      }
+      renderCostSettings(result.settings);
+      return;
+    }
+    
+    // Default: use list_master for existing tabs
+    result = await api.call('list_master', { master_key: key });
+    if (!result.ok) {
+      content.innerHTML = '<div class="empty-state"><h3>Error</h3><p>' + escapeHtml(result.error) + '</p></div>';
+      return;
+    }
+    
+    currentData = result;
+    renderTable(result);
+  } catch (err) {
+    console.error(err);
+    content.innerHTML = '<div class="empty-state"><h3>Connection error</h3></div>';
+  }
+}
 }
 
 async function loadMaster(key) {
@@ -308,4 +350,57 @@ function toast(msg, type) {
     t.style.transition = 'opacity 0.3s';
     setTimeout(() => t.remove(), 300);
   }, 2000);
+}
+function renderCostSettings(settings) {
+  const content = document.getElementById('mastersContent');
+  
+  const rows = [
+    { key: 'default_profit_pct', label: 'Default Profit Margin (%)', value: settings.default_profit_pct },
+    { key: 'gst_pct',            label: 'GST Rate (%)',               value: settings.gst_pct },
+    { key: 'currency',           label: 'Currency Symbol',            value: settings.currency }
+  ];
+  
+  let html = '<div class="card" style="max-width: 500px;">';
+  html += '<div class="card-header"><h3>Cost Settings</h3></div>';
+  html += '<p style="color: var(--grey); margin-bottom: 20px; font-size: 0.9rem;">These values apply to all new quotations. Existing quotations are not affected.</p>';
+  
+  rows.forEach(row => {
+    html += `
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>${row.label}</label>
+        <input type="text" 
+               value="${escapeHtml(String(row.value || ''))}"
+               data-setting-key="${row.key}"
+               onblur="saveCostSetting(this)"
+               style="max-width: 200px;">
+      </div>
+    `;
+  });
+  
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+async function saveCostSetting(input) {
+  const key      = input.dataset.settingKey;
+  const newValue = input.value.trim();
+  const user     = api.getCurrentUser();
+  
+  try {
+    const result = await api.call('update_master_cell', {
+      master_key: 'cost_settings',
+      row_index:  null,
+      column:     key,
+      value:      newValue,
+      username:   user.username
+    });
+    
+    if (result.ok) {
+      toast('Saved', 'success');
+    } else {
+      toast('Save failed', 'error');
+    }
+  } catch (err) {
+    toast('Connection error', 'error');
+  }
 }
