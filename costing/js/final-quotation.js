@@ -718,7 +718,237 @@ async function updateProfitPct(value) {
 }
 
 function generatePdf() {
-  toast('PDF generation coming in Phase 7.4', 'success');
+ async function generatePdf() {
+  if (!quotation || !project) { toast('No quotation loaded', 'error'); return; }
+
+  const btn = document.querySelector('.btn-primary[onclick="generatePdf()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Generating...'; }
+
+  try {
+    const page1Html = buildQuotationPageHtml();
+    const page2Html = buildProcessPageHtml();
+
+    const root = document.getElementById('pdfRoot');
+    root.innerHTML = '';
+
+    // Render page 1
+    const p1div = document.createElement('div');
+    p1div.innerHTML = page1Html;
+    root.appendChild(p1div);
+
+    // Wait for images
+    await waitForPdfImages(root);
+
+    const pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+    const canvas1 = await html2canvas(p1div.firstElementChild, {
+      scale: 2, useCORS: true, allowTaint: true,
+      backgroundColor: '#ffffff', logging: false
+    });
+    pdf.addImage(canvas1.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+
+    // Render page 2
+    const p2div = document.createElement('div');
+    p2div.innerHTML = page2Html;
+    root.innerHTML = '';
+    root.appendChild(p2div);
+    await waitForPdfImages(root);
+
+    pdf.addPage('a4', 'portrait');
+    const canvas2 = await html2canvas(p2div.firstElementChild, {
+      scale: 2, useCORS: true, allowTaint: true,
+      backgroundColor: '#ffffff', logging: false
+    });
+    pdf.addImage(canvas2.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, 210, 297);
+
+    pdf.save(quotation.quotation_id + '.pdf');
+    toast('PDF downloaded', 'success');
+  } catch (err) {
+    console.error('PDF error:', err);
+    toast('PDF generation failed: ' + err.message, 'error');
+  } finally {
+    const root = document.getElementById('pdfRoot');
+    if (root) root.innerHTML = '';
+    if (btn) { btn.disabled = false; btn.textContent = 'Download PDF'; }
+  }
+}
+
+function buildQuotationPageHtml() {
+  const p = project;
+  const q = quotation;
+  const frameworkIcons = {
+    'Sinhasan': 'framework-sinhasan.png',
+    'Wall/Floor Mounted': 'framework-wfm.png',
+    'Back Panel': 'framework-bpn.png',
+    'Open Cabinet': 'framework-ocm.png',
+    'Cabinet with Door': 'framework-cmd.png',
+    'Mandir Room': 'framework-mdr.png'
+  };
+  const frameworkIcon = frameworkIcons[p.framework] || 'logo.png';
+  const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  const validUntil = q.valid_until ? new Date(q.valid_until).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
+
+  // Calculate proportional amounts (profit distributed across heads)
+  const profitPct  = parseFloat(q.profit_pct)  || 40;
+  const totalCost  = parseFloat(q.total_cost)  || 0;
+  const profitAmt  = parseFloat(q.profit_amount) || 0;
+  const preGst     = parseFloat(q.pre_gst_total) || 0;
+  const gstAmt     = parseFloat(q.gst_amount)    || 0;
+  const finalAmt   = parseFloat(q.final_amount)  || 0;
+
+  const headCosts = {
+    material:  parseFloat(q.material_cost)  || 0,
+    cnc:       parseFloat(q.cnc_cost)       || 0,
+    decor:     parseFloat(q.decor_cost)     || 0,
+    hardware:  parseFloat(q.hardware_cost)  || 0,
+    lighting:  parseFloat(q.lighting_cost)  || 0,
+    labour:    parseFloat(q.labour_cost)    || 0,
+    logistics: parseFloat(q.logistics_cost) || 0
+  };
+
+  const headLabels = {
+    material: 'Material', cnc: 'CNC & Cutting', decor: 'Decor',
+    hardware: 'Hardware', lighting: 'Lighting', labour: 'Labour', logistics: 'Logistics'
+  };
+
+  // Build rows — only show heads with value > 0
+  var headRows = '';
+  Object.keys(headCosts).forEach(function(key) {
+    const cost = headCosts[key];
+    if (cost <= 0) return;
+    const share       = totalCost > 0 ? cost / totalCost : 0;
+    const clientTotal = cost + (profitAmt * share);
+    headRows += '<tr>';
+    headRows += '<td style="padding:10px 16px;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + headLabels[key] + '</td>';
+    headRows += '<td style="padding:10px 16px;text-align:right;font-weight:600;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + pdfFormatINR(clientTotal) + '</td>';
+    headRows += '</tr>';
+  });
+
+  if (!headRows) {
+    headRows = '<tr><td colspan="2" style="padding:20px 16px;color:#999;text-align:center;">No line items added yet</td></tr>';
+  }
+
+  return `
+    <div style="width:210mm;min-height:297mm;padding:14mm 14mm 50mm 14mm;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.4;box-sizing:border-box;position:relative;color:#1F1F1F;">
+
+      <!-- Header -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8mm;border-bottom:2px solid #E87722;margin-bottom:8mm;">
+        <img src="assets/logo.png" style="max-width:65mm;max-height:28mm;object-fit:contain;" crossorigin="anonymous">
+        <img src="assets/${frameworkIcon}" style="width:60mm;height:50mm;object-fit:contain;" crossorigin="anonymous">
+      </div>
+
+      <!-- Client info table -->
+      <table style="width:100%;border-collapse:collapse;margin-bottom:5mm;font-size:9.5pt;">
+        <tr>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;width:23%;">Client Name</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(p.client_name)}</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;width:23%;">Location</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(p.location || '')}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Mobile</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(p.contact || '')}</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Type of Space</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(p.type_of_space || '')}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Quotation ID</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(q.quotation_id)}</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Date</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${today}</td>
+        </tr>
+        <tr>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Valid Until</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${validUntil}</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Framework</td>
+          <td style="border:1px solid #E8C9AE;padding:5px 9px;">${escapeHtml(p.framework)}</td>
+        </tr>
+      </table>
+
+      <!-- Quotation table -->
+      <div style="background:#E87722;color:#fff;padding:9px 16px;font-weight:700;font-size:12pt;letter-spacing:1px;text-align:center;margin-bottom:0;">QUOTATION</div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:5mm;font-size:9.5pt;">
+        <thead>
+          <tr>
+            <th style="border:1px solid #E8C9AE;padding:8px 16px;text-align:left;background:#FFF7F0;color:#C5651C;font-size:9pt;text-transform:uppercase;letter-spacing:0.5px;">Description</th>
+            <th style="border:1px solid #E8C9AE;padding:8px 16px;text-align:right;background:#FFF7F0;color:#C5651C;font-size:9pt;text-transform:uppercase;letter-spacing:0.5px;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${headRows}
+          <tr>
+            <td style="padding:10px 16px;font-weight:600;border-top:2px solid #E87722;">Subtotal</td>
+            <td style="padding:10px 16px;text-align:right;font-weight:600;border-top:2px solid #E87722;">${pdfFormatINR(preGst)}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 16px;color:#555;border-bottom:1px solid #F0E6DC;">GST (${q.gst_pct || 18}%)</td>
+            <td style="padding:8px 16px;text-align:right;color:#555;border-bottom:1px solid #F0E6DC;">${pdfFormatINR(gstAmt)}</td>
+          </tr>
+          <tr style="background:#FFF7F0;">
+            <td style="padding:12px 16px;font-weight:700;font-size:12pt;color:#E87722;">TOTAL</td>
+            <td style="padding:12px 16px;text-align:right;font-weight:700;font-size:12pt;color:#E87722;">${pdfFormatINR(finalAmt)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Terms -->
+      <div style="border:1px solid #E8C9AE;border-left:3px solid #E87722;padding:10px 14px;background:#FFF7F0;font-size:8.5pt;line-height:1.6;margin-bottom:5mm;">
+        <strong style="color:#C5651C;">Terms &amp; Conditions:</strong>
+        <ul style="margin:6px 0 0 16px;padding:0;">
+          <li>This quotation is valid until ${validUntil}.</li>
+          <li>75% advance payment required to commence design &amp; production.</li>
+          <li>Balance 25% payable before dispatch.</li>
+          <li>Prices subject to change if design is modified after approval.</li>
+          <li>GST as applicable is included above.</li>
+          <li>All designs remain intellectual property of Make My Mandir.</li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <div style="position:absolute;bottom:10mm;left:14mm;right:14mm;padding-top:5mm;border-top:2px solid #E87722;display:table;width:calc(100% - 28mm);table-layout:fixed;">
+        <div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;padding-right:6mm;">
+          <div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Address</div>
+          <strong>Make My Mandir</strong><br>
+          Jehangir Villa, Ground Floor,<br>
+          Shankarseth Road, Bhawani Peth,<br>
+          Pune – 411042
+        </div>
+        <div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;padding-right:6mm;">
+          <div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Contact</div>
+          <strong>+91 77679 62441</strong><br>
+          info@makemymandir.com
+        </div>
+        <div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;">
+          <div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Online</div>
+          makemymandir.com<br>
+          @make_my_mandir
+        </div>
+      </div>
+
+    </div>
+  `;
+}
+
+function buildProcessPageHtml() {
+  return '<div style="width:210mm;height:297mm;padding:0;margin:0;overflow:hidden;box-sizing:border-box;"><img src="assets/process-page.png" style="width:210mm;height:297mm;display:block;object-fit:cover;" crossorigin="anonymous"></div>';
+}
+
+function pdfFormatINR(num) {
+  if (num === null || num === undefined || isNaN(parseFloat(num))) return '—';
+  return '₹' + parseFloat(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+
+async function waitForPdfImages(container) {
+  var imgs = container.querySelectorAll('img');
+  var promises = Array.from(imgs).map(function(img) {
+    if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+    return new Promise(function(resolve) {
+      img.onload  = resolve;
+      img.onerror = resolve;
+      setTimeout(resolve, 5000);
+    });
+  });
+  return Promise.all(promises);
 }
 
 // ─────────────────────────────────────────
