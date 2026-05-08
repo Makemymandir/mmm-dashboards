@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Quotation · Make My Mandir</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/quotation.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <img src="assets/logo.png" alt="Make My Mandir" class="topbar-logo">
+      <span class="topbar-title">Costing System</span>
+    </div>
+    <div class="app-header-right">
+      <div class="user-info">
+        <div id="userName">—</div>
+        <div id="userRole" class="user-role">—</div>
+      </div>
+      <button class="btn-link" onclick="api.logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <a href="#" id="backLink" class="back-link">← Back to Project</a>
+    <div id="content">
+      <div class="loading">Loading quotation...</div>
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/final-quotation.js"></script>
+</body>
+</html>
