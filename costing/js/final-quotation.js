@@ -122,8 +122,8 @@ async function loadCatalogData() {
 }
 
 async function loadQuotation(quotationId) {
+  document.getElementById('content').innerHTML = '<div class="loading" style="padding:60px;text-align:center;color:var(--grey);">Loading quotation...</div>';
   try {
-    const result = await api.call('get_quotation', { quotation_id: quotationId });
     if (!result.ok) { showError(result.error || 'Quotation not found'); return; }
     quotation = result.quotation;
     lines     = result.lines || [];
@@ -139,6 +139,7 @@ async function loadQuotation(quotationId) {
 }
 
 async function createNewQuotation(projectId) {
+  document.getElementById('content').innerHTML = '<div class="loading" style="padding:60px;text-align:center;color:var(--grey);">Creating quotation...</div>';
   try {
     const projResult = await api.call('get_project', { project_id: projectId });
     if (!projResult.ok) { showError('Project not found'); return; }
