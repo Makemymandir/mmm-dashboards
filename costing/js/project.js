@@ -82,7 +82,19 @@ async function loadRoughEstimates() {
   if (!currentProject) return;
   const container = document.getElementById('roughListContainer');
   if (!container) return;
-  container.innerHTML = '<div class="loading">Loading rough estimates...</div>';
+
+  // Show cached instantly
+  var cacheKey = 'mmm_rough_' + currentProject.project_id;
+  var cached = sessionStorage.getItem(cacheKey);
+  if (cached && roughEstimates.length === 0) {
+    try {
+      roughEstimates = JSON.parse(cached);
+      renderRoughList();
+    } catch (e) {}
+  } else if (roughEstimates.length === 0) {
+    container.innerHTML = '<div class="loading" style="padding:40px;text-align:center;color:var(--grey);">Loading estimates...</div>';
+  }
+
   try {
     const result = await api.call('list_rough_estimates', { project_id: currentProject.project_id });
     if (!result.ok) {
@@ -90,10 +102,11 @@ async function loadRoughEstimates() {
       return;
     }
     roughEstimates = result.estimates;
+    sessionStorage.setItem(cacheKey, JSON.stringify(roughEstimates));
     renderRoughList();
   } catch (err) {
     console.error(err);
-    container.innerHTML = '<div class="empty-tab"><h3>Connection error</h3></div>';
+    if (roughEstimates.length === 0) container.innerHTML = '<div class="empty-tab"><h3>Connection error</h3></div>';
   }
 }
 
