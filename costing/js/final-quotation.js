@@ -1,5 +1,5 @@
 // ============================================
-// final-quotation.js — Complete Phase 7.3b + 7.4
+// final-quotation.js — Complete Phase 7.3b + 7.4 + 7.5
 // ============================================
 
 let quotation       = null;
@@ -117,6 +117,10 @@ async function createNewQuotation(projectId) {
   }
 }
 
+// ─────────────────────────────────────────
+// RENDER PAGE
+// ─────────────────────────────────────────
+
 function renderPage() {
   var p = project;
   var q = quotation;
@@ -129,12 +133,13 @@ function renderPage() {
   html += '<h1 class="project-client-name">' + escapeHtml(p.client_name) + '</h1>';
   html += '<div class="project-meta">' + escapeHtml(p.framework) + ' · ' + escapeHtml(p.location || '') + ' · ' + escapeHtml(p.type_of_space || '') + '</div>';
   html += '</div>';
-  html += '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">';
+  html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">';
   html += '<select class="quotation-status-select" onchange="updateQuotationField(\'status\', this.value)">';
   ['Draft','Sent','Accepted','Rejected'].forEach(function(s) {
     html += '<option value="' + s + '" ' + (q.status === s ? 'selected' : '') + '>' + s + '</option>';
   });
   html += '</select>';
+  html += '<button class="btn-secondary" id="reviseBtn" onclick="reviseQuotation()">Revise</button>';
   html += '<button class="btn-primary" onclick="generatePdf()">Download PDF</button>';
   html += '</div></div>';
 
@@ -258,7 +263,8 @@ function refreshSection(sectionKey) {
   if (!card) return;
   var section = SECTIONS.find(function(s) { return s.key === sectionKey; });
   if (!section) return;
-  var wasOpen = document.getElementById('body-' + sectionKey) && document.getElementById('body-' + sectionKey).classList.contains('open');
+  var wasOpen = document.getElementById('body-' + sectionKey) &&
+                document.getElementById('body-' + sectionKey).classList.contains('open');
   card.outerHTML = renderSectionCard(section);
   if (wasOpen) {
     var nb = document.getElementById('body-' + sectionKey);
@@ -478,8 +484,8 @@ function selectMasterItem(idx) {
 }
 
 function calcLineTotal() {
-  var qty   = parseFloat(document.getElementById('lineQty').value)  || 0;
-  var rate  = parseFloat(document.getElementById('lineRate').value) || 0;
+  var qty  = parseFloat(document.getElementById('lineQty').value)  || 0;
+  var rate = parseFloat(document.getElementById('lineRate').value) || 0;
   document.getElementById('lineTotalDisplay').textContent = formatINR(qty * rate);
 }
 
@@ -516,7 +522,6 @@ async function submitAddLine() {
   }
 
   if (qty <= 0) { errorEl.textContent = 'Qty must be greater than 0.'; errorEl.style.display = 'block'; return; }
-
   var requiresRate = section === 'material' || !!MASTER_KEYS[section];
   if (requiresRate && rate <= 0) { errorEl.textContent = 'Please enter a rate greater than 0.'; errorEl.style.display = 'block'; return; }
 
@@ -586,6 +591,39 @@ async function updateProfitPct(value) {
 }
 
 // ─────────────────────────────────────────
+// VERSIONING — Phase 7.5
+// ─────────────────────────────────────────
+
+async function reviseQuotation() {
+  var nextVersion = parseInt(quotation.version || 1) + 1;
+  if (!confirm('Create revision FQ' + nextVersion + ' based on this quotation? The current version will be preserved.')) return;
+
+  var btn = document.getElementById('reviseBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating...'; }
+
+  var user = api.getCurrentUser();
+  try {
+    var result = await api.call('revise_quotation', {
+      quotation_id: quotation.quotation_id,
+      username:     user.username
+    });
+    if (result.ok) {
+      toast('Revision ' + result.new_quotation_id + ' created', 'success');
+      setTimeout(function() {
+        window.location.href = 'final-quotation.html?quotation_id=' + encodeURIComponent(result.new_quotation_id);
+      }, 1000);
+    } else {
+      toast(result.error || 'Failed to create revision', 'error');
+      if (btn) { btn.disabled = false; btn.textContent = 'Revise'; }
+    }
+  } catch (err) {
+    console.error(err);
+    toast('Connection error', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Revise'; }
+  }
+}
+
+// ─────────────────────────────────────────
 // PDF GENERATION — Phase 7.4
 // ─────────────────────────────────────────
 
@@ -604,7 +642,6 @@ async function generatePdf() {
     await waitForPdfImages(root);
 
     var pdf = new jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-
     var canvas1 = await html2canvas(p1div.firstElementChild, {
       scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false
     });
@@ -672,40 +709,31 @@ function buildQuotationPageHtml() {
     if (cost <= 0) return;
     var share       = totalCost > 0 ? cost / totalCost : 0;
     var clientTotal = cost + (profitAmt * share);
-    headRows += '<tr>';
-    headRows += '<td style="padding:10px 16px;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + headLabels[key] + '</td>';
-    headRows += '<td style="padding:10px 16px;text-align:right;font-weight:600;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + pdfFormatINR(clientTotal) + '</td>';
-    headRows += '</tr>';
+    headRows += '<tr><td style="padding:10px 16px;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + headLabels[key] + '</td>';
+    headRows += '<td style="padding:10px 16px;text-align:right;font-weight:600;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + pdfFormatINR(clientTotal) + '</td></tr>';
   });
 
-  if (!headRows) {
-    headRows = '<tr><td colspan="2" style="padding:20px 16px;color:#999;text-align:center;">No line items added yet</td></tr>';
-  }
+  if (!headRows) headRows = '<tr><td colspan="2" style="padding:20px 16px;color:#999;text-align:center;">No line items added yet</td></tr>';
 
   return '<div style="width:210mm;min-height:297mm;padding:14mm 14mm 50mm 14mm;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.4;box-sizing:border-box;position:relative;color:#1F1F1F;">'
-
     + '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8mm;border-bottom:2px solid #E87722;margin-bottom:8mm;">'
     + '<img src="assets/logo.png" style="max-width:65mm;max-height:28mm;object-fit:contain;" crossorigin="anonymous">'
     + '<img src="assets/' + frameworkIcon + '" style="width:60mm;height:50mm;object-fit:contain;" crossorigin="anonymous">'
     + '</div>'
-
     + '<table style="width:100%;border-collapse:collapse;margin-bottom:5mm;font-size:9.5pt;">'
     + '<tr><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;width:23%;">Client Name</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(p.client_name) + '</td><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;width:23%;">Location</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(p.location || '') + '</td></tr>'
     + '<tr><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Mobile</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(p.contact || '') + '</td><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Type of Space</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(p.type_of_space || '') + '</td></tr>'
     + '<tr><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Quotation ID</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(q.quotation_id) + '</td><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Date</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + today + '</td></tr>'
     + '<tr><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Valid Until</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + validUntil + '</td><td style="border:1px solid #E8C9AE;padding:5px 9px;font-weight:600;background:#FFF7F0;color:#C5651C;">Framework</td><td style="border:1px solid #E8C9AE;padding:5px 9px;">' + escapeHtml(p.framework) + '</td></tr>'
     + '</table>'
-
     + '<div style="background:#E87722;color:#fff;padding:9px 16px;font-weight:700;font-size:12pt;letter-spacing:1px;text-align:center;">QUOTATION</div>'
     + '<table style="width:100%;border-collapse:collapse;margin-bottom:5mm;font-size:9.5pt;">'
     + '<thead><tr><th style="border:1px solid #E8C9AE;padding:8px 16px;text-align:left;background:#FFF7F0;color:#C5651C;font-size:9pt;text-transform:uppercase;letter-spacing:0.5px;">Description</th><th style="border:1px solid #E8C9AE;padding:8px 16px;text-align:right;background:#FFF7F0;color:#C5651C;font-size:9pt;text-transform:uppercase;letter-spacing:0.5px;">Amount</th></tr></thead>'
-    + '<tbody>'
-    + headRows
+    + '<tbody>' + headRows
     + '<tr><td style="padding:10px 16px;font-weight:600;border-top:2px solid #E87722;">Subtotal</td><td style="padding:10px 16px;text-align:right;font-weight:600;border-top:2px solid #E87722;">' + pdfFormatINR(preGst) + '</td></tr>'
     + '<tr><td style="padding:8px 16px;color:#555;border-bottom:1px solid #F0E6DC;">GST (' + (q.gst_pct || 18) + '%)</td><td style="padding:8px 16px;text-align:right;color:#555;border-bottom:1px solid #F0E6DC;">' + pdfFormatINR(gstAmt) + '</td></tr>'
     + '<tr style="background:#FFF7F0;"><td style="padding:12px 16px;font-weight:700;font-size:12pt;color:#E87722;">TOTAL</td><td style="padding:12px 16px;text-align:right;font-weight:700;font-size:12pt;color:#E87722;">' + pdfFormatINR(finalAmt) + '</td></tr>'
     + '</tbody></table>'
-
     + '<div style="border:1px solid #E8C9AE;border-left:3px solid #E87722;padding:10px 14px;background:#FFF7F0;font-size:8.5pt;line-height:1.6;margin-bottom:5mm;">'
     + '<strong style="color:#C5651C;">Terms &amp; Conditions:</strong>'
     + '<ul style="margin:6px 0 0 16px;padding:0;">'
@@ -716,13 +744,11 @@ function buildQuotationPageHtml() {
     + '<li>GST as applicable is included above.</li>'
     + '<li>All designs remain intellectual property of Make My Mandir.</li>'
     + '</ul></div>'
-
     + '<div style="position:absolute;bottom:10mm;left:14mm;right:14mm;padding-top:5mm;border-top:2px solid #E87722;display:table;width:calc(100% - 28mm);table-layout:fixed;">'
     + '<div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;padding-right:6mm;"><div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Address</div><strong>Make My Mandir</strong><br>Jehangir Villa, Ground Floor,<br>Shankarseth Road, Bhawani Peth,<br>Pune – 411042</div>'
     + '<div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;padding-right:6mm;"><div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Contact</div><strong>+91 77679 62441</strong><br>info@makemymandir.com</div>'
     + '<div style="display:table-cell;vertical-align:top;font-size:7.5pt;line-height:1.5;"><div style="font-size:7pt;text-transform:uppercase;letter-spacing:0.8px;color:#C5651C;font-weight:700;margin-bottom:2mm;">Online</div>makemymandir.com<br>@make_my_mandir</div>'
-    + '</div>'
-    + '</div>';
+    + '</div></div>';
 }
 
 function buildProcessPageHtml() {
