@@ -214,6 +214,130 @@ function render() {
 
 function renderDetailsTab() {
   const p = currentProject;
+
+  if (isEditMode) {
+    return `
+      <div class="card">
+        <div class="card-header">
+          <h3>Edit Project Details</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
+            <button class="btn-primary" onclick="saveEdit()" id="saveBtn">Save Changes</button>
+          </div>
+        </div>
+        <div class="edit-form-grid">
+          <div class="form-group"><label>Client Name *</label><input type="text" id="ed_client_name" value="${escapeAttr(p.client_name)}"></div>
+          <div class="form-group"><label>Contact</label><input type="tel" id="ed_contact" value="${escapeAttr(p.contact)}"></div>
+          <div class="form-group"><label>Email</label><input type="email" id="ed_email" value="${escapeAttr(p.email)}"></div>
+          <div class="form-group"><label>Location</label><input type="text" id="ed_location" value="${escapeAttr(p.location)}"></div>
+          <div class="form-group">
+            <label>Type of Space</label>
+            <select id="ed_type">
+              <option value="" ${!p.type_of_space ? 'selected' : ''}>— Select —</option>
+              <option value="Apartment"  ${p.type_of_space === 'Apartment'  ? 'selected' : ''}>Apartment</option>
+              <option value="Bungalow"   ${p.type_of_space === 'Bungalow'   ? 'selected' : ''}>Bungalow</option>
+              <option value="Villa"      ${p.type_of_space === 'Villa'      ? 'selected' : ''}>Villa</option>
+              <option value="Office"     ${p.type_of_space === 'Office'     ? 'selected' : ''}>Office</option>
+              <option value="Showroom"   ${p.type_of_space === 'Showroom'   ? 'selected' : ''}>Showroom</option>
+              <option value="Other"      ${p.type_of_space === 'Other'      ? 'selected' : ''}>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Framework</label>
+            <input type="text" value="${escapeAttr(p.framework)}" disabled style="background:var(--grey-bg);">
+          </div>
+          <div class="form-group"><label>Width (ft)</label><input type="number" step="0.1" id="ed_width" value="${p.width_ft || ''}"></div>
+          <div class="form-group"><label>Depth (ft)</label><input type="number" step="0.1" id="ed_depth" value="${p.depth_ft || ''}"></div>
+          <div class="form-group"><label>Height (ft)</label><input type="number" step="0.1" id="ed_height" value="${p.height_ft || ''}"></div>
+          <div class="form-group"><label>Expected Completion</label><input type="date" id="ed_completion" value="${formatDateForInput(p.expected_completion)}"></div>
+          <div class="form-group">
+            <label>Customer Type</label>
+            <select id="ed_customer_type">
+              <option value="B2C" ${p.customer_type === 'B2C' ? 'selected' : ''}>B2C (Retail)</option>
+              <option value="B2B" ${p.customer_type === 'B2B' ? 'selected' : ''}>B2B (Trade)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+          <label>Notes</label>
+          <textarea id="ed_notes" rows="3">${escapeHtml(p.notes || '')}</textarea>
+        </div>
+      </div>
+    `;
+  }
+
+  const cft = (p.width_ft && p.depth_ft && p.height_ft)
+    ? (parseFloat(p.width_ft) * parseFloat(p.depth_ft) * parseFloat(p.height_ft)).toFixed(2) + ' CFT'
+    : null;
+
+  return `
+    <div class="card" style="padding:0;overflow:hidden;">
+
+      <!-- Brand header strip -->
+      <div style="background:linear-gradient(135deg,#E87722,#C5651C);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:rgba(255,255,255,0.75);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Project</div>
+          <div style="color:#fff;font-size:1.4rem;font-weight:700;margin-top:2px;">${escapeHtml(p.client_name)}</div>
+          <div style="color:rgba(255,255,255,0.85);font-size:0.85rem;margin-top:4px;">${escapeHtml(p.framework)} · ${escapeHtml(p.location || 'No location')}</div>
+        </div>
+        <button class="btn-secondary" onclick="enterEditMode()" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">Edit</button>
+      </div>
+
+      <!-- Client info grid -->
+      <div style="padding:24px 28px;">
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:16px;">Client Information</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border:1px solid #F0E6DC;border-radius:10px;overflow:hidden;">
+          ${brandDetailRow('📞', 'Contact', p.contact)}
+          ${brandDetailRow('✉️', 'Email', p.email)}
+          ${brandDetailRow('📍', 'Location', p.location)}
+          ${brandDetailRow('🏠', 'Type of Space', p.type_of_space)}
+          ${brandDetailRow('👤', 'Customer Type', p.customer_type || 'B2C')}
+          ${brandDetailRow('📅', 'Expected Completion', formatDate(p.expected_completion))}
+        </div>
+      </div>
+
+      <!-- Mandir specs -->
+      <div style="padding:0 28px 24px;">
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:16px;">Mandir Specifications</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;border:1px solid #F0E6DC;border-radius:10px;overflow:hidden;">
+          ${brandDetailRow('🔲', 'Framework', p.framework)}
+          ${brandDetailRow('↔️', 'Width', p.width_ft ? p.width_ft + ' ft' : null)}
+          ${brandDetailRow('↕️', 'Depth', p.depth_ft ? p.depth_ft + ' ft' : null)}
+          ${brandDetailRow('📏', 'Height', p.height_ft ? p.height_ft + ' ft' : null)}
+          ${brandDetailRow('📦', 'Cubic Feet', cft)}
+          ${brandDetailRow('🔖', 'Status', p.status)}
+        </div>
+      </div>
+
+      ${p.notes ? `
+      <div style="padding:0 28px 24px;">
+        <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Notes</div>
+        <div style="background:#FFF7F0;border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:14px 18px;font-size:0.9rem;line-height:1.6;white-space:pre-wrap;color:var(--dark);">${escapeHtml(p.notes)}</div>
+      </div>
+      ` : ''}
+
+      <!-- Audit footer -->
+      <div style="background:#FAFAFA;border-top:1px solid #F0E6DC;padding:12px 28px;display:flex;gap:24px;font-size:0.78rem;color:var(--grey);">
+        <span>Created ${formatDate(p.created_at)} by <strong>${escapeHtml(p.created_by || '—')}</strong></span>
+        <span>Project ID: <strong>${escapeHtml(p.project_id)}</strong></span>
+      </div>
+    </div>
+  `;
+}
+
+function brandDetailRow(icon, label, value) {
+  var display = (value === null || value === undefined || value === '') ? '—' : escapeHtml(String(value));
+  var isEmpty = (value === null || value === undefined || value === '');
+  return `
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid #F0E6DC;background:${isEmpty ? '#FAFAFA' : '#fff'};">
+      <span style="font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;">${icon}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--grey);font-weight:600;margin-bottom:2px;">${label}</div>
+        <div style="font-size:0.9rem;font-weight:${isEmpty ? '400' : '500'};color:${isEmpty ? 'var(--grey)' : 'var(--dark)'};">${display}</div>
+      </div>
+    </div>
+  `;
+}
   
   if (isEditMode) {
     return `
@@ -301,6 +425,30 @@ function detailItem(label, value) {
 
 function switchTab(name) {
   activeTab = name;
+
+  document.querySelectorAll('.tab').forEach(function(btn) {
+    btn.classList.toggle('tab-active', btn.getAttribute('onclick').includes("'" + name + "'"));
+  });
+  document.querySelectorAll('.tab-content').forEach(function(div) {
+    div.classList.remove('tab-content-active');
+  });
+
+  if (name === 'details') {
+    document.getElementById('tabDetails').classList.add('tab-content-active');
+  } else if (name === 'rough') {
+    document.getElementById('tabRough').classList.add('tab-content-active');
+    if (roughEstimates.length === 0) loadRoughEstimates();
+  } else if (name === 'quotations') {
+    document.getElementById('tabQuotations').classList.add('tab-content-active');
+    if (quotations.length === 0) loadQuotations();
+  }
+
+  // Scroll to tab content smoothly
+  setTimeout(function() {
+    var tabsEl = document.querySelector('.tabs');
+    if (tabsEl) tabsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
 
   // Just toggle visibility — don't re-render the whole page
   document.querySelectorAll('.tab').forEach(function(btn) {
