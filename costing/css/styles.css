@@ -470,9 +470,9 @@ body {
   width: 100%;
   max-width: 640px;
   box-shadow: var(--shadow-lg);
-  max-height: none;
-  overflow-y: visible;
-  margin: 20px auto;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  margin: 0 auto;
 }
 }
 
@@ -523,6 +523,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  overflow-y: auto;
 }
 
 .modal-footer {
