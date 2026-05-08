@@ -31,59 +31,54 @@
 
   <!-- Add Line Modal -->
   <div id="addLineModal" class="modal-backdrop" style="display:none;">
-    <div class="modal" style="max-width: 560px;">
+    <div class="modal" style="max-width:560px;">
       <div class="modal-header">
         <h2 id="addLineTitle">Add Line</h2>
         <button class="modal-close" onclick="closeAddLineModal()">×</button>
       </div>
-      <div style="padding: 24px;">
+      <div style="padding:24px;">
 
-        <!-- Material search (shown for material lines) -->
+        <!-- Material search -->
         <div id="materialSearchGroup" style="display:none;">
-          <div class="form-group" style="margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom:16px;">
             <label>Search Material</label>
             <input type="text" id="materialSearch" placeholder="Type to search... e.g. HDHMR, Marble, Acrylic"
-                   oninput="filterMaterials()" autocomplete="off"
-                   style="width:100%;">
-            <div id="materialDropdown" style="display:none; border: 1px solid var(--grey-light); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; background: white; position: relative; z-index: 10;"></div>
+                   oninput="filterMaterials()" autocomplete="off" style="width:100%;">
+            <div id="materialDropdown" style="display:none;border:1px solid var(--grey-light);border-top:none;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;background:white;position:relative;z-index:10;"></div>
           </div>
-          <div id="selectedMaterialDisplay" style="display:none; background: var(--orange-light); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.9rem;">
+          <div id="selectedMaterialDisplay" style="display:none;background:var(--orange-light);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.9rem;">
             <strong id="selectedMaterialName"></strong>
-            <span id="selectedMaterialCategory" style="color: var(--grey); margin-left: 8px;"></span>
+            <span id="selectedMaterialCategory" style="color:var(--grey);margin-left:8px;"></span>
           </div>
-          <div class="form-group" id="supplierGroup" style="display:none; margin-bottom: 16px;">
+          <div class="form-group" id="supplierGroup" style="display:none;margin-bottom:16px;">
             <label>Supplier</label>
-            <select id="supplierSelect" onchange="onSupplierChange()" style="width:100%;">
-              <option value="">— Select Supplier —</option>
-            </select>
+            <select id="supplierSelect" onchange="onSupplierChange()" style="width:100%;"></select>
           </div>
         </div>
 
-        <!-- Master search (shown for cnc/decor/hardware/lighting) -->
+        <!-- Master search -->
         <div id="masterSearchGroup" style="display:none;">
-          <div class="form-group" style="margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom:16px;">
             <label id="masterSearchLabel">Search Item</label>
             <input type="text" id="masterSearch" placeholder="Type to search..."
-                   oninput="filterMasterItems()" autocomplete="off"
-                   style="width:100%;">
-            <div id="masterDropdown" style="display:none; border: 1px solid var(--grey-light); border-top: none; border-radius: 0 0 8px 8px; max-height: 200px; overflow-y: auto; background: white; position: relative; z-index: 10;"></div>
+                   oninput="filterMasterItems()" autocomplete="off" style="width:100%;">
+            <div id="masterDropdown" style="display:none;border:1px solid var(--grey-light);border-top:none;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;background:white;position:relative;z-index:10;"></div>
           </div>
-          <div id="selectedMasterDisplay" style="display:none; background: var(--orange-light); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.9rem;">
+          <div id="selectedMasterDisplay" style="display:none;background:var(--orange-light);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:0.9rem;">
             <strong id="selectedMasterName"></strong>
           </div>
         </div>
 
-        <!-- Free text (shown for labour/logistics) -->
+        <!-- Free text -->
         <div id="freeTextGroup" style="display:none;">
-          <div class="form-group" style="margin-bottom: 16px;">
+          <div class="form-group" style="margin-bottom:16px;">
             <label>Description</label>
-            <input type="text" id="freeTextDesc" placeholder="e.g. Installation charges, Transport to Mumbai"
-                   style="width:100%;">
+            <input type="text" id="freeTextDesc" placeholder="e.g. Installation charges, Transport to Mumbai" style="width:100%;">
           </div>
         </div>
 
         <!-- Common fields -->
-        <div class="form-row form-row-3" style="margin-bottom: 16px;">
+        <div class="form-row form-row-3" style="margin-bottom:16px;">
           <div class="form-group">
             <label>Qty</label>
             <input type="number" id="lineQty" min="0" step="any" value="1" oninput="calcLineTotal()">
@@ -105,19 +100,19 @@
           </div>
         </div>
 
-        <div style="background: var(--orange-light); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
-          <span style="color: var(--grey); font-size: 0.9rem;">Line Total</span>
-          <strong id="lineTotalDisplay" style="font-size: 1.1rem; color: var(--orange);">₹0</strong>
+        <div style="background:var(--orange-light);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;">
+          <span style="color:var(--grey);font-size:0.9rem;">Line Total</span>
+          <strong id="lineTotalDisplay" style="font-size:1.1rem;color:var(--orange);">₹0</strong>
         </div>
 
-        <div class="form-group" style="margin-bottom: 20px;">
+        <div class="form-group" style="margin-bottom:20px;">
           <label>Notes (optional)</label>
           <input type="text" id="lineNotes" placeholder="Any extra details..." style="width:100%;">
         </div>
 
-        <div id="addLineError" class="error-message" style="display:none; margin-bottom: 16px;"></div>
+        <div id="addLineError" class="error-message" style="display:none;margin-bottom:16px;"></div>
 
-        <div style="display:flex; gap:12px; justify-content:flex-end;">
+        <div style="display:flex;gap:12px;justify-content:flex-end;">
           <button class="btn-secondary" onclick="closeAddLineModal()">Cancel</button>
           <button class="btn-primary" id="addLineSubmitBtn" onclick="submitAddLine()">Add Line</button>
         </div>
@@ -125,6 +120,11 @@
     </div>
   </div>
 
+  <!-- Hidden PDF render area -->
+  <div id="pdfRoot" style="position:fixed;top:0;left:-9999px;width:210mm;background:white;"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="js/api.js"></script>
   <script src="js/final-quotation.js"></script>
 </body>
