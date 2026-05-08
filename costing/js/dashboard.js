@@ -174,7 +174,7 @@ async function createProject() {
     width_ft: parseFloat(document.getElementById('np_width').value) || '',
     depth_ft: parseFloat(document.getElementById('np_depth').value) || '',
     height_ft: parseFloat(document.getElementById('np_height').value) || '',
-    expected_completion: document.getElementById('np_completion').value,
+    expected_completion: document.getElementById('np_completion').value,customer_type: document.getElementById('np_customer_type').value,
     notes: document.getElementById('np_notes').value.trim()
   };
   
