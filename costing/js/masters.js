@@ -163,18 +163,27 @@ function renderCostSettings(settings) {
 }
 
 async function saveCostSetting(input) {
-  const key      = input.dataset.settingKey;
-  const newValue = input.value.trim();
-  const user     = api.getCurrentUser();
+  var key      = input.dataset.settingKey;
+  var newValue = input.value.trim();
+  
+  if (!newValue) { toast('Value cannot be empty', 'error'); return; }
   
   try {
-    const result = await api.call('update_master_cell', {
-      master_key: 'cost_settings',
-      row_index:  null,
-      column:     key,
-      value:      newValue,
-      username:   user.username
+    var result = await api.call('update_cost_setting', {
+      setting_key: key,
+      value:       newValue
     });
+    
+    if (result.ok) {
+      toast('Saved', 'success');
+    } else {
+      toast('Save failed: ' + (result.error || 'unknown'), 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    toast('Connection error', 'error');
+  }
+}
     
     if (result.ok) {
       toast('Saved', 'success');
