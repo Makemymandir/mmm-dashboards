@@ -80,7 +80,14 @@
       "hook": "",
       "caption": "",
       "brief": "",
-      "cta": "DM your requirement"
+      "cta": "DM your requirement",
+      "slides": [
+        "Slide 1",
+        "Slide 2",
+        "Slide 3",
+        "Slide 4",
+        "Slide 5"
+      ]
     },
     "8": {
       "title": "3D AI Mandir 21/5/2025",
@@ -846,6 +853,16 @@
       "1": {
         "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5-slide-1.jpg",
         "ts": 1778072078245
+      },
+      "2": {
+        "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-5-slide-2.jpg",
+        "ts": 1778072089522
+      }
+    },
+    "7": {
+      "0": {
+        "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-7-slide-0.jpg",
+        "ts": 1778331900518
       }
     },
     "8": {
