@@ -141,20 +141,20 @@ function renderTable(data) {
 function renderCostSettings(settings) {
   const content = document.getElementById('mastersContent');
   
-  const rows = [
+  var rows = [
     { key: 'default_profit_pct', label: 'Default Profit Margin (%)', value: settings.default_profit_pct },
     { key: 'gst_pct',            label: 'GST Rate (%)',               value: settings.gst_pct },
     { key: 'currency',           label: 'Currency Symbol',            value: settings.currency }
   ];
   
-  var html = '<div class="card" style="max-width: 500px;">';
+  var html = '<div class="card" style="max-width:500px;">';
   html += '<div class="card-header"><h3>Cost Settings</h3></div>';
-  html += '<p style="color: var(--grey); margin-bottom: 20px; font-size: 0.9rem;">These values apply to all new quotations. Existing quotations are not affected.</p>';
+  html += '<p style="color:var(--grey);margin-bottom:20px;font-size:0.9rem;">These values apply to all new quotations. Existing quotations are not affected.</p>';
   
   rows.forEach(function(row) {
-    html += '<div class="form-group" style="margin-bottom: 20px;">';
+    html += '<div class="form-group" style="margin-bottom:20px;">';
     html += '<label>' + row.label + '</label>';
-    html += '<input type="text" value="' + escapeHtml(String(row.value || '')) + '" data-setting-key="' + row.key + '" onblur="saveCostSetting(this)" style="max-width: 200px;">';
+    html += '<input type="text" value="' + escapeHtml(String(row.value || '')) + '" data-setting-key="' + row.key + '" onblur="saveCostSetting(this)" style="max-width:200px;">';
     html += '</div>';
   });
   
@@ -173,7 +173,6 @@ async function saveCostSetting(input) {
       setting_key: key,
       value:       newValue
     });
-    
     if (result.ok) {
       toast('Saved', 'success');
     } else {
@@ -181,16 +180,6 @@ async function saveCostSetting(input) {
     }
   } catch (err) {
     console.error(err);
-    toast('Connection error', 'error');
-  }
-}
-    
-    if (result.ok) {
-      toast('Saved', 'success');
-    } else {
-      toast('Save failed', 'error');
-    }
-  } catch (err) {
     toast('Connection error', 'error');
   }
 }
@@ -246,20 +235,20 @@ function openAddRowModal() {
   if (!currentData) return;
   if (currentMasterKey === 'cost_settings') return;
   
-  const headers = currentData.headers;
-  const skipCols = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
+  const headers   = currentData.headers;
+  const skipCols  = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
   const formFields = headers.filter(function(h) { return !skipCols.includes(h.toLowerCase()); });
   
   var html = '';
   formFields.forEach(function(h) {
-    const id = 'addRow_' + h;
+    const id      = 'addRow_' + h;
     const isActive = h.toLowerCase() === 'active';
-    const isRate   = h.toLowerCase().indexOf('rate') !== -1;
+    const isRate   = h.toLowerCase().indexOf('rate') !== -1 || h.toLowerCase().indexOf('cost') !== -1;
     
     if (isActive) {
-      html += '<div class="form-group" style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px;">';
+      html += '<div class="form-group" style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">';
       html += '<input type="checkbox" id="' + id + '" checked>';
-      html += '<label for="' + id + '" style="margin: 0;">Active</label>';
+      html += '<label for="' + id + '" style="margin:0;">Active</label>';
       html += '</div>';
     } else {
       const inputType = isRate ? 'number' : 'text';
@@ -287,14 +276,14 @@ function closeAddRowModal() {
 }
 
 function getMasterDisplayName(key) {
-  const names = {
-    'rough_rates':  'Rough Rates',
-    'material':     'Material Rates',
-    'cnc':          'CNC Designs',
-    'decor':        'Decor',
-    'hardware':     'Hardware',
-    'lighting':     'Lighting',
-    'suppliers':    'Suppliers',
+  var names = {
+    'rough_rates':   'Rough Rates',
+    'material':      'Material Rates',
+    'cnc':           'CNC Designs',
+    'decor':         'Decor',
+    'hardware':      'Hardware',
+    'lighting':      'Lighting',
+    'suppliers':     'Suppliers',
     'cost_settings': 'Cost Settings'
   };
   return names[key] || key;
@@ -305,10 +294,10 @@ async function submitAddRow() {
   const btn     = document.getElementById('addRowSubmitBtn');
   errorEl.style.display = 'none';
   
-  const headers   = currentData.headers;
-  const skipCols  = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
-  const rowData   = {};
-  var firstField  = null;
+  const headers  = currentData.headers;
+  const skipCols = ['_rowindex', 'id', 'created_at', 'created_by', 'updated_at', 'updated_by'];
+  const rowData  = {};
+  var firstField      = null;
   var firstFieldValue = null;
   
   headers.forEach(function(h) {
@@ -337,7 +326,7 @@ async function submitAddRow() {
     return;
   }
   
-  btn.disabled = true;
+  btn.disabled    = true;
   btn.textContent = 'Adding...';
   
   const user = api.getCurrentUser();
@@ -356,14 +345,14 @@ async function submitAddRow() {
     } else {
       errorEl.textContent = result.error || 'Failed to add row';
       errorEl.style.display = 'block';
-      btn.disabled = false;
+      btn.disabled    = false;
       btn.textContent = 'Add Row';
     }
   } catch (err) {
     console.error(err);
     errorEl.textContent = 'Connection error';
     errorEl.style.display = 'block';
-    btn.disabled = false;
+    btn.disabled    = false;
     btn.textContent = 'Add Row';
   }
 }
