@@ -1120,4 +1120,10 @@ body {
   h1 {
     font-size: 1.4rem;
   }
+}/* Force modal grids to collapse on small screens */
+@media (max-width: 560px) {
+  .modal [style*="grid-template-columns"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
 }
