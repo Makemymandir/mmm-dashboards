@@ -1126,4 +1126,77 @@ body {
     display: flex !important;
     flex-direction: column !important;
   }
+}/* ── NEW PROJECT MODAL — Compact fit ───────────── */
+#newProjectModal .modal {
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+#newProjectModal .form-group {
+  margin-bottom: 0;
+}
+
+#newProjectModal label {
+  font-size: 0.78rem;
+  margin-bottom: 3px;
+}
+
+#newProjectModal input,
+#newProjectModal select {
+  padding: 7px 10px;
+  font-size: 0.88rem;
+}
+
+#newProjectModal [style*="padding:20px"] {
+  padding: 14px 20px !important;
+  gap: 10px !important;
+}
+
+/* ── STATUS BADGES — Solid colors ──────────────── */
+.status-Lead {
+  background: #EEEEEE !important;
+  color: #424242 !important;
+  border: none !important;
+}
+
+.status-Active {
+  background: #E3F2FD !important;
+  color: #1565C0 !important;
+  border: none !important;
+}
+
+.status-Won {
+  background: #E8F5E9 !important;
+  color: #2E7D32 !important;
+  border: none !important;
+}
+
+.status-Lost {
+  background: #FFEBEE !important;
+  color: #C62828 !important;
+  border: none !important;
+}
+
+.status-Draft {
+  background: #EEEEEE !important;
+  color: #424242 !important;
+  border: none !important;
+}
+
+.status-Sent {
+  background: #E3F2FD !important;
+  color: #1565C0 !important;
+  border: none !important;
+}
+
+.status-Accepted {
+  background: #E8F5E9 !important;
+  color: #2E7D32 !important;
+  border: none !important;
+}
+
+.status-Rejected {
+  background: #FFEBEE !important;
+  color: #C62828 !important;
+  border: none !important;
 }
