@@ -42,57 +42,15 @@ document.addEventListener('click', function(e) {
 
 document.addEventListener('DOMContentLoaded', async function() {
   if (!api.requireLogin()) return;
-  const user = api.getCurrentUser();
+  var user = api.getCurrentUser();
   document.getElementById('userName').textContent = user.displayName;
   document.getElementById('userRole').textContent = user.role;
 
-  const params      = new URLSearchParams(window.location.search);
-  const quotationId = params.get('quotation_id');
-  const projectId   = params.get('project_id');
+  var params      = new URLSearchParams(window.location.search);
+  var quotationId = params.get('quotation_id');
+  var projectId   = params.get('project_id');
 
-  async function loadCatalogData() {
-  try {
-    // Check session cache first — avoids reloading on every visit
-    var cached = sessionStorage.getItem('mmm_catalog');
-    if (cached) {
-      try {
-        var c = JSON.parse(cached);
-        materialCatalog = c.materials  || [];
-        suppliers       = c.suppliers  || [];
-        masterData      = c.masterData || {};
-        return;
-      } catch (e) { /* ignore bad cache */ }
-    }
-
-    // Load everything in parallel — not one by one
-    var results = await Promise.all([
-      api.call('get_material_catalog', {}),
-      api.call('get_suppliers', {}),
-      api.call('list_master', { master_key: 'cnc' }),
-      api.call('list_master', { master_key: 'decor' }),
-      api.call('list_master', { master_key: 'hardware' }),
-      api.call('list_master', { master_key: 'lighting' })
-    ]);
-
-    if (results[0].ok) materialCatalog   = results[0].materials  || [];
-    if (results[1].ok) suppliers         = results[1].suppliers  || [];
-    if (results[2].ok) masterData.cnc      = results[2].rows || [];
-    if (results[3].ok) masterData.decor    = results[3].rows || [];
-    if (results[4].ok) masterData.hardware = results[4].rows || [];
-    if (results[5].ok) masterData.lighting = results[5].rows || [];
-
-    // Cache for 30 minutes
-    sessionStorage.setItem('mmm_catalog', JSON.stringify({
-      materials:  materialCatalog,
-      suppliers:  suppliers,
-      masterData: masterData,
-      cachedAt:   Date.now()
-    }));
-
-  } catch (err) {
-    console.error('Error loading catalog data:', err);
-  }
-}
+  loadCatalogData();
 
   if (quotationId) {
     await loadQuotation(quotationId);
@@ -105,49 +63,72 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function loadCatalogData() {
   try {
-    const [matResult, suppResult] = await Promise.all([
-      api.call('get_material_catalog', {}),
-      api.call('get_suppliers', {})
-    ]);
-    if (matResult.ok)  materialCatalog = matResult.materials  || [];
-    if (suppResult.ok) suppliers       = suppResult.suppliers || [];
-    const masterKeys = ['cnc', 'decor', 'hardware', 'lighting'];
-    for (var i = 0; i < masterKeys.length; i++) {
-      var r = await api.call('list_master', { master_key: masterKeys[i] });
-      if (r.ok) masterData[masterKeys[i]] = r.rows || [];
+    var cached = sessionStorage.getItem('mmm_catalog');
+    if (cached) {
+      try {
+        var c = JSON.parse(cached);
+        if (Date.now() - (c.cachedAt || 0) < 30 * 60 * 1000) {
+          materialCatalog = c.materials  || [];
+          suppliers       = c.suppliers  || [];
+          masterData      = c.masterData || {};
+          return;
+        }
+      } catch (e) {}
     }
+
+    var results = await Promise.all([
+      api.call('get_material_catalog', {}),
+      api.call('get_suppliers', {}),
+      api.call('list_master', { master_key: 'cnc' }),
+      api.call('list_master', { master_key: 'decor' }),
+      api.call('list_master', { master_key: 'hardware' }),
+      api.call('list_master', { master_key: 'lighting' })
+    ]);
+
+    if (results[0].ok) materialCatalog     = results[0].materials  || [];
+    if (results[1].ok) suppliers           = results[1].suppliers  || [];
+    if (results[2].ok) masterData.cnc      = results[2].rows || [];
+    if (results[3].ok) masterData.decor    = results[3].rows || [];
+    if (results[4].ok) masterData.hardware = results[4].rows || [];
+    if (results[5].ok) masterData.lighting = results[5].rows || [];
+
+    sessionStorage.setItem('mmm_catalog', JSON.stringify({
+      materials: materialCatalog, suppliers: suppliers,
+      masterData: masterData, cachedAt: Date.now()
+    }));
   } catch (err) {
-    console.error('Error loading catalog data:', err);
+    console.error('Error loading catalog:', err);
   }
 }
 
 async function loadQuotation(quotationId) {
-  document.getElementById('content').innerHTML = '<div class="loading" style="padding:60px;text-align:center;color:var(--grey);">Loading quotation...</div>';
+  document.getElementById('content').innerHTML = '<div style="padding:80px;text-align:center;"><div style="font-size:2rem;">🛕</div><div style="color:var(--grey);margin-top:12px;">Loading quotation...</div></div>';
   try {
+    var result = await api.call('get_quotation', { quotation_id: quotationId });
     if (!result.ok) { showError(result.error || 'Quotation not found'); return; }
     quotation = result.quotation;
     lines     = result.lines || [];
-    const projResult = await api.call('get_project', { project_id: quotation.project_id });
+    var projResult = await api.call('get_project', { project_id: quotation.project_id });
     if (!projResult.ok) { showError('Project not found'); return; }
     project = projResult.project;
     document.getElementById('backLink').href = 'project.html?id=' + encodeURIComponent(project.project_id) + '&tab=quotations';
     renderPage();
   } catch (err) {
     console.error(err);
-    showError('Connection error');
+    showError('Connection error. Please refresh and try again.');
   }
 }
 
 async function createNewQuotation(projectId) {
-  document.getElementById('content').innerHTML = '<div class="loading" style="padding:60px;text-align:center;color:var(--grey);">Creating quotation...</div>';
+  document.getElementById('content').innerHTML = '<div style="padding:80px;text-align:center;"><div style="font-size:2rem;">🛕</div><div style="color:var(--grey);margin-top:12px;">Creating quotation...</div></div>';
   try {
-    const projResult = await api.call('get_project', { project_id: projectId });
+    var projResult = await api.call('get_project', { project_id: projectId });
     if (!projResult.ok) { showError('Project not found'); return; }
     project = projResult.project;
-    const user   = api.getCurrentUser();
-    const result = await api.call('create_quotation', { project_id: projectId, username: user.username });
+    var user   = api.getCurrentUser();
+    var result = await api.call('create_quotation', { project_id: projectId, username: user.username });
     if (!result.ok) { showError(result.error || 'Failed to create quotation'); return; }
-    const qResult = await api.call('get_quotation', { quotation_id: result.quotation_id });
+    var qResult = await api.call('get_quotation', { quotation_id: result.quotation_id });
     if (!qResult.ok) { showError('Failed to load new quotation'); return; }
     quotation = qResult.quotation;
     lines     = [];
@@ -156,7 +137,7 @@ async function createNewQuotation(projectId) {
     renderPage();
   } catch (err) {
     console.error(err);
-    showError('Connection error');
+    showError('Connection error. Please refresh and try again.');
   }
 }
 
@@ -225,7 +206,7 @@ function renderSectionCard(section) {
   html += '</div>';
   html += '<span class="section-toggle" id="toggle-' + section.key + '">▼</span>';
   html += '</div>';
-  html += '<div class="section-body" id="body-' + section.key + '">';
+  html += '<div class="section-body' + (hasValue ? ' open' : '') + '" id="body-' + section.key + '">';
   if (sectionLines.length === 0) {
     html += '<div class="section-empty">No items added yet. Click below to add.</div>';
   } else {
@@ -306,15 +287,12 @@ function refreshSection(sectionKey) {
   if (!card) return;
   var section = SECTIONS.find(function(s) { return s.key === sectionKey; });
   if (!section) return;
-  var wasOpen = document.getElementById('body-' + sectionKey) &&
-                document.getElementById('body-' + sectionKey).classList.contains('open');
   card.outerHTML = renderSectionCard(section);
-  if (wasOpen) {
-    var nb = document.getElementById('body-' + sectionKey);
-    var nt = document.getElementById('toggle-' + sectionKey);
-    if (nb) nb.classList.add('open');
-    if (nt) nt.classList.add('open');
-  }
+  // Auto-open section after adding a line
+  var newBody   = document.getElementById('body-' + sectionKey);
+  var newToggle = document.getElementById('toggle-' + sectionKey);
+  if (newBody)   newBody.classList.add('open');
+  if (newToggle) newToggle.classList.add('open');
 }
 
 // ─────────────────────────────────────────
@@ -634,7 +612,7 @@ async function updateProfitPct(value) {
 }
 
 // ─────────────────────────────────────────
-// VERSIONING — Phase 7.5
+// VERSIONING
 // ─────────────────────────────────────────
 
 async function reviseQuotation() {
@@ -667,7 +645,7 @@ async function reviseQuotation() {
 }
 
 // ─────────────────────────────────────────
-// PDF GENERATION — Phase 7.4
+// PDF GENERATION
 // ─────────────────────────────────────────
 
 async function generatePdf() {
@@ -755,8 +733,7 @@ function buildQuotationPageHtml() {
     headRows += '<tr><td style="padding:10px 16px;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + headLabels[key] + '</td>';
     headRows += '<td style="padding:10px 16px;text-align:right;font-weight:600;color:#1F1F1F;border-bottom:1px solid #F0E6DC;">' + pdfFormatINR(clientTotal) + '</td></tr>';
   });
-
-  if (!headRows) headRows = '<tr><td colspan="2" style="padding:20px 16px;color:#999;text-align:center;">No line items added yet</td></tr>';
+  if (!headRows) headRows = '<tr><td colspan="2" style="padding:20px;color:#999;text-align:center;">No line items added yet</td></tr>';
 
   return '<div style="width:210mm;min-height:297mm;padding:14mm 14mm 50mm 14mm;background:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.4;box-sizing:border-box;position:relative;color:#1F1F1F;">'
     + '<div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:8mm;border-bottom:2px solid #E87722;margin-bottom:8mm;">'
@@ -820,7 +797,8 @@ async function waitForPdfImages(container) {
 // ─────────────────────────────────────────
 
 function showError(msg) {
-  document.getElementById('content').innerHTML = '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3></div>';
+  document.getElementById('content').innerHTML =
+    '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3><p><a href="dashboard.html" class="btn-secondary" style="display:inline-block;margin-top:12px;">← Dashboard</a></p></div>';
 }
 
 function formatDateInput(val) {
