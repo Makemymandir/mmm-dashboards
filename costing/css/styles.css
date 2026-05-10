@@ -408,6 +408,7 @@ body {
   font-weight: 500;
 }
 
+/* ── STATUS BADGES — Solid colors ──────────────── */
 .status-badge {
   display: inline-block;
   padding: 3px 10px;
@@ -415,8 +416,97 @@ body {
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.3px;
+  pointer-events: none;
 }
 
+.status-Lead,
+tr:hover .status-Lead,
+tr:active .status-Lead,
+tr.active .status-Lead {
+  background: #EEEEEE !important;
+  color: #424242 !important;
+  border: none !important;
+}
+
+.status-Active,
+tr:hover .status-Active,
+tr:active .status-Active,
+tr.active .status-Active {
+  background: #E3F2FD !important;
+  color: #1565C0 !important;
+  border: none !important;
+}
+
+.status-Won,
+tr:hover .status-Won,
+tr:active .status-Won,
+tr.active .status-Won {
+  background: #E8F5E9 !important;
+  color: #2E7D32 !important;
+  border: none !important;
+}
+
+.status-Lost,
+tr:hover .status-Lost,
+tr:active .status-Lost,
+tr.active .status-Lost {
+  background: #FFEBEE !important;
+  color: #C62828 !important;
+  border: none !important;
+}
+
+.status-Draft,
+tr:hover .status-Draft,
+tr:active .status-Draft {
+  background: #EEEEEE !important;
+  color: #424242 !important;
+  border: none !important;
+}
+
+.status-Sent,
+tr:hover .status-Sent,
+tr:active .status-Sent {
+  background: #E3F2FD !important;
+  color: #1565C0 !important;
+  border: none !important;
+}
+
+.status-Accepted,
+tr:hover .status-Accepted,
+tr:active .status-Accepted {
+  background: #E8F5E9 !important;
+  color: #2E7D32 !important;
+  border: none !important;
+}
+
+.status-Rejected,
+tr:hover .status-Rejected,
+tr:active .status-Rejected {
+  background: #FFEBEE !important;
+  color: #C62828 !important;
+  border: none !important;
+}
+
+/* ── NEW PROJECT MODAL — Compact fit ───────────── */
+#newProjectModal .modal {
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+}
+
+#newProjectModal .form-group {
+  margin-bottom: 0;
+}
+
+#newProjectModal label {
+  font-size: 0.78rem;
+  margin-bottom: 3px;
+}
+
+#newProjectModal input,
+#newProjectModal select {
+  padding: 7px 10px;
+  font-size: 0.88rem;
+}
 .status-Lead {
   background: #F5F5F5;
   color: #616161;
