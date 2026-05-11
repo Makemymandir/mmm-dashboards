@@ -120,14 +120,16 @@ function renderRoughList() {
   html += '<th style="text-align:right;">Solid Surface</th><th style="text-align:right;">Solid Wood</th><th style="text-align:right;">HDHMR+Duco</th><th></th>';
   html += '</tr></thead><tbody>';
   roughEstimates.forEach(function(e) {
-    html += '<tr><td><span class="project-id-cell">' + escapeHtml(e.estimate_id) + '</span></td>';
+    html += '<tr>';
+    html += '<td><span class="project-id-cell">' + escapeHtml(e.estimate_id) + '</span></td>';
     html += '<td style="color:var(--grey);font-size:0.85rem;">' + formatDate(e.created_at) + '</td>';
     html += '<td style="color:var(--grey);font-size:0.85rem;">' + escapeHtml(e.created_by || '') + '</td>';
     html += '<td>' + (e.cubic_feet ? Number(e.cubic_feet).toFixed(2) : '—') + '</td>';
     html += '<td style="text-align:right;">' + formatINR(e.solid_surface) + '</td>';
     html += '<td style="text-align:right;">' + formatINR(e.solid_wood) + '</td>';
     html += '<td style="text-align:right;">' + formatINR(e.hdhmr_duco) + '</td>';
-    html += '<td style="text-align:right;"><button class="btn-text" onclick="viewRoughEstimate(\'' + e.estimate_id + '\')">View</button></td></tr>';
+    html += '<td style="text-align:right;"><button class="btn-text" onclick="viewRoughEstimate(\'' + e.estimate_id + '\')">View</button></td>';
+    html += '</tr>';
   });
   html += '</tbody></table></div>';
   container.innerHTML = html;
@@ -143,50 +145,58 @@ async function loadQuotations() {
     if (!result.ok) { container.innerHTML = '<div class="empty-tab"><h3>Error</h3></div>'; return; }
     quotations = result.quotations || [];
     renderQuotationsList();
-  } catch (err) { container.innerHTML = '<div class="empty-tab"><h3>Connection error</h3></div>'; }
+  } catch (err) {
+    container.innerHTML = '<div class="empty-tab"><h3>Connection error</h3></div>';
+  }
 }
 
 function renderQuotationsList() {
   const container = document.getElementById('quotationsListContainer');
   if (!container) return;
   var html = '<div style="display:flex;justify-content:flex-end;margin-bottom:16px;">';
-  html += '<a href="final-quotation.html?project_id=' + encodeURIComponent(currentProject.project_id) + '" class="btn-primary">+ New Quotation</a></div>';
+  html += '<a href="final-quotation.html?project_id=' + encodeURIComponent(currentProject.project_id) + '" class="btn-primary">+ New Quotation</a>';
+  html += '</div>';
   if (quotations.length === 0) {
     html += '<div class="empty-tab"><h3>No quotations yet</h3><p>Click "+ New Quotation" to create the first one.</p></div>';
     container.innerHTML = html;
     return;
   }
-  var statusColors = { 'Draft':'status-Lead','Sent':'status-Active','Accepted':'status-Won','Rejected':'status-Lost' };
+  var statusColors = { 'Draft':'status-Lead', 'Sent':'status-Active', 'Accepted':'status-Won', 'Rejected':'status-Lost' };
   html += '<div class="card"><table class="project-table" style="border-radius:0;box-shadow:none;"><thead><tr>';
   html += '<th>Quotation ID</th><th>Status</th><th>Type</th><th style="text-align:right;">Final Amount</th><th>Created</th><th></th>';
   html += '</tr></thead><tbody>';
   quotations.forEach(function(q) {
     var sc = statusColors[q.status] || 'status-Lead';
     var fa = parseFloat(q.final_amount) || 0;
-    html += '<tr><td><span class="project-id-cell">' + escapeHtml(q.quotation_id) + '</span></td>';
+    html += '<tr>';
+    html += '<td><span class="project-id-cell">' + escapeHtml(q.quotation_id) + '</span></td>';
     html += '<td><span class="status-badge ' + sc + '">' + escapeHtml(q.status) + '</span></td>';
     html += '<td>' + escapeHtml(q.customer_type || 'B2C') + '</td>';
     html += '<td style="text-align:right;"><strong>' + (fa > 0 ? formatINR(fa) : '—') + '</strong></td>';
     html += '<td style="color:var(--grey);font-size:0.85rem;">' + formatDate(q.created_at) + '</td>';
-    html += '<td><a href="final-quotation.html?quotation_id=' + encodeURIComponent(q.quotation_id) + '" class="btn-text">Open →</a></td></tr>';
+    html += '<td><a href="final-quotation.html?quotation_id=' + encodeURIComponent(q.quotation_id) + '" class="btn-text">Open →</a></td>';
+    html += '</tr>';
   });
   html += '</tbody></table></div>';
   container.innerHTML = html;
 }
 
-function newRoughEstimate()  { if (currentProject) window.location.href = 'rough-estimate.html?project_id=' + encodeURIComponent(currentProject.project_id); }
-function viewRoughEstimate(id) { window.location.href = 'rough-estimate.html?estimate_id=' + encodeURIComponent(id); }
+function newRoughEstimate() {
+  if (currentProject) window.location.href = 'rough-estimate.html?project_id=' + encodeURIComponent(currentProject.project_id);
+}
+function viewRoughEstimate(id) {
+  window.location.href = 'rough-estimate.html?estimate_id=' + encodeURIComponent(id);
+}
 function showError(msg) {
   document.getElementById('projectContent').innerHTML =
     '<div class="empty-state"><h3>' + escapeHtml(msg) + '</h3><a href="dashboard.html" class="btn-primary" style="display:inline-block;margin-top:12px;">← Dashboard</a></div>';
 }
 
 function render() {
-  const p = currentProject;
+  const p     = currentProject;
   const stage = getStage(p.status);
-  const container = document.getElementById('projectContent');
 
-  container.innerHTML = `
+  document.getElementById('projectContent').innerHTML = `
     <div class="project-header">
       <div class="project-header-left">
         <div class="project-id-large">${escapeHtml(p.project_id)}</div>
@@ -221,14 +231,18 @@ function render() {
     </div>
 
     <div class="tabs">
-      <button class="tab ${activeTab==='details'    ?'tab-active':''}" data-tab="details"     onclick="switchTab('details')">Project Details</button>
-      <button class="tab ${activeTab==='rough'      ?'tab-active':''}" data-tab="rough"       onclick="switchTab('rough')">Rough Estimates</button>
-      <button class="tab ${activeTab==='quotations' ?'tab-active':''}" data-tab="quotations"  onclick="switchTab('quotations')">Final Quotations</button>
+      <button class="tab ${activeTab==='details'    ?'tab-active':''}" data-tab="details"    onclick="switchTab('details')">Project Details</button>
+      <button class="tab ${activeTab==='rough'      ?'tab-active':''}" data-tab="rough"      onclick="switchTab('rough')">Rough Estimates</button>
+      <button class="tab ${activeTab==='quotations' ?'tab-active':''}" data-tab="quotations" onclick="switchTab('quotations')">Final Quotations</button>
     </div>
 
     <div id="tabDetails"    class="tab-content ${activeTab==='details'    ?'tab-content-active':''}">${renderDetailsTab()}</div>
-    <div id="tabRough"      class="tab-content ${activeTab==='rough'      ?'tab-content-active':''}"><div id="roughListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div></div>
-    <div id="tabQuotations" class="tab-content ${activeTab==='quotations' ?'tab-content-active':''}"><div id="quotationsListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div></div>
+    <div id="tabRough"      class="tab-content ${activeTab==='rough'      ?'tab-content-active':''}">
+      <div id="roughListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
+    </div>
+    <div id="tabQuotations" class="tab-content ${activeTab==='quotations' ?'tab-content-active':''}">
+      <div id="quotationsListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
+    </div>
   `;
 }
 
@@ -242,7 +256,7 @@ function switchTab(name) {
     if (el) el.classList.remove('tab-content-active');
   });
   var map = { details:'tabDetails', rough:'tabRough', quotations:'tabQuotations' };
-  var el = document.getElementById(map[name]);
+  var el  = document.getElementById(map[name]);
   if (el) el.classList.add('tab-content-active');
   if (name === 'rough')      loadRoughEstimates();
   if (name === 'quotations') loadQuotations();
@@ -260,7 +274,7 @@ function renderDetailsTab() {
     ? (parseFloat(p.width_ft) * parseFloat(p.depth_ft) * parseFloat(p.height_ft)).toFixed(2) + ' CFT'
     : null;
 
-  const stage = getStage(p.status);
+  const stage     = getStage(p.status);
   const feeStatus = p.design_fee_status || 'Not Paid';
   const feeColor  = feeStatus === 'Paid' ? '#2E7D32' : feeStatus === 'Redeemable Used' ? '#6A1B9A' : '#C62828';
   const feeBg     = feeStatus === 'Paid' ? '#E8F5E9' : feeStatus === 'Redeemable Used' ? '#F3E5F5' : '#FFEBEE';
@@ -268,7 +282,6 @@ function renderDetailsTab() {
   return `
     <div class="card" style="padding:0;overflow:hidden;">
 
-      <!-- Orange header -->
       <div style="background:linear-gradient(135deg,#E87722,#C5651C);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div style="color:rgba(255,255,255,0.75);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
@@ -277,57 +290,54 @@ function renderDetailsTab() {
           <div style="color:#fff;font-size:1.4rem;font-weight:700;margin-top:2px;">${escapeHtml(p.client_name)}</div>
           <div style="color:rgba(255,255,255,0.85);font-size:0.85rem;margin-top:4px;">${escapeHtml(p.framework)} · ${escapeHtml(p.location || 'No location')}</div>
         </div>
-        <button class="btn-secondary" onclick="enterEditMode()" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">Edit</button>
+        <button class="btn-secondary" onclick="enterEditMode()"
+          style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">Edit</button>
       </div>
 
-      <!-- Client info -->
       <div style="padding:24px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Client Information</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid #F0E6DC;border-radius:10px;overflow:hidden;">
-          ${bRow('📞','Contact', p.contact)}
-          ${bRow('✉️','Email', p.email)}
-          ${bRow('📍','Location', p.location)}
+          ${bRow('📞','Contact',       p.contact)}
+          ${bRow('✉️','Email',         p.email)}
+          ${bRow('📍','Location',      p.location)}
           ${bRow('👤','Customer Type', p.customer_type || 'B2C')}
-          ${bRow('📣','Source', p.source)}
-          ${bRow('📅','Created', formatDate(p.created_at))}
+          ${bRow('📣','Source',        p.source)}
+          ${bRow('📅','Created',       formatDate(p.created_at))}
         </div>
       </div>
 
-      <!-- Mandir specs -->
       <div style="padding:20px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Mandir Specifications</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid #F0E6DC;border-radius:10px;overflow:hidden;">
           ${bRow('🔲','Framework', p.framework)}
-          ${bRow('↔️','Width', p.width_ft ? p.width_ft + ' ft' : null)}
-          ${bRow('↕️','Depth', p.depth_ft ? p.depth_ft + ' ft' : null)}
-          ${bRow('📏','Height', p.height_ft ? p.height_ft + ' ft' : null)}
+          ${bRow('↔️','Width',     p.width_ft  ? p.width_ft  + ' ft' : null)}
+          ${bRow('↕️','Depth',     p.depth_ft  ? p.depth_ft  + ' ft' : null)}
+          ${bRow('📏','Height',    p.height_ft ? p.height_ft + ' ft' : null)}
           ${bRow('📦','Cubic Feet', cft)}
-          ${bRow('💰','Design Fee', '<span style="background:' + feeBg + ';color:' + feeColor + ';padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:600;">' + escapeHtml(feeStatus) + '</span>', true)}
+          ${bRow('💰','Design Fee',
+            '<span style="background:' + feeBg + ';color:' + feeColor + ';padding:2px 8px;border-radius:10px;font-size:0.8rem;font-weight:600;">'
+            + escapeHtml(feeStatus) + '</span>', true)}
         </div>
       </div>
 
-      <!-- Delivery address -->
       ${p.delivery_address ? `
       <div style="padding:20px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Delivery Address</div>
         <div style="background:#F0F4FF;border-left:3px solid #1565C0;border-radius:0 8px 8px 0;padding:12px 16px;font-size:0.9rem;line-height:1.6;">${escapeHtml(p.delivery_address)}</div>
       </div>` : ''}
 
-      <!-- Consultation notes -->
       ${p.consultation_notes ? `
       <div style="padding:20px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Sales Consultation Notes</div>
         <div style="background:#FFF7F0;border-left:3px solid var(--orange);border-radius:0 8px 8px 0;padding:12px 16px;font-size:0.9rem;line-height:1.6;white-space:pre-wrap;">${escapeHtml(p.consultation_notes)}</div>
       </div>` : ''}
 
-      <!-- General notes -->
       ${p.notes ? `
       <div style="padding:20px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Notes</div>
         <div style="background:#FAFAFA;border-left:3px solid var(--grey-light);border-radius:0 8px 8px 0;padding:12px 16px;font-size:0.9rem;line-height:1.6;white-space:pre-wrap;">${escapeHtml(p.notes)}</div>
       </div>` : ''}
 
-      <!-- Audit footer -->
       <div style="background:#FAFAFA;border-top:1px solid #F0E6DC;padding:12px 28px;margin-top:20px;display:flex;gap:24px;font-size:0.78rem;color:var(--grey);">
         <span>Created ${formatDate(p.created_at)} by <strong>${escapeHtml(p.created_by || '—')}</strong></span>
         <span>ID: <strong>${escapeHtml(p.project_id)}</strong></span>
@@ -342,7 +352,8 @@ function bRow(icon, label, value, rawHtml) {
   return '<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #F0E6DC;background:' + (isEmpty ? '#FAFAFA' : '#fff') + ';">'
     + '<span style="font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;">' + icon + '</span>'
     + '<div><div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--grey);font-weight:600;margin-bottom:2px;">' + label + '</div>'
-    + '<div style="font-size:0.9rem;font-weight:' + (isEmpty?'400':'500') + ';color:' + (isEmpty?'var(--grey)':'var(--dark)') + ';">' + display + '</div></div></div>';
+    + '<div style="font-size:0.9rem;font-weight:' + (isEmpty ? '400' : '500') + ';color:' + (isEmpty ? 'var(--grey)' : 'var(--dark)') + ';">' + display + '</div>'
+    + '</div></div>';
 }
 
 function renderEditForm(p) {
@@ -352,9 +363,7 @@ function renderEditForm(p) {
         <h3>Edit Project</h3>
         <div style="display:flex;gap:8px;">
           <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
-          <button class="btn-primary" onclick="saveEdit()" width_ft:  document.getElementById('ed_width').value  !== '' ? parseFloat(document.getElementById('ed_width').value)  : '',
-depth_ft:  document.getElementById('ed_depth').value  !== '' ? parseFloat(document.getElementById('ed_depth').value)  : '',
-height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(document.getElementById('ed_height').value) : '',id="saveBtn">Save Changes</button>
+          <button class="btn-primary" onclick="saveEdit()" id="saveBtn">Save Changes</button>
         </div>
       </div>
 
@@ -367,21 +376,21 @@ height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(docume
         <div class="form-group">
           <label>Customer Type</label>
           <select id="ed_customer_type">
-            <option value="B2C" ${p.customer_type==='B2C'?'selected':''}>B2C (Retail)</option>
-            <option value="B2B" ${p.customer_type==='B2B'?'selected':''}>B2B (Trade)</option>
+            <option value="B2C" ${p.customer_type === 'B2C' ? 'selected' : ''}>B2C (Retail)</option>
+            <option value="B2B" ${p.customer_type === 'B2B' ? 'selected' : ''}>B2B (Trade)</option>
           </select>
         </div>
         <div class="form-group">
           <label>Source</label>
           <select id="ed_source">
-            <option value="" ${!p.source?'selected':''}>— Select —</option>
-            <option value="Configurator"  ${p.source==='Configurator'  ?'selected':''}>Configurator Form</option>
-            <option value="Walk-in"       ${p.source==='Walk-in'       ?'selected':''}>Walk-in</option>
-            <option value="WhatsApp"      ${p.source==='WhatsApp'      ?'selected':''}>WhatsApp Direct</option>
-            <option value="Referral"      ${p.source==='Referral'      ?'selected':''}>Referral</option>
-            <option value="Instagram"     ${p.source==='Instagram'     ?'selected':''}>Instagram</option>
-            <option value="Google"        ${p.source==='Google'        ?'selected':''}>Google Search</option>
-            <option value="Other"         ${p.source==='Other'         ?'selected':''}>Other</option>
+            <option value=""            ${!p.source                    ? 'selected' : ''}>— Select —</option>
+            <option value="Configurator" ${p.source==='Configurator'  ? 'selected' : ''}>Configurator Form</option>
+            <option value="Walk-in"      ${p.source==='Walk-in'       ? 'selected' : ''}>Walk-in</option>
+            <option value="WhatsApp"     ${p.source==='WhatsApp'      ? 'selected' : ''}>WhatsApp Direct</option>
+            <option value="Referral"     ${p.source==='Referral'      ? 'selected' : ''}>Referral</option>
+            <option value="Instagram"    ${p.source==='Instagram'     ? 'selected' : ''}>Instagram</option>
+            <option value="Google"       ${p.source==='Google'        ? 'selected' : ''}>Google Search</option>
+            <option value="Other"        ${p.source==='Other'         ? 'selected' : ''}>Other</option>
           </select>
         </div>
       </div>
@@ -392,32 +401,32 @@ height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(docume
           <label>Framework <span style="color:var(--grey);font-size:0.8rem;">(cannot change)</span></label>
           <input type="text" value="${escapeAttr(p.framework)}" disabled style="background:var(--grey-bg);">
         </div>
-        <div class="form-group"><label>Width (ft)</label><input type="number" step="0.5" id="ed_width" value="${p.width_ft||''}"></div>
-        <div class="form-group"><label>Depth (ft)</label><input type="number" step="0.5" id="ed_depth" value="${p.depth_ft||''}"></div>
-        <div class="form-group"><label>Height (ft)</label><input type="number" step="0.5" id="ed_height" value="${p.height_ft||''}"></div>
+        <div class="form-group"><label>Width (ft)</label><input type="number" step="0.5" id="ed_width"  value="${p.width_ft  || ''}"></div>
+        <div class="form-group"><label>Depth (ft)</label><input type="number" step="0.5" id="ed_depth"  value="${p.depth_ft  || ''}"></div>
+        <div class="form-group"><label>Height (ft)</label><input type="number" step="0.5" id="ed_height" value="${p.height_ft || ''}"></div>
         <div class="form-group">
           <label>Design Fee Status</label>
           <select id="ed_design_fee_status">
-            <option value="Not Paid"         ${p.design_fee_status==='Not Paid'         ?'selected':''}>Not Paid</option>
-            <option value="Paid"             ${p.design_fee_status==='Paid'             ?'selected':''}>Paid</option>
-            <option value="Redeemable Used"  ${p.design_fee_status==='Redeemable Used'  ?'selected':''}>Redeemable Used</option>
+            <option value="Not Paid"        ${p.design_fee_status==='Not Paid'        ? 'selected' : ''}>Not Paid</option>
+            <option value="Paid"            ${p.design_fee_status==='Paid'            ? 'selected' : ''}>Paid</option>
+            <option value="Redeemable Used" ${p.design_fee_status==='Redeemable Used' ? 'selected' : ''}>Redeemable Used</option>
           </select>
         </div>
         <div class="form-group"><label>Expected Completion</label><input type="date" id="ed_completion" value="${formatDateForInput(p.expected_completion)}"></div>
       </div>
 
-      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:700;margin:16px 0 12px;">Delivery & Notes</div>
+      <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:700;margin:16px 0 12px;">Delivery &amp; Notes</div>
       <div class="form-group" style="margin-bottom:12px;">
         <label>Delivery Address</label>
-        <textarea id="ed_delivery_address" rows="2" placeholder="Full delivery address for installation...">${escapeHtml(p.delivery_address||'')}</textarea>
+        <textarea id="ed_delivery_address" rows="2" placeholder="Full delivery address for installation...">${escapeHtml(p.delivery_address || '')}</textarea>
       </div>
       <div class="form-group" style="margin-bottom:12px;">
         <label>Sales Consultation Notes</label>
-        <textarea id="ed_consultation_notes" rows="3" placeholder="What did the client say? Requirements, preferences, budget discussed...">${escapeHtml(p.consultation_notes||'')}</textarea>
+        <textarea id="ed_consultation_notes" rows="3" placeholder="What did the client say? Requirements, preferences, budget discussed...">${escapeHtml(p.consultation_notes || '')}</textarea>
       </div>
       <div class="form-group">
         <label>General Notes</label>
-        <textarea id="ed_notes" rows="2">${escapeHtml(p.notes||'')}</textarea>
+        <textarea id="ed_notes" rows="2">${escapeHtml(p.notes || '')}</textarea>
       </div>
     </div>
   `;
@@ -427,11 +436,17 @@ function enterEditMode() { isEditMode = true;  render(); }
 function cancelEdit()    { isEditMode = false; render(); }
 
 async function saveEdit() {
-  width_ft:  document.getElementById('ed_width').value  !== '' ? parseFloat(document.getElementById('ed_width').value)  : '',
-depth_ft:  document.getElementById('ed_depth').value  !== '' ? parseFloat(document.getElementById('ed_depth').value)  : '',
-height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(document.getElementById('ed_height').value) : '',
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
   const clientName = document.getElementById('ed_client_name').value.trim();
-  if (!clientName) { toast('Client name is required', 'error'); btn.disabled = false; btn.textContent = 'Save Changes'; return; }
+  if (!clientName) {
+    toast('Client name is required', 'error');
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+    return;
+  }
 
   const updated = {
     project_id:          currentProject.project_id,
@@ -439,9 +454,9 @@ height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(docume
     contact:             document.getElementById('ed_contact').value.trim(),
     email:               document.getElementById('ed_email').value.trim(),
     location:            document.getElementById('ed_location').value.trim(),
-    width_ft:            parseFloat(document.getElementById('ed_width').value) || '',
-    depth_ft:            parseFloat(document.getElementById('ed_depth').value) || '',
-    height_ft:           parseFloat(document.getElementById('ed_height').value) || '',
+    width_ft:            document.getElementById('ed_width').value  !== '' ? parseFloat(document.getElementById('ed_width').value)  : '',
+    depth_ft:            document.getElementById('ed_depth').value  !== '' ? parseFloat(document.getElementById('ed_depth').value)  : '',
+    height_ft:           document.getElementById('ed_height').value !== '' ? parseFloat(document.getElementById('ed_height').value) : '',
     customer_type:       document.getElementById('ed_customer_type').value,
     source:              document.getElementById('ed_source').value,
     design_fee_status:   document.getElementById('ed_design_fee_status').value,
@@ -463,12 +478,14 @@ height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(docume
       toast('Project updated', 'success');
     } else {
       toast(result.error || 'Failed to save', 'error');
-      btn.disabled = false; btn.textContent = 'Save Changes';
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
     }
   } catch (err) {
     console.error(err);
     toast('Connection error', 'error');
-    btn.disabled = false; btn.textContent = 'Save Changes';
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
   }
 }
 
@@ -482,11 +499,6 @@ async function changeStatus(newStatus) {
       currentProject._cachedAt = Date.now();
       sessionStorage.setItem('mmm_project_' + currentProject.project_id, JSON.stringify(currentProject));
       sessionStorage.removeItem('mmm_all_projects');
-      // Update status select color
-      var sel   = document.getElementById('statusSelect');
-      var stage = getStage(newStatus);
-      if (sel) { sel.style.borderColor = stage.color; sel.style.color = stage.color; }
-      // Update header phase text
       render();
       toast('Stage → ' + newStatus, 'success');
     } else {
@@ -507,24 +519,35 @@ function escapeHtml(str) {
   if (str === null || str === undefined) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
+
 function escapeAttr(str) {
   if (str === null || str === undefined) return '';
   return String(str).replace(/"/g,'&quot;');
 }
+
 function formatDate(iso) {
   if (!iso) return '';
-  try { var d = new Date(iso); if (isNaN(d.getTime())) return ''; return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }); }
-  catch (e) { return ''; }
+  try {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  } catch (e) { return ''; }
 }
+
 function formatDateForInput(iso) {
   if (!iso) return '';
-  try { var d = new Date(iso); if (isNaN(d.getTime())) return ''; return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
-  catch (e) { return ''; }
+  try {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  } catch (e) { return ''; }
 }
+
 function formatINR(num) {
   if (num === null || num === undefined || num === '' || isNaN(num)) return '—';
   return '₹' + Number(num).toLocaleString('en-IN', { maximumFractionDigits: 0 });
 }
+
 function toast(msg, type) {
   type = type || 'success';
   var existing = document.querySelector('.toast');
@@ -533,5 +556,9 @@ function toast(msg, type) {
   t.className = 'toast toast-' + type;
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(function() { t.style.opacity='0'; t.style.transition='opacity 0.3s'; setTimeout(function(){ t.remove(); }, 300); }, 2500);
+  setTimeout(function() {
+    t.style.opacity = '0';
+    t.style.transition = 'opacity 0.3s';
+    setTimeout(function() { t.remove(); }, 300);
+  }, 2500);
 }
