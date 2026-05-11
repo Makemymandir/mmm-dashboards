@@ -352,7 +352,9 @@ function renderEditForm(p) {
         <h3>Edit Project</h3>
         <div style="display:flex;gap:8px;">
           <button class="btn-secondary" onclick="cancelEdit()">Cancel</button>
-          <button class="btn-primary" onclick="saveEdit()" id="saveBtn">Save Changes</button>
+          <button class="btn-primary" onclick="saveEdit()" width_ft:  document.getElementById('ed_width').value  !== '' ? parseFloat(document.getElementById('ed_width').value)  : '',
+depth_ft:  document.getElementById('ed_depth').value  !== '' ? parseFloat(document.getElementById('ed_depth').value)  : '',
+height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(document.getElementById('ed_height').value) : '',id="saveBtn">Save Changes</button>
         </div>
       </div>
 
