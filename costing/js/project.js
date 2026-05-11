@@ -425,9 +425,9 @@ function enterEditMode() { isEditMode = true;  render(); }
 function cancelEdit()    { isEditMode = false; render(); }
 
 async function saveEdit() {
-  const btn = document.getElementById('saveBtn');
-  btn.disabled = true; btn.textContent = 'Saving...';
-
+  width_ft:  document.getElementById('ed_width').value  !== '' ? parseFloat(document.getElementById('ed_width').value)  : '',
+depth_ft:  document.getElementById('ed_depth').value  !== '' ? parseFloat(document.getElementById('ed_depth').value)  : '',
+height_ft: document.getElementById('ed_height').value !== '' ? parseFloat(document.getElementById('ed_height').value) : '',
   const clientName = document.getElementById('ed_client_name').value.trim();
   if (!clientName) { toast('Client name is required', 'error'); btn.disabled = false; btn.textContent = 'Save Changes'; return; }
 
