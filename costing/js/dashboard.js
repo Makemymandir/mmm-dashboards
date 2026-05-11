@@ -222,10 +222,9 @@ function closeNewProjectModal() {
 }
 
 async function createProject() {
-  var btn     = document.getElementById('createProjectBtn');
-  var errorEl = document.getElementById('newProjectError');
-  errorEl.style.display = 'none';
-
+  width_ft:  document.getElementById('np_width').value  !== '' ? parseFloat(document.getElementById('np_width').value)  : '',
+depth_ft:  document.getElementById('np_depth').value  !== '' ? parseFloat(document.getElementById('np_depth').value)  : '',
+height_ft: document.getElementById('np_height').value !== '' ? parseFloat(document.getElementById('np_height').value) : '',
   var clientName = document.getElementById('np_client_name').value.trim();
   var contact    = document.getElementById('np_contact').value.trim();
   var location   = document.getElementById('np_location').value.trim();
