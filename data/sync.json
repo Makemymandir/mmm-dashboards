@@ -103,14 +103,7 @@
       "hook": "",
       "caption": "",
       "brief": "",
-      "cta": "",
-      "slides": [
-        "Slide 1",
-        "Slide 2",
-        "Slide 3",
-        "Slide 4",
-        "Slide 5"
-      ]
+      "cta": ""
     },
     "10": {
       "title": "3D AI Mandir 26/5/2025",
@@ -973,6 +966,10 @@
       "1": {
         "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-9-slide-1.jpg",
         "ts": 1778592144917
+      },
+      "2": {
+        "url": "https://raw.githubusercontent.com/Makemymandir/mmm-dashboards/main/data/images/post-9-slide-2.jpg",
+        "ts": 1778592156006
       }
     }
   },
