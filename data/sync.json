@@ -103,7 +103,14 @@
       "hook": "",
       "caption": "",
       "brief": "",
-      "cta": ""
+      "cta": "",
+      "slides": [
+        "Slide 1",
+        "Slide 2",
+        "Slide 3",
+        "Slide 4",
+        "Slide 5"
+      ]
     },
     "10": {
       "title": "3D AI Mandir 26/5/2025",
@@ -151,6 +158,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 9,
+      "user": "Team Member",
+      "time": "2026-05-12T13:22:47.348Z"
+    },
     {
       "action": "month-created",
       "note": "June 2026 — 27 posts (1 festival posts)",
