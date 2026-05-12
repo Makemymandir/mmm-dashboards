@@ -185,6 +185,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--light);col
 .ab-copy:hover{background:var(--light);}
 .ab-dl{border-color:var(--o);color:var(--o);}
 .ab-dl:hover{background:#FFF3E8;}
+.ab-rep{border-color:#7b3594;color:#7b3594;}
+.ab-rep:hover{background:rgba(123,53,148,.08);}
 
 /* MODAL */
 .mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;align-items:center;justify-content:center;padding:16px;}
@@ -457,7 +459,24 @@ input[type=file]{display:none;}
 .br-v{color:var(--dark);flex:1;word-break:break-word;}
 .br-camp{background:rgba(123,53,148,.08);margin:5px -12px -9px;padding:6px 12px;border-radius:0 0 8px 8px;border-top:1px solid rgba(123,53,148,.15);}
 
+/* v7.1: QUICK STATS strip — at top of All Posts page */
+.qs-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 16px 14px;}
+.qs-card{background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:10px 12px;}
+.qs-card.qs-clickable{cursor:pointer;transition:all .15s;}
+.qs-card.qs-clickable:hover{border-color:var(--o);background:#fefbf6;}
+.qs-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--mid);}
+.qs-val{font-size:22px;font-weight:700;color:var(--dark);font-family:'Georgia',serif;line-height:1.1;margin-top:2px;}
+.qs-val-sm{font-size:16px;}
+.qs-tot{font-size:13px;color:var(--mid);font-weight:400;}
+.qs-sub{font-size:10px;color:var(--mid);margin-top:2px;}
+.qs-card.qs-week{background:linear-gradient(135deg,rgba(232,119,34,.08),rgba(139,58,31,.05));}
+.qs-card.qs-next{background:linear-gradient(135deg,rgba(15,110,86,.06),rgba(212,165,116,.05));}
+@media(max-width:768px){
+  .qs-strip{grid-template-columns:repeat(2,1fr);}
+}
+
 /* v6.8: AI STUDIO */
+
 .ais-wrap{max-width:880px;margin:0 auto;padding:14px 16px 80px;}
 .ais-intro{font-size:12.5px;color:var(--dark);background:linear-gradient(135deg,rgba(123,53,148,.08),rgba(232,119,34,.06));padding:13px 16px;border-radius:9px;margin-bottom:14px;border:1px solid var(--bdr);line-height:1.6;}
 .ais-tabs{display:flex;gap:5px;background:var(--w);border:1px solid var(--bdr);border-radius:9px;padding:4px;margin-bottom:14px;flex-wrap:wrap;}
@@ -469,9 +488,7 @@ input[type=file]{display:none;}
 .ais-fr{display:flex;flex-direction:column;gap:5px;}
 .ais-fr label{font-size:11.5px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:.5px;}
 .ais-opt{font-weight:400;color:var(--mid);text-transform:none;letter-spacing:0;font-size:11px;}
-/* When ais-fr contains multiple inner divs (dual-column layout for Length+Goal) */
 .ais-fr > div{display:flex;flex-direction:column;gap:5px;}
-/* If the parent ais-fr has multiple direct >div children, lay them out as columns */
 .ais-fr:has(> div + div){flex-direction:row;gap:10px;}
 .ais-i{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:9px 12px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--dark);outline:none;transition:border-color .15s;box-sizing:border-box;line-height:1.5;}
 .ais-i:focus{border-color:var(--o);box-shadow:0 0 0 3px rgba(232,119,34,.12);}
@@ -483,6 +500,146 @@ textarea.ais-i{resize:vertical;min-height:60px;}
   .ais-fr{flex-direction:column;}
   .ais-tabs{flex-wrap:wrap;}
   .ais-tab{min-width:48%;}
+}
+
+/* v7.1: AI PROMPT LIBRARY */
+.lib-empty{text-align:center;padding:50px 30px;}
+.lib-empty-small{text-align:center;padding:30px;color:var(--mid);font-size:12.5px;background:var(--light);border-radius:8px;}
+.lib-wrap{display:flex;flex-direction:column;gap:14px;}
+.lib-toolbar{display:flex;flex-direction:column;gap:10px;}
+.lib-search{width:100%;background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:10px 14px;font-family:'Inter',sans-serif;font-size:13px;color:var(--dark);outline:none;box-sizing:border-box;}
+.lib-search:focus{border-color:var(--o);box-shadow:0 0 0 3px rgba(232,119,34,.12);}
+.lib-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.lib-chip{background:#fff;border:1px solid var(--bdr);color:var(--mid);font-size:11.5px;font-weight:600;padding:6px 11px;border-radius:14px;cursor:pointer;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:5px;}
+.lib-chip:hover{border-color:var(--o);color:var(--dark);}
+.lib-chip.on{background:var(--dark);color:#fff;border-color:var(--dark);}
+.lib-chip-n{background:rgba(0,0,0,.1);padding:1px 6px;border-radius:9px;font-size:10px;}
+.lib-chip.on .lib-chip-n{background:rgba(255,255,255,.18);}
+.lib-grid{display:flex;flex-direction:column;gap:10px;}
+.lib-card{background:#fff;border:1px solid var(--bdr);border-radius:9px;padding:12px 14px;}
+.lib-card-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px;}
+.lib-card-name{font-size:13px;font-weight:700;color:var(--dark);line-height:1.4;}
+.lib-mode{font-size:10px;font-weight:600;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;}
+.lib-mode-image{background:#fff3e8;color:#cf6a1d;}
+.lib-mode-video{background:#f0e8ff;color:#7b3594;}
+.lib-mode-caption{background:#e8f5f0;color:#0F6E56;}
+.lib-mode-voice{background:#ffeaea;color:#A32D2D;}
+.lib-card-meta{font-size:10px;color:var(--mid);margin-bottom:6px;}
+.lib-tags{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;}
+.lib-tag{background:var(--light);color:var(--mid);font-size:10px;padding:2px 8px;border-radius:9px;}
+.lib-card-text{width:100%;background:#fafaf7;border:1px solid var(--bdr);border-radius:6px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:11.5px;color:var(--dark);resize:none;box-sizing:border-box;line-height:1.55;}
+.lib-card-actions{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.ai-save{background:#fff;border-color:#7b3594;color:#7b3594;}
+.ai-save:hover{background:rgba(123,53,148,.08);}
+.ai-del{background:#fff;border-color:var(--rd);color:var(--rd);}
+.ai-del:hover{background:#ffeaea;}
+
+/* v7.1: CALENDAR VIEW */
+.cal-wrap{max-width:1200px;margin:0 auto;padding:14px 16px 80px;}
+.cal-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+.cal-title{margin:0;font-family:'Georgia',serif;font-size:28px;color:var(--dark);font-weight:600;}
+.cal-subtitle{font-size:12.5px;color:var(--mid);margin-top:4px;}
+.cal-tip{background:linear-gradient(135deg,rgba(232,119,34,.08),rgba(212,165,116,.05));padding:8px 14px;border-radius:7px;font-size:11.5px;color:var(--dark);border:1px solid var(--bdr);}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;background:var(--w);padding:10px 14px;border:1px solid var(--bdr);border-radius:9px;margin-bottom:12px;font-size:11px;color:var(--dark);}
+.cal-leg{display:inline-flex;align-items:center;gap:5px;}
+.cal-leg-dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+.cal-leg-spacer{flex:1;}
+.cal-leg-icon{color:var(--mid);font-size:11px;}
+.cal-weekhdr{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;}
+.cal-weekhdr > div{text-align:center;font-size:10.5px;font-weight:700;color:var(--mid);padding:6px 0;text-transform:uppercase;letter-spacing:.5px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-cell{background:var(--w);border:1px solid var(--bdr);border-radius:7px;min-height:120px;padding:7px;display:flex;flex-direction:column;gap:4px;transition:all .15s;}
+.cal-cell.cal-empty{background:transparent;border:none;}
+.cal-cell.cal-past{opacity:.72;}
+.cal-cell.cal-today{border:2px solid var(--o);background:linear-gradient(135deg,#fffbf6,#fff);box-shadow:0 0 0 3px rgba(232,119,34,.1);}
+.cal-cell.cal-noposts{background:#fdfaf5;}
+.cal-date{font-size:13px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:6px;}
+.cal-today-badge{background:var(--o);color:#fff;font-size:8.5px;padding:2px 6px;border-radius:8px;font-weight:600;letter-spacing:.4px;}
+.cal-empty-day{font-size:10px;color:var(--mid);font-style:italic;margin-top:4px;opacity:.7;}
+.cal-post{display:flex;align-items:center;gap:4px;background:#f5f0eb;border-left:3px solid var(--mid);border-radius:4px;padding:4px 6px;font-size:10.5px;color:var(--dark);cursor:pointer;transition:transform .1s;line-height:1.3;}
+.cal-post:hover{transform:translateX(2px);filter:brightness(.96);}
+.cal-post-time{font-size:9px;color:var(--mid);font-weight:600;flex-shrink:0;}
+.cal-post-icon{flex-shrink:0;font-size:11px;}
+.cal-post-title{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px;}
+.cal-post-st{font-size:10px;font-weight:700;flex-shrink:0;}
+@media(max-width:900px){
+  .cal-cell{min-height:80px;padding:5px;}
+  .cal-post-title{display:none;}
+  .cal-post-time{display:none;}
+  .cal-post{padding:3px 5px;justify-content:center;}
+}
+@media(max-width:600px){
+  .cal-grid{grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-cell{min-height:60px;padding:3px;}
+  .cal-date{font-size:11px;}
+  .cal-today-badge{display:none;}
+  .cal-empty-day{display:none;}
+}
+
+/* v7.4: Calendar month nav + Create-month button */
+.cal-monthnav{display:inline-flex;background:var(--w);border:1px solid var(--bdr);border-radius:8px;overflow:hidden;}
+.cal-navbtn{background:transparent;border:none;padding:7px 13px;font-size:12px;color:var(--dark);cursor:pointer;font-family:'Inter',sans-serif;border-right:1px solid var(--bdr);}
+.cal-navbtn:last-child{border-right:none;}
+.cal-navbtn:hover{background:var(--light);}
+.cal-navbtn-today{font-weight:600;color:var(--o);}
+.cal-createbtn{background:linear-gradient(135deg,var(--o),#cf6a1d);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-weight:600;font-size:12.5px;cursor:pointer;font-family:'Inter',sans-serif;letter-spacing:.3px;box-shadow:0 2px 6px rgba(232,119,34,.25);}
+.cal-createbtn:hover{filter:brightness(1.05);}
+
+/* v7.4: Create-month modal */
+.cm-intro{font-size:13px;color:var(--dark);background:linear-gradient(135deg,rgba(232,119,34,.08),rgba(212,165,116,.05));padding:12px 15px;border-radius:8px;border:1px solid var(--bdr);line-height:1.6;margin-bottom:14px;}
+.cm-section{margin-bottom:14px;}
+.cm-section-hd{font-size:11.5px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;}
+.cm-fest-list,.cm-info-list{margin:0;padding-left:20px;font-size:12.5px;color:var(--dark);line-height:1.7;}
+.cm-fest-list li,.cm-info-list li{margin-bottom:3px;}
+.cm-section-hint{font-size:10.5px;color:var(--mid);font-style:italic;margin-top:6px;}
+.cm-warn{background:rgba(232,119,34,.07);padding:10px 13px;border-radius:7px;font-size:12px;color:var(--dark);border-left:3px solid var(--o);line-height:1.5;}
+
+/* v7.3: FESTIVAL PLANNER */
+.fest-wrap{max-width:1100px;margin:0 auto;padding:14px 16px 80px;}
+.fest-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:14px;flex-wrap:wrap;}
+.fest-title{margin:0;font-family:'Georgia',serif;font-size:28px;color:var(--dark);font-weight:600;}
+.fest-subtitle{font-size:12.5px;color:var(--mid);margin-top:4px;}
+.fest-toggle{display:flex;gap:5px;}
+.fest-callout{padding:11px 16px;border-radius:9px;margin-bottom:12px;border:1px solid var(--bdr);}
+.fest-callout-fire{background:linear-gradient(135deg,rgba(232,119,34,.15),rgba(163,45,45,.08));border-color:var(--o);}
+.fest-callout-info{background:linear-gradient(135deg,rgba(15,110,86,.08),rgba(212,165,116,.05));}
+.fest-callout-hd{font-size:11.5px;font-weight:700;color:var(--dark);letter-spacing:.6px;margin-bottom:5px;}
+.fest-callout-body{font-size:12px;color:var(--dark);line-height:1.6;}
+.fest-callout-item{display:inline-block;margin-right:2px;}
+.fest-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.fest-chip-sep{display:inline-block;width:1px;height:18px;background:var(--bdr);margin:0 4px;}
+.fest-list{display:flex;flex-direction:column;gap:11px;}
+.fest-card{background:#fff;border:1px solid var(--bdr);border-radius:10px;padding:14px 16px;}
+.fest-card.fest-past{opacity:.7;}
+.fest-card-row{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:10px;}
+.fest-card-left{flex:1;}
+.fest-card-right{flex-shrink:0;}
+.fest-card-name{font-size:15px;font-weight:700;color:var(--dark);font-family:'Georgia',serif;line-height:1.3;}
+.fest-card-date{font-size:11.5px;color:var(--mid);margin-top:3px;display:flex;align-items:center;gap:8px;}
+.fest-card-badges{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.fest-comm{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:9px;letter-spacing:.3px;}
+.fest-days{font-size:10px;font-weight:700;padding:2px 8px;border-radius:9px;letter-spacing:.3px;}
+.fest-days-today{background:#A32D2D;color:#fff;animation:fest-pulse 1.5s ease-in-out infinite;}
+.fest-days-tomorrow{background:var(--o);color:#fff;}
+.fest-days-week{background:#FEF5E7;color:#854F0B;border:1px solid #854F0B;}
+.fest-days-soon{background:#FEF5E7;color:#854F0B;}
+.fest-days-far{background:var(--light);color:var(--mid);}
+.fest-days-past{background:var(--light);color:var(--mid);font-weight:500;}
+@keyframes fest-pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+.fest-status-sel{background:#fff;border:1px solid var(--bdr);border-radius:7px;padding:7px 11px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;outline:none;min-width:135px;}
+.fest-approx{font-size:9.5px;color:#854F0B;background:#FEF5E7;padding:2px 7px;border-radius:8px;font-weight:600;margin-left:4px;cursor:help;}
+.fest-card-sig{font-size:11.5px;color:var(--dark);line-height:1.55;margin-bottom:6px;padding:8px 12px;background:#fafaf7;border-radius:6px;border-left:3px solid var(--mid);}
+.fest-card-sig b{color:var(--mid);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px;}
+.fest-card-angle{font-size:11.5px;color:var(--dark);line-height:1.55;margin-bottom:9px;padding:8px 12px;background:linear-gradient(135deg,rgba(232,119,34,.06),rgba(212,165,116,.04));border-radius:6px;border-left:3px solid var(--o);}
+.fest-card-angle b{color:var(--o);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:2px;}
+.fest-card-notes-row{display:flex;align-items:stretch;}
+.fest-card-notes{width:100%;background:#fffef9;border:1px dashed var(--bdr);border-radius:6px;padding:8px 11px;font-family:'Inter',sans-serif;font-size:11.5px;color:var(--dark);outline:none;resize:vertical;min-height:38px;box-sizing:border-box;line-height:1.5;}
+.fest-card-notes:focus{border-style:solid;border-color:var(--o);background:#fff;box-shadow:0 0 0 3px rgba(232,119,34,.1);}
+.fest-card-notes::placeholder{color:var(--mid);font-style:italic;}
+@media(max-width:768px){
+  .fest-card-row{flex-direction:column;}
+  .fest-card-right{width:100%;}
+  .fest-status-sel{width:100%;}
 }
 
 /* v5: Brand DNA */
@@ -603,6 +760,7 @@ textarea.cmp-fi{resize:vertical;min-height:42px;line-height:1.5;}
     <div class="sb-nav">
       <div class="nav-s">Posts</div>
       <div class="nav-item active" onclick="navTo('all',this)"><span class="nav-icon">📋</span>All Posts<span class="nav-cnt" id="nc-all">27</span></div>
+      <div class="nav-item" onclick="navTo('calendar',this)"><span class="nav-icon">📅</span>Calendar</div>
       <div class="nav-item" onclick="navTo('pending',this)"><span class="nav-icon">⏳</span>Pending<span class="nav-cnt am" id="nc-pend">27</span></div>
       <div class="nav-item" onclick="navTo('approved',this)"><span class="nav-icon">✅</span>Approved<span class="nav-cnt g" id="nc-app">0</span></div>
       <div class="nav-item" onclick="navTo('revision',this)"><span class="nav-icon">🔄</span>Revision<span class="nav-cnt am" id="nc-rev">0</span></div>
@@ -612,6 +770,7 @@ textarea.cmp-fi{resize:vertical;min-height:42px;line-height:1.5;}
       <div class="nav-item" onclick="navTo('activity',this)"><span class="nav-icon">📜</span>Activity Log</div>
       <div class="nav-item" onclick="navTo('campaigns',this)"><span class="nav-icon">📅</span>Campaigns<span class="nav-cnt" id="nc-camp">0</span></div>
       <div class="nav-item" onclick="navTo('requests',this)"><span class="nav-icon">📥</span>Content Requests<span class="nav-cnt am" id="nc-req">0</span></div>
+      <div class="nav-item" onclick="navTo('festivals',this)"><span class="nav-icon">🪔</span>Festivals<span class="nav-cnt" id="nc-fest">0</span></div>
       <div class="nav-divider" style="height:1px;background:rgba(255,255,255,.07);margin:6px 8px;"></div>
       <div class="nav-section-lbl" style="font-size:10px;color:rgba(255,255,255,.35);letter-spacing:1.2px;text-transform:uppercase;padding:6px 10px 3px;font-weight:700;">REFERENCE</div>
       <div class="nav-item" onclick="navTo('knowledge',this)"><span class="nav-icon">📚</span>Knowledge Base<span class="nav-cnt" id="nc-know">0</span></div>
@@ -745,36 +904,67 @@ const GH_DATA_PATH = "data/sync.json";
 const GH_IMG_PATH = "data/images";
 const SYNC_INTERVAL = 30000; // Auto-sync every 30 seconds
 
-const POSTS=[
-  {id:1,w:1,d:"May 1",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: apartment mandir reveal",hook:"She sent us a plain wall. We sent back this...",caption:"The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",brief:"30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal.",cta:"DM your space photo",slides:null},
-  {id:2,w:1,d:"May 2",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Corian vs Wood vs Marble: which lasts?",hook:"Choosing your mandir material? Here's what nobody tells you.",caption:"Not all mandir materials are equal. Here's an honest breakdown so you choose right the first time.\n\nSwipe to see which material suits your home, budget, and lifestyle.\n\n#mandirmaterial #corianmandir #woodenmandir #homemandirdesign #makemymandir",brief:"5 slides: Hook, Corian, Wood, Marble, CTA",cta:"DM for material recommendation",slides:["Hook: Choosing your mandir material?","Slide 2: Corian — Pros & Cons","Slide 3: Wood — Pros & Cons","Slide 4: Marble — Pros & Cons","Slide 5: Our Recommendation + CTA"]},
-  {id:3,w:2,d:"May 4",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Wall-mounted mandir — product spotlight",hook:"No dedicated pooja room? No problem.",caption:"Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",brief:"Product photo of wall-mounted Corian mandir with LED.",cta:"WhatsApp/DM to see designs",slides:null},
-  {id:4,w:2,d:"May 5",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Vastu guide: the right wall for your mandir",hook:"Is your mandir in the wrong spot? Here's how to fix it.",caption:"A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",brief:"6 slides: Hook, East wall, North, avoid South, Height, CTA",cta:"DM floor plan",slides:["Hook: Is your mandir in the wrong spot?","Slide 2: East Wall — Most Auspicious","Slide 3: North Wall — Acceptable","Slide 4: Avoid South & West","Slide 5: Height Guidelines","Slide 6: CTA — DM your floor plan"]},
-  {id:5,w:2,d:"May 6",day:"Wed",type:"Reel",plat:"IG",time:"7:30 PM",title:"BTS: how a Corian mandir is made",hook:"Ever wondered how a premium Corian mandir is actually built?",caption:"From raw Corian sheet to sacred centrepiece.\n\nDM us or WhatsApp to start your design conversation.\n\n#corianmandir #mandirmaking #behindthescenes #custommandir #makemymandir",brief:"45-sec BTS: Corian → CNC cutting → assembly → LED → final glow.",cta:"DM to start your design",slides:null},
-  {id:6,w:2,d:"May 7",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Narasimha Jayanti — festive greeting",hook:"Jai Shri Narasimha. May the divine protector guard your home today.",caption:"Jai Shri Narasimha on this blessed Jayanti. 🙏\n\n#NarasimhaJayanti #JaiShriNarasimha #makemymandir",brief:"Devotional graphic in gold and maroon.",cta:"None",slides:null},
-  {id:7,w:2,d:"May 8",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:00 PM",title:"Client testimonial: cabinet mandir",hook:"He wanted a mandir with hidden storage. Here's what we built.",caption:"Mr. Amit Jain wanted a mandir that doesn't look like one when guests come over.\n\nDM us your requirement.\n\n#clienttestimonial #cabinetmandir #custommandir #makemymandir",brief:"10s B-roll → 15s client speaking → reveal shot.",cta:"DM your requirement",slides:null},
-  {id:8,w:2,d:"May 9",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"3 mandir packages — what they cost",hook:"Thinking of a mandir? Here's what budget you actually need.",caption:"Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",brief:"5 slides: Hook, Essential, Premium, Signature, CTA",cta:"DM budget + space for quote",slides:["Hook: What budget do you actually need?","Slide 2: Essential — ₹30,000–50,000","Slide 3: Premium — ₹60,000–1,20,000","Slide 4: Signature — ₹1,50,000+","Slide 5: CTA — DM your budget"]},
-  {id:9,w:2,d:"May 10",day:"Sun",type:"Static",plat:"IG+FB",time:"10:00 AM",title:"Mother's Day — gift her a sacred space",hook:"The best gift for a mother who prays every day.",caption:"She wakes up early for pooja. She lights the diya before anyone else.\n\nThis Mother's Day, gift her the sacred corner she deserves. 🙏\n\n#MothersDay #GiftForMom #Mandir #makemymandir",brief:"Warm graphic: mother at lit mandir. Soft gold tones.",cta:"DM to gift a mandir",slides:null},
-  {id:10,w:3,d:"May 11",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"DM us your space challenge",hook:"Send us a photo of your pooja corner. We'll redesign it — free.",caption:"DM or WhatsApp us a photo of your current pooja corner. Our designer sends back a concept — no cost.\n\nTag someone whose mandir needs an upgrade. 👇\n\n#FreeDesign #CustomMandir #MandirMakeover #makemymandir",brief:"Bold typographic post.",cta:"DM your space photo",slides:null},
-  {id:11,w:3,d:"May 12",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"5 pooja room mistakes people always make",hook:"If your pooja room never feels right, one of these might be why.",caption:"These are the 5 most common pooja room mistakes.\n\nSave this if you're planning a renovation.\n\n#PoojaRoomDesign #MandirDesign #VastuTips #makemymandir",brief:"7 slides: Hook, 5 mistakes, CTA",cta:"DM to plan your space right",slides:["Hook: If your pooja room never feels right...","Mistake 1: Wrong wall placement","Mistake 2: Incorrect idol height","Mistake 3: Poor lighting","Mistake 4: No storage solution","Mistake 5: Wrong materials","Slide 7: CTA — DM us"]},
-  {id:12,w:3,d:"May 13",day:"Wed",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: office mandir installation",hook:"They wanted the divine in their workspace. Here's what we did.",caption:"When this Pune IT company needed a sacred space, they came to us.\n\nWe build for homes, offices, and commercial spaces. DM us. 🙏\n\n#OfficeMandir #CorporateMandir #CorianMandir #makemymandir",brief:"40-sec: plain wall → mandir installed → glowing result.",cta:"DM for office mandirs",slides:null},
-  {id:13,w:3,d:"May 14",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Cabinet mandir with hidden storage",hook:"A mandir that stores everything — and shows nothing.",caption:"Full mandir setup inside a furniture piece. Doors open for prayers. Doors closed for guests.\n\nStarting at ₹65,000. DM us.\n\n#CabinetMandir #HiddenMandir #ApartmentLiving #makemymandir",brief:"Two-shot: closed cabinet → open reveal. Price: From ₹65,000.",cta:"DM to see cabinet mandir options",slides:null},
-  {id:14,w:3,d:"May 15",day:"Fri",type:"Reel",plat:"IG",time:"7:00 PM",title:"Trending audio: transformation montage",hook:"3 mandirs. 3 spaces. 1 craftsman.",caption:"Every home we enter is different. Every mandir we build is different.\n\nWhich style speaks to you? Tell us in the comments. 👇\n\n#MandirTransformation #CustomMandir #makemymandir",brief:"30-sec montage to trending spiritual audio.",cta:"Comment your favourite style",slides:null},
-  {id:15,w:3,d:"May 16",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Top 5 FAQs — answered honestly",hook:"You asked. We answered — honestly.",caption:"Before you DM us, here are the 5 questions we get asked most.\n\n#CustomMandir #MandirFAQ #MakeMyMandir #PuneInteriors",brief:"7 slides: Intro, 5 Q&As, CTA",cta:"DM us your question",slides:["Slide 1: You asked. We answered honestly.","FAQ 1: How long does it take?","FAQ 2: What is Corian?","FAQ 3: Do you deliver outside Pune?","FAQ 4: What's the minimum budget?","FAQ 5: Can you do custom designs?","Slide 7: CTA — DM us"]},
-  {id:16,w:4,d:"May 18",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Our process: brief to installation",hook:"Wondering what it's like to work with us? Here's the full journey.",caption:"Getting a custom mandir is simpler than you think. Most clients have their mandir ready in 12–18 days.\n\nDM us today. 🙏\n\n#CustomMandir #OurProcess #CorianMandir #makemymandir",brief:"4-step process infographic.",cta:"DM to start the process",slides:null},
-  {id:17,w:4,d:"May 19",day:"Tue",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Client testimonial: full pooja room reveal",hook:"They gave us an entire room. We turned it into a sanctuary.",caption:"Mr. & Mrs. Kulkarni handed us their empty pooja room and said: Make it divine.\n\nFull pooja room designs starting at ₹1.5L. DM/WhatsApp for a free site visit. 🙏\n\n#PoojaRoomDesign #LuxuryMandir #makemymandir",brief:"50-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for free site visit",slides:null},
-  {id:18,w:4,d:"May 20",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Planning a mandir in a new flat",hook:"Moving into a new flat? Plan your mandir before the walls are done.",caption:"This is the time to plan your mandir — before walls are plastered.\n\nDM us your floor plan. We advise for free.\n\n#NewFlat #PoojaRoomPlanning #HomeRenovation #makemymandir",brief:"6 slides: Hook, wall selection, electrical, clearance, type, CTA",cta:"DM floor plan",slides:["Hook: Plan mandir before walls are done","Slide 2: Choosing the right wall","Slide 3: Electrical planning for LED","Slide 4: Space clearance requirements","Slide 5: Which type suits your flat?","Slide 6: CTA — DM your floor plan"]},
-  {id:19,w:4,d:"May 21",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"LED Corian mandir — product spotlight",hook:"The glow you see here isn't a filter. It's Corian + LED done right.",caption:"Floor-standing Corian mandir with integrated LED, carved arches, and storage base.\n\nStarting at ₹75,000. DM/WhatsApp to see the full portfolio.\n\n#LEDMandir #CorianMandir #LuxuryMandir #makemymandir",brief:"Hero product shot: dramatic LED glow.",cta:"DM to see full portfolio",slides:null},
-  {id:20,w:4,d:"May 22",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: 1BHK compact mandir",hook:"Small flat. Big devotion. Here's how we solved it.",caption:"2.5ft wall. No dedicated room. But full devotion.\n\nStarting at ₹30,000. DM us. 🙏\n\n#CompactMandir #1BHKDesign #SmallSpaceMandir #makemymandir",brief:"35-sec: tiny corner → compact wall-mount → happy client.",cta:"DM for compact mandir options",slides:null},
-  {id:21,w:4,d:"May 23",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Trending mandir styles of 2026",hook:"Which mandir style is dominating homes in 2026? Swipe to see.",caption:"Mandir design in India has evolved. Here are the 5 dominant styles we're seeing in 2026.\n\nWhich one speaks to your aesthetic? Tell us in the comments.\n\n#MandirDesign2026 #HomeTemple #InteriorTrends #makemymandir",brief:"6 slides: Hook, 5 styles, CTA",cta:"Comment your style",slides:["Hook: Which style is dominating 2026?","Style 1: Corian Minimalist","Style 2: Wood Classic","Style 3: Marble Luxury","Style 4: Wall-Mount Compact","Style 5: Full Pooja Room"]},
-  {id:22,w:5,d:"May 25",day:"Mon",type:"Carousel",plat:"IG+FB",time:"8:00 AM",title:"Why clients choose Corian",hook:"Why do 80% of our clients choose Corian over marble and wood?",caption:"Corian: maintenance-free, termite-proof, and beautiful in any interior.\n\nDM us to explore Corian designs. 🙏\n\n#CorianMandir #WhyCorian #MandirMaterial #makemymandir",brief:"6 slides: Hook, Seamless, Hygienic, Durable, Customisable, CTA",cta:"DM to explore Corian",slides:["Hook: Why 80% choose Corian?","Benefit 1: Seamless","Benefit 2: Hygienic","Benefit 3: Durable — termite proof","Benefit 4: Customisable","Slide 6: CTA"]},
-  {id:23,w:5,d:"May 26",day:"Tue",type:"Reel",plat:"IG",time:"7:30 PM",title:"Satisfying workshop reel",hook:"There's something meditative about watching this.",caption:"Sometimes the most sacred thing isn't the finished piece — it's the care that went into making it.\n\n#MandirMaking #Craftsmanship #CorianArt #makemymandir",brief:"25-sec ASMR: Corian cut → sanding → LED → polish → glow.",cta:"None",slides:null},
-  {id:24,w:5,d:"May 27",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Home renovation: plan mandir first",hook:"If you're renovating this summer, don't leave your mandir as an afterthought.",caption:"Summer is peak renovation season in Pune. Don't let the mandir be an afterthought.\n\nDM us your floor plan and timeline.\n\n#HomeRenovation #PuneRenovation #MandirPlanning #makemymandir",brief:"5 slides: Hook, mistake, why first, timeline, CTA",cta:"DM floor plan + timeline",slides:["Hook: Don't make this renovation mistake","Slide 2: Why mandir planning comes first","Slide 3: Electrical & plumbing coordination","Slide 4: Ideal renovation timeline","Slide 5: CTA — DM your timeline"]},
-  {id:25,w:5,d:"May 28",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"We deliver across Maharashtra",hook:"Pune, Mumbai, Nashik, Aurangabad — we come to you.",caption:"Pune: free site visit. Mumbai, Nashik, Aurangabad, Kolhapur: video consultation + delivery + installation.\n\nDM us with your city. 🙏\n\n#MandirDelivery #MaharashtraInteriors #CorianMandir #makemymandir",brief:"Map-style graphic with delivery cities.",cta:"DM with your city",slides:null},
-  {id:26,w:5,d:"May 29",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: luxury pooja room",hook:"Empty 10×10 room. 18 days. This is how it ended.",caption:"Full pooja room: Corian mandir, 3D wall panels, LED architecture, marble flooring. 18 days.\n\nDM us or WhatsApp to talk about your space. 🙏\n\n#PoojaRoomReveal #LuxuryMandir #HomeTransformation #makemymandir",brief:"60-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for full pooja room quote",slides:null},
-  {id:27,w:5,d:"May 30",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"May highlights: our best work",hook:"May in pictures — here's what we built.",caption:"May was full of beautiful projects. June slots are filling up.\n\nDM us to book yours. 🙏\n\n#MayHighlights #MandirBuilds #CustomMandir #CorianMandir #makemymandir",brief:"8 slides: Intro, 6 installations, CTA",cta:"DM to book June slot",slides:["Slide 1: May in pictures","Project 1: Apartment mandir — Pune","Project 2: Office installation","Project 3: Cabinet mandir","Project 4: Full pooja room","Project 5: Wall-mount mandir","Project 6: LED Corian","Slide 8: June slots filling — DM now"]},
+const SEED_POSTS=[
+  {id:1,w:1,d:"May 1",iso:"2026-05-01",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: apartment mandir reveal",hook:"She sent us a plain wall. We sent back this...",caption:"The brief was simple — a corner with soul. Built for a client in her Pune 2BHK. From concept to installation: 12 days.\n\nLooking for something like this? DM us your space photo or WhatsApp us for a free design consultation.\n\n#corianmandir #mandirinpune #custommandir #poojaroomdesign #mandirdesign #makemymandir",brief:"30-sec reel: blank corner → Corian fabrication → LED-lit mandir reveal.",cta:"DM your space photo",slides:null},
+  {id:2,w:1,d:"May 2",iso:"2026-05-02",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Corian vs Wood vs Marble: which lasts?",hook:"Choosing your mandir material? Here's what nobody tells you.",caption:"Not all mandir materials are equal. Here's an honest breakdown so you choose right the first time.\n\nSwipe to see which material suits your home, budget, and lifestyle.\n\n#mandirmaterial #corianmandir #woodenmandir #homemandirdesign #makemymandir",brief:"5 slides: Hook, Corian, Wood, Marble, CTA",cta:"DM for material recommendation",slides:["Hook: Choosing your mandir material?","Slide 2: Corian — Pros & Cons","Slide 3: Wood — Pros & Cons","Slide 4: Marble — Pros & Cons","Slide 5: Our Recommendation + CTA"]},
+  {id:3,w:2,d:"May 4",iso:"2026-05-04",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Wall-mounted mandir — product spotlight",hook:"No dedicated pooja room? No problem.",caption:"Your pooja corner doesn't need a full room. Starting at ₹35,000.\n\nWhatsApp or DM us to see more designs.\n\n#wallmountedmandir #apartmentmandir #corianmandir #mandirinpune #makemymandir",brief:"Product photo of wall-mounted Corian mandir with LED.",cta:"WhatsApp/DM to see designs",slides:null},
+  {id:4,w:2,d:"May 5",iso:"2026-05-05",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Vastu guide: the right wall for your mandir",hook:"Is your mandir in the wrong spot? Here's how to fix it.",caption:"A mandir placed wrong can feel off. Here's a simple Vastu guide.\n\nSave this post. DM us your floor plan for a free assessment.\n\n#vastuformandir #mandirvastu #poojaroom #vastuforhouse #makemymandir",brief:"6 slides: Hook, East wall, North, avoid South, Height, CTA",cta:"DM floor plan",slides:["Hook: Is your mandir in the wrong spot?","Slide 2: East Wall — Most Auspicious","Slide 3: North Wall — Acceptable","Slide 4: Avoid South & West","Slide 5: Height Guidelines","Slide 6: CTA — DM your floor plan"]},
+  {id:5,w:2,d:"May 6",iso:"2026-05-06",day:"Wed",type:"Reel",plat:"IG",time:"7:30 PM",title:"BTS: how a Corian mandir is made",hook:"Ever wondered how a premium Corian mandir is actually built?",caption:"From raw Corian sheet to sacred centrepiece.\n\nDM us or WhatsApp to start your design conversation.\n\n#corianmandir #mandirmaking #behindthescenes #custommandir #makemymandir",brief:"45-sec BTS: Corian → CNC cutting → assembly → LED → final glow.",cta:"DM to start your design",slides:null},
+  {id:6,w:2,d:"May 7",iso:"2026-05-07",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Narasimha Jayanti — festive greeting",hook:"Jai Shri Narasimha. May the divine protector guard your home today.",caption:"Jai Shri Narasimha on this blessed Jayanti. 🙏\n\n#NarasimhaJayanti #JaiShriNarasimha #makemymandir",brief:"Devotional graphic in gold and maroon.",cta:"None",slides:null},
+  {id:7,w:2,d:"May 8",iso:"2026-05-08",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:00 PM",title:"Client testimonial: cabinet mandir",hook:"He wanted a mandir with hidden storage. Here's what we built.",caption:"Mr. Amit Jain wanted a mandir that doesn't look like one when guests come over.\n\nDM us your requirement.\n\n#clienttestimonial #cabinetmandir #custommandir #makemymandir",brief:"10s B-roll → 15s client speaking → reveal shot.",cta:"DM your requirement",slides:null},
+  {id:8,w:2,d:"May 9",iso:"2026-05-09",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"3 mandir packages — what they cost",hook:"Thinking of a mandir? Here's what budget you actually need.",caption:"Three real tiers, honest pricing.\n\nDM us with your budget and we'll design around it.\n\n#mandirprice #custommandir #corianmandir #mandirinpune #makemymandir",brief:"5 slides: Hook, Essential, Premium, Signature, CTA",cta:"DM budget + space for quote",slides:["Hook: What budget do you actually need?","Slide 2: Essential — ₹30,000–50,000","Slide 3: Premium — ₹60,000–1,20,000","Slide 4: Signature — ₹1,50,000+","Slide 5: CTA — DM your budget"]},
+  {id:9,w:2,d:"May 10",iso:"2026-05-10",day:"Sun",type:"Static",plat:"IG+FB",time:"10:00 AM",title:"Mother's Day — gift her a sacred space",hook:"The best gift for a mother who prays every day.",caption:"She wakes up early for pooja. She lights the diya before anyone else.\n\nThis Mother's Day, gift her the sacred corner she deserves. 🙏\n\n#MothersDay #GiftForMom #Mandir #makemymandir",brief:"Warm graphic: mother at lit mandir. Soft gold tones.",cta:"DM to gift a mandir",slides:null},
+  {id:10,w:3,d:"May 11",iso:"2026-05-11",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"DM us your space challenge",hook:"Send us a photo of your pooja corner. We'll redesign it — free.",caption:"DM or WhatsApp us a photo of your current pooja corner. Our designer sends back a concept — no cost.\n\nTag someone whose mandir needs an upgrade. 👇\n\n#FreeDesign #CustomMandir #MandirMakeover #makemymandir",brief:"Bold typographic post.",cta:"DM your space photo",slides:null},
+  {id:11,w:3,d:"May 12",iso:"2026-05-12",day:"Tue",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"5 pooja room mistakes people always make",hook:"If your pooja room never feels right, one of these might be why.",caption:"These are the 5 most common pooja room mistakes.\n\nSave this if you're planning a renovation.\n\n#PoojaRoomDesign #MandirDesign #VastuTips #makemymandir",brief:"7 slides: Hook, 5 mistakes, CTA",cta:"DM to plan your space right",slides:["Hook: If your pooja room never feels right...","Mistake 1: Wrong wall placement","Mistake 2: Incorrect idol height","Mistake 3: Poor lighting","Mistake 4: No storage solution","Mistake 5: Wrong materials","Slide 7: CTA — DM us"]},
+  {id:12,w:3,d:"May 13",iso:"2026-05-13",day:"Wed",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: office mandir installation",hook:"They wanted the divine in their workspace. Here's what we did.",caption:"When this Pune IT company needed a sacred space, they came to us.\n\nWe build for homes, offices, and commercial spaces. DM us. 🙏\n\n#OfficeMandir #CorporateMandir #CorianMandir #makemymandir",brief:"40-sec: plain wall → mandir installed → glowing result.",cta:"DM for office mandirs",slides:null},
+  {id:13,w:3,d:"May 14",iso:"2026-05-14",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Cabinet mandir with hidden storage",hook:"A mandir that stores everything — and shows nothing.",caption:"Full mandir setup inside a furniture piece. Doors open for prayers. Doors closed for guests.\n\nStarting at ₹65,000. DM us.\n\n#CabinetMandir #HiddenMandir #ApartmentLiving #makemymandir",brief:"Two-shot: closed cabinet → open reveal. Price: From ₹65,000.",cta:"DM to see cabinet mandir options",slides:null},
+  {id:14,w:3,d:"May 15",iso:"2026-05-15",day:"Fri",type:"Reel",plat:"IG",time:"7:00 PM",title:"Trending audio: transformation montage",hook:"3 mandirs. 3 spaces. 1 craftsman.",caption:"Every home we enter is different. Every mandir we build is different.\n\nWhich style speaks to you? Tell us in the comments. 👇\n\n#MandirTransformation #CustomMandir #makemymandir",brief:"30-sec montage to trending spiritual audio.",cta:"Comment your favourite style",slides:null},
+  {id:15,w:3,d:"May 16",iso:"2026-05-16",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Top 5 FAQs — answered honestly",hook:"You asked. We answered — honestly.",caption:"Before you DM us, here are the 5 questions we get asked most.\n\n#CustomMandir #MandirFAQ #MakeMyMandir #PuneInteriors",brief:"7 slides: Intro, 5 Q&As, CTA",cta:"DM us your question",slides:["Slide 1: You asked. We answered honestly.","FAQ 1: How long does it take?","FAQ 2: What is Corian?","FAQ 3: Do you deliver outside Pune?","FAQ 4: What's the minimum budget?","FAQ 5: Can you do custom designs?","Slide 7: CTA — DM us"]},
+  {id:16,w:4,d:"May 18",iso:"2026-05-18",day:"Mon",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"Our process: brief to installation",hook:"Wondering what it's like to work with us? Here's the full journey.",caption:"Getting a custom mandir is simpler than you think. Most clients have their mandir ready in 12–18 days.\n\nDM us today. 🙏\n\n#CustomMandir #OurProcess #CorianMandir #makemymandir",brief:"4-step process infographic.",cta:"DM to start the process",slides:null},
+  {id:17,w:4,d:"May 19",iso:"2026-05-19",day:"Tue",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Client testimonial: full pooja room reveal",hook:"They gave us an entire room. We turned it into a sanctuary.",caption:"Mr. & Mrs. Kulkarni handed us their empty pooja room and said: Make it divine.\n\nFull pooja room designs starting at ₹1.5L. DM/WhatsApp for a free site visit. 🙏\n\n#PoojaRoomDesign #LuxuryMandir #makemymandir",brief:"50-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for free site visit",slides:null},
+  {id:18,w:4,d:"May 20",iso:"2026-05-20",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Planning a mandir in a new flat",hook:"Moving into a new flat? Plan your mandir before the walls are done.",caption:"This is the time to plan your mandir — before walls are plastered.\n\nDM us your floor plan. We advise for free.\n\n#NewFlat #PoojaRoomPlanning #HomeRenovation #makemymandir",brief:"6 slides: Hook, wall selection, electrical, clearance, type, CTA",cta:"DM floor plan",slides:["Hook: Plan mandir before walls are done","Slide 2: Choosing the right wall","Slide 3: Electrical planning for LED","Slide 4: Space clearance requirements","Slide 5: Which type suits your flat?","Slide 6: CTA — DM your floor plan"]},
+  {id:19,w:4,d:"May 21",iso:"2026-05-21",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"LED Corian mandir — product spotlight",hook:"The glow you see here isn't a filter. It's Corian + LED done right.",caption:"Floor-standing Corian mandir with integrated LED, carved arches, and storage base.\n\nStarting at ₹75,000. DM/WhatsApp to see the full portfolio.\n\n#LEDMandir #CorianMandir #LuxuryMandir #makemymandir",brief:"Hero product shot: dramatic LED glow.",cta:"DM to see full portfolio",slides:null},
+  {id:20,w:4,d:"May 22",iso:"2026-05-22",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: 1BHK compact mandir",hook:"Small flat. Big devotion. Here's how we solved it.",caption:"2.5ft wall. No dedicated room. But full devotion.\n\nStarting at ₹30,000. DM us. 🙏\n\n#CompactMandir #1BHKDesign #SmallSpaceMandir #makemymandir",brief:"35-sec: tiny corner → compact wall-mount → happy client.",cta:"DM for compact mandir options",slides:null},
+  {id:21,w:4,d:"May 23",iso:"2026-05-23",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"Trending mandir styles of 2026",hook:"Which mandir style is dominating homes in 2026? Swipe to see.",caption:"Mandir design in India has evolved. Here are the 5 dominant styles we're seeing in 2026.\n\nWhich one speaks to your aesthetic? Tell us in the comments.\n\n#MandirDesign2026 #HomeTemple #InteriorTrends #makemymandir",brief:"6 slides: Hook, 5 styles, CTA",cta:"Comment your style",slides:["Hook: Which style is dominating 2026?","Style 1: Corian Minimalist","Style 2: Wood Classic","Style 3: Marble Luxury","Style 4: Wall-Mount Compact","Style 5: Full Pooja Room"]},
+  {id:22,w:5,d:"May 25",iso:"2026-05-25",day:"Mon",type:"Carousel",plat:"IG+FB",time:"8:00 AM",title:"Why clients choose Corian",hook:"Why do 80% of our clients choose Corian over marble and wood?",caption:"Corian: maintenance-free, termite-proof, and beautiful in any interior.\n\nDM us to explore Corian designs. 🙏\n\n#CorianMandir #WhyCorian #MandirMaterial #makemymandir",brief:"6 slides: Hook, Seamless, Hygienic, Durable, Customisable, CTA",cta:"DM to explore Corian",slides:["Hook: Why 80% choose Corian?","Benefit 1: Seamless","Benefit 2: Hygienic","Benefit 3: Durable — termite proof","Benefit 4: Customisable","Slide 6: CTA"]},
+  {id:23,w:5,d:"May 26",iso:"2026-05-26",day:"Tue",type:"Reel",plat:"IG",time:"7:30 PM",title:"Satisfying workshop reel",hook:"There's something meditative about watching this.",caption:"Sometimes the most sacred thing isn't the finished piece — it's the care that went into making it.\n\n#MandirMaking #Craftsmanship #CorianArt #makemymandir",brief:"25-sec ASMR: Corian cut → sanding → LED → polish → glow.",cta:"None",slides:null},
+  {id:24,w:5,d:"May 27",iso:"2026-05-27",day:"Wed",type:"Carousel",plat:"IG+FB",time:"7:00 PM",title:"Home renovation: plan mandir first",hook:"If you're renovating this summer, don't leave your mandir as an afterthought.",caption:"Summer is peak renovation season in Pune. Don't let the mandir be an afterthought.\n\nDM us your floor plan and timeline.\n\n#HomeRenovation #PuneRenovation #MandirPlanning #makemymandir",brief:"5 slides: Hook, mistake, why first, timeline, CTA",cta:"DM floor plan + timeline",slides:["Hook: Don't make this renovation mistake","Slide 2: Why mandir planning comes first","Slide 3: Electrical & plumbing coordination","Slide 4: Ideal renovation timeline","Slide 5: CTA — DM your timeline"]},
+  {id:25,w:5,d:"May 28",iso:"2026-05-28",day:"Thu",type:"Static",plat:"IG+FB",time:"8:00 AM",title:"We deliver across Maharashtra",hook:"Pune, Mumbai, Nashik, Aurangabad — we come to you.",caption:"Pune: free site visit. Mumbai, Nashik, Aurangabad, Kolhapur: video consultation + delivery + installation.\n\nDM us with your city. 🙏\n\n#MandirDelivery #MaharashtraInteriors #CorianMandir #makemymandir",brief:"Map-style graphic with delivery cities.",cta:"DM with your city",slides:null},
+  {id:26,w:5,d:"May 29",iso:"2026-05-29",day:"Fri",type:"Reel",plat:"IG+FB",time:"7:30 PM",title:"Before/after: luxury pooja room",hook:"Empty 10×10 room. 18 days. This is how it ended.",caption:"Full pooja room: Corian mandir, 3D wall panels, LED architecture, marble flooring. 18 days.\n\nDM us or WhatsApp to talk about your space. 🙏\n\n#PoojaRoomReveal #LuxuryMandir #HomeTransformation #makemymandir",brief:"60-sec: empty room → 3D render → fabrication → cinematic reveal.",cta:"DM for full pooja room quote",slides:null},
+  {id:27,w:5,d:"May 30",iso:"2026-05-30",day:"Sat",type:"Carousel",plat:"IG+FB",time:"10:00 AM",title:"May highlights: our best work",hook:"May in pictures — here's what we built.",caption:"May was full of beautiful projects. June slots are filling up.\n\nDM us to book yours. 🙏\n\n#MayHighlights #MandirBuilds #CustomMandir #CorianMandir #makemymandir",brief:"8 slides: Intro, 6 installations, CTA",cta:"DM to book June slot",slides:["Slide 1: May in pictures","Project 1: Apartment mandir — Pune","Project 2: Office installation","Project 3: Cabinet mandir","Project 4: Full pooja room","Project 5: Wall-mount mandir","Project 6: LED Corian","Slide 8: June slots filling — DM now"]},
 ];
 
+/* ══ v7.4: POSTS storage layer ══
+   Posts moved from hardcoded const to localStorage-backed + synced array.
+   On first run, the 27 May seed posts above are used. As admin creates future
+   months, posts get appended. The mutable POSTS variable is the live working copy.
+   - getStoredPosts() returns localStorage data or falls back to SEED_POSTS
+   - savePosts(arr) writes to localStorage; sync to GitHub is separate
+   - addPosts(newPosts) appends new posts to POSTS and saves                           */
+function getStoredPosts(){
+  const s=stg("posts");
+  if(s&&Array.isArray(s)&&s.length){
+    // Filter malformed entries — must have id and iso minimum
+    const clean=s.filter(p=>p&&typeof p==="object"&&p.id&&p.iso&&p.title);
+    if(clean.length)return clean;
+  }
+  return SEED_POSTS;
+}
+function savePosts(posts){
+  sto("posts",posts);
+}
+function addPostsToStorage(newPosts){
+  POSTS=[...POSTS,...newPosts];
+  savePosts(POSTS);
+}
+/* Compute the iso date for a post — backward compat for any post that somehow has no iso */
+function pISO(p){
+  if(p.iso)return p.iso;
+  const m=p.d&&p.d.match(/May\s+(\d+)/i);
+  if(m)return `2026-05-${String(parseInt(m[1],10)).padStart(2,"0")}`;
+  return null;
+}
+let POSTS=getStoredPosts();
 const USERS={admin:{pass:"mmm2026",role:"admin",name:"Nilesh K Mehta"},team:{pass:"team2026",role:"team",name:"Team Member"}};
 const WLBLS={1:"Week 1 — May 1–3",2:"Week 2 — May 4–10",3:"Week 3 — May 11–17",4:"Week 4 — May 18–24",5:"Week 5 — May 25–31"};
 const ST_COLORS={pending:"#854F0B",approved:"#0F6E56",rejected:"#A32D2D",revision:"#854F0B",published:"#5D3FD3"};
@@ -966,6 +1156,7 @@ const SEED_KNOWLEDGE=[
   {id:"k13",cat:"Manufacturing",title:"Corian thickness limits",content:"Standard Corian sheet is 12mm. Above 18mm thickness, joints become visible — we use thicker pieces only for structural columns. For carved details, we layer multiple 12mm sheets and CNC-route them.",tags:"corian,manufacturing",updated_at:""},
   {id:"k14",cat:"Lighting",title:"LED specifications",content:"We use 3000K warm white LED strips (12V, 14.4W/m) for ambient mandir lighting. Spot accent: 2700K, 5W. Always run dimmer switches — clients want different intensity for daily prayer vs festivals. Never use cool white (>4000K) — looks clinical, kills the devotional mood.",tags:"led,lighting",updated_at:""},
   {id:"k15",cat:"Premium Clients",title:"Site visit etiquette",content:"Arrive 5 min early. Carry: tape measure, brand portfolio (printed), 3 material samples (Corian/marble/wood), business cards. Remove shoes before entering pooja area. Don't photograph idols without permission. Take floor plan measurements yourself — never trust verbal dimensions. End with a clear next step + timeline commitment.",tags:"client,site-visit",updated_at:""},
+  {id:"k16",cat:"Reference",title:"Famous Mandirs of India — quick reference for content",content:"Reference list of major Hindu/Jain temples. Useful when writing content about devotion, pilgrimage, or particular deities. Cite the temple, never claim association.\n\n--- VAISHNAV / VISHNU ---\n• Tirupati Balaji (Tirumala, Andhra) — Lord Venkateshwara. Saturdays auspicious. World's richest temple. Brahmotsavam in Sep.\n• Jagannath Puri (Odisha) — Rath Yatra in June-July. Triad: Jagannath, Balabhadra, Subhadra.\n• Dwarkadhish (Gujarat) — Krishna. One of Char Dham.\n• ISKCON Vrindavan/Mayapur — Krishna devotion centres.\n• Padmanabhaswamy (Trivandrum) — Reclining Vishnu. Wealthiest temple discovered (₹2 lakh crore+).\n\n--- SHIVA / 12 JYOTIRLINGAS ---\n• Somnath (Gujarat) — Coastal, 1st jyotirlinga.\n• Kashi Vishwanath (Varanasi) — Most sacred Shiva. Recent corridor expansion.\n• Mahakaleshwar (Ujjain) — Bhasma aarti famous.\n• Kedarnath (Uttarakhand) — Char Dham. Reopens late April-Nov.\n• Trimbakeshwar (Nashik, MAHARASHTRA) — Source of Godavari.\n• Bhimashankar (Pune district, MAHARASHTRA) — Sahyadri.\n• Grishneshwar (Aurangabad, MAHARASHTRA) — Last jyotirlinga.\n• Rameshwaram (Tamil Nadu) — Char Dham + jyotirlinga.\n\n--- DEVI / SHAKTI PEETHS ---\n• Vaishno Devi (J&K) — Trikuta hills. Navratri peak.\n• Kamakhya (Assam) — Tantric significance.\n• Mahalakshmi (Kolhapur, MAHARASHTRA) — Major Maharashtrian shakti peeth.\n• Tuljabhavani (Tuljapur, MAHARASHTRA) — Shivaji's kuldevi.\n• Meenakshi (Madurai) — Iconic gopurams.\n\n--- RAM / HANUMAN ---\n• Ayodhya Ram Mandir — Inaugurated 2024. New pilgrimage centre.\n• Shri Ramanathaswamy (Rameshwaram) — Where Ram worshipped Shiva.\n\n--- GANESHA ---\n• Siddhivinayak (Mumbai) — Tuesday darshan. Pan-India famous.\n• Ashtavinayak circuit (MAHARASHTRA) — 8 Ganesh temples around Pune. Local pride for our market.\n• Dagdusheth Halwai Ganpati (PUNE) — Pune's most loved Ganesh. Gold-clad idol.\n\n--- SAI / KRISHNA / OTHERS ---\n• Shirdi Sai Baba (MAHARASHTRA) — Thursday darshan. Massive devotee base.\n• Pandharpur Vitthal (MAHARASHTRA) — Wari (palki yatra) in June-July & November. Maharashtrian devotional heart.\n• Akshardham (Delhi, Gandhinagar) — Swaminarayan sect.\n• Lord Venkateswara (Various) — Replicas across India.\n• Mata Vaishno Devi — Massive yatra during Navratri.\n\n--- JAIN ---\n• Palitana (Gujarat) — 863 temples on Shatrunjaya hill. Most sacred Shvetambar site.\n• Ranakpur (Rajasthan) — 1444 marble pillars, no two same. Architectural marvel.\n• Dilwara (Mt Abu) — 5 temples, peak Jain art.\n• Shravanabelagola (Karnataka) — 57-ft Bahubali statue.\n• Sammed Shikharji (Jharkhand) — Where 20 Tirthankaras attained moksha.\n\n--- ARCHITECTURAL / HISTORIC ---\n• Brihadeeswarar (Thanjavur) — 1010 AD Chola masterpiece. UNESCO.\n• Sun Temple, Konark (Odisha) — Chariot-form, 13th century.\n• Khajuraho (Madhya Pradesh) — 10-11th century sculpted temples.\n• Lingaraja (Bhubaneswar) — Kalinga architecture.\n\n--- LOCAL TO PUNE / MAHARASHTRA (use for hyperlocal content) ---\n• Dagdusheth Halwai Ganpati (Pune)\n• Khandoba Mandir (Jejuri)\n• Tuljabhavani (Tuljapur) — Shivaji's kuldevi\n• Bhimashankar Jyotirlinga\n• Trimbakeshwar Jyotirlinga (Nashik)\n• Grishneshwar Jyotirlinga (Aurangabad)\n• Mahalakshmi (Kolhapur)\n• Vitthal Mandir (Pandharpur)\n• Shirdi Sai Baba\n• Ashtavinayak (8 Ganesh temples around Pune)\n\nUSAGE: When writing a post, look at the festival/community and pick a relevant temple to cite. E.g. Pandharpur for Ashadhi Ekadashi. Siddhivinayak for Ganesh Chaturthi. Vaishno Devi for Navratri. This grounds content in real devotional context.",tags:"reference,temples,famous-mandirs,pilgrimage,content-resource",updated_at:""},
 ];
 function getKnowledge(){
   const k=stg("knowledge");
@@ -1004,6 +1195,119 @@ function getHooks(){
   const clean=h.filter(x=>x&&typeof x==="object"&&x.id&&x.content);
   return clean.length?clean:SEED_HOOKS;
 }
+
+/* ══ v7.3: FESTIVAL PLANNER ══
+   Pre-seeded festivals + famous temple events for May 2026 → May 2027.
+   Communities: hindu, jain, agarwal, maharashtrian, punjabi, temple
+   Status: not-planned, planning, ready, published
+   Dates verified for fixed-Gregorian festivals (Lohri, Baisakhi, Sankranti, Agrasen Jayanti)
+   and confirmed lunar festivals (Diwali Nov 8 2026, Akshaya Tritiya May 9 2027).
+   Lunar dates that depend on tithi calculations carry "approx" flag — admin should verify
+   1-2 weeks before, since regional panchang can shift the date by ±1 day. */
+const FESTIVAL_COMMUNITIES={
+  hindu:        {label:"Hindu",        color:"#A32D2D", bg:"#FDF0F0"},
+  jain:         {label:"Jain",         color:"#854F0B", bg:"#FEF5E7"},
+  agarwal:      {label:"Agarwal",      color:"#5D3FD3", bg:"#EFEBFC"},
+  maharashtrian:{label:"Maharashtrian",color:"#0F6E56", bg:"#E6F5F0"},
+  punjabi:      {label:"Punjabi",      color:"#185FA5", bg:"#EAF2FB"},
+  temple:       {label:"Temple",       color:"#7b3594", bg:"#F4ECFD"},
+};
+const SEED_FESTIVALS=[
+  // ═══ MAY-JUNE 2026 ═══
+  {id:"f001",name:"Ganga Dussehra",date:"2026-05-26",community:["hindu"],approx:true,significance:"Day Ganga descended to Earth. Especially significant in Varanasi, Haridwar, Rishikesh.",mmm_angle:"Carousel: Ganga ji's role in Hindu pooja — why we keep gangajal in every mandir. Reel: shot of gangajal copper kalash inside one of our installations."},
+  {id:"f002",name:"Nirjala Ekadashi",date:"2026-05-27",community:["hindu"],approx:true,significance:"Hardest Ekadashi — fasting without water. Most rewarding of all 24 Ekadashis.",mmm_angle:"Static: 'Today, millions fast without water. Their mandirs are working overtime too.' Educational angle on fasting & devotion."},
+  {id:"f003",name:"Vat Purnima / Vat Savitri",date:"2026-05-31",community:["maharashtrian","hindu"],approx:true,significance:"Married women tie threads around banyan tree praying for husband's long life. Big in Maharashtra, Gujarat, UP.",mmm_angle:"Reel: married couple lighting diyas together at mandir. Caption angle: 'Some traditions need a tree. Others, a sacred corner at home.'"},
+  // ═══ JUNE-JULY 2026 ═══
+  {id:"f004",name:"Jagannath Rath Yatra",date:"2026-06-26",community:["hindu","temple"],approx:true,significance:"Lord Jagannath's chariot procession in Puri. Massive 9-day festival. Lakhs of devotees.",mmm_angle:"Carousel: 'Why Lord Jagannath leaves his temple every year' — devotion explained. End slide: how to honour at your home mandir."},
+  {id:"f005",name:"Devshayani / Ashadhi Ekadashi",date:"2026-07-15",community:["hindu","maharashtrian","temple"],approx:true,significance:"Vishnu enters yog-nidra for 4 months. Mass Wari pilgrimage to Pandharpur (Vitthal temple). Huge in Maharashtra.",mmm_angle:"PANDHARPUR DAY. Reel: 'Lakhs walk to Pandharpur today. The rest of us bring Vitthal home.' Tie to Maharashtrian household mandirs."},
+  {id:"f006",name:"Guru Purnima",date:"2026-07-29",community:["hindu","jain"],approx:true,significance:"Honoring spiritual gurus & teachers. Shirdi Sai Baba mega event.",mmm_angle:"Carousel: 'Your mandir is your daily guru' — devotion-as-discipline angle. Founder note from Nilesh works well here."},
+  // ═══ JULY-AUGUST 2026 ═══
+  {id:"f007",name:"Naga Panchami",date:"2026-08-18",community:["hindu","maharashtrian"],approx:true,significance:"Snake worship — Shiva's sacred companion. Big in Maharashtra, Karnataka.",mmm_angle:"Static: subtle Shiva-Naga motif visible in our brass detailing. Educational angle on symbolism in mandir design."},
+  {id:"f008",name:"Hariyali Teej",date:"2026-08-15",community:["hindu","punjabi"],approx:true,significance:"Married women fast for husband. Mehendi, green clothes, swings. Big in North India, Rajasthan.",mmm_angle:"Reel: hands applying mehendi near a softly-lit mandir. 'Some prayers are silent. Some are written on your skin.'"},
+  {id:"f009",name:"Raksha Bandhan",date:"2026-08-28",community:["hindu","jain","punjabi"],approx:true,significance:"Sister ties rakhi to brother, prayers for protection. Pan-India.",mmm_angle:"Static: sister tying rakhi in front of family mandir. Caption: 'A blessing is best given where blessings come from.' STRONG gift-mandir angle for brothers gifting mandirs to sisters' new homes."},
+  {id:"f010",name:"Krishna Janmashtami",date:"2026-09-04",community:["hindu","maharashtrian"],approx:true,significance:"Krishna's birth at midnight. Dahi Handi in Maharashtra. Bal Krishna decorated, fed.",mmm_angle:"BIG DAY. Reel: BTS of installing a Krishna idol in a client's new mandir. Carousel: 'Different forms of Krishna across Indian homes.' Caption angle: positioning the laddu gopal corner."},
+  // ═══ AUGUST-SEPTEMBER 2026 ═══
+  {id:"f011",name:"Paryushan Parva begins",date:"2026-08-20",community:["jain"],approx:true,significance:"Most sacred 8-day Jain festival. Fasting, introspection, kshamavani.",mmm_angle:"IMPORTANT for Jain client base. Story-style carousel: 'Inside a Shvetambar home during Paryushan — the mandir is the centre.' Subtle, respectful. NOT promotional."},
+  {id:"f012",name:"Samvatsari (Paryushan ends)",date:"2026-08-27",community:["jain"],approx:true,significance:"Annual day of forgiveness — 'Micchami Dukkadam'. Most important Jain day.",mmm_angle:"Founder note from Nilesh: 'Micchami Dukkadam' — to clients, vendors, team. Quiet, meaningful, no product push."},
+  {id:"f013",name:"Ganesh Chaturthi",date:"2026-09-14",community:["hindu","maharashtrian"],approx:true,significance:"Bappa arrives home for 1.5/3/5/10 days. PUNE's biggest festival. 11-day visarjan cycle.",mmm_angle:"YOUR HOMETOWN FESTIVAL. Carousel: 'What makes a great Bappa corner at home' — proportions, lighting, color, asanam. Reel: BTS of a household Bappa corner being built. Lead 10-day campaign."},
+  {id:"f014",name:"Anant Chaturdashi (Visarjan)",date:"2026-09-24",community:["hindu","maharashtrian"],approx:true,significance:"Final visarjan of Ganpati. Emotional close to 11-day Pune celebration.",mmm_angle:"Static or Story: a single image of an empty Bappa corner, soft light. Caption: 'Pudhchya varshi lavkar ya.' Emotional, not promotional."},
+  {id:"f015",name:"Pitru Paksha begins",date:"2026-09-08",community:["hindu"],approx:true,significance:"15-day fortnight for ancestor remembrance. Considered INAUSPICIOUS for new purchases.",mmm_angle:"⚠️ CAUTION: Don't run promotional posts. No 'buy now' content. Suitable for educational/respectful content only — e.g. 'Why our ancestors built homes with the mandir at the heart.'"},
+  {id:"f016",name:"Agrasen Jayanti",date:"2026-09-22",community:["agarwal","hindu"],approx:false,significance:"Birth of Maharaja Agrasen — founder of Agarwal community. Equality, social justice values.",mmm_angle:"Direct outreach to Agarwal client base. Static: respectful note honoring Maharaja Agrasen. Caption can reference legacy of dharma-rooted families."},
+  // ═══ SEPTEMBER-OCTOBER 2026 ═══
+  {id:"f017",name:"Sharad Navratri begins",date:"2026-10-11",community:["hindu","punjabi","temple"],approx:true,significance:"9 nights of Durga. Garba in Gujarat, Maharashtra. Vaishno Devi peak season.",mmm_angle:"9-day campaign. Each day a different Devi form. Carousel series: 'Maa's 9 forms — and how to honour each from your home mandir.' Strong recurring engagement."},
+  {id:"f018",name:"Dussehra / Vijayadashami",date:"2026-10-20",community:["hindu","maharashtrian"],approx:true,significance:"Victory of good over evil. Ravan dahan. Big in Maharashtra, North India.",mmm_angle:"Static: Ram darbar idol in one of our installations. Caption: 'The day good wins. Our mandirs remember it every day.'"},
+  {id:"f019",name:"Karwa Chauth",date:"2026-10-30",community:["hindu","punjabi"],approx:true,significance:"Married women fast sunrise to moonrise for husband. Big in Punjab, Delhi, UP, Rajasthan.",mmm_angle:"Reel: married woman performing chand-pujan in front of home mandir. Punjabi audience angle particularly strong."},
+  // ═══ NOVEMBER 2026 — DIWALI CYCLE (verified dates) ═══
+  {id:"f020",name:"Dhanteras",date:"2026-11-06",community:["hindu","punjabi","agarwal","maharashtrian","jain"],approx:false,significance:"Day 1 of Diwali. Auspicious for buying gold, silver, utensils, new things.",mmm_angle:"HUGE COMMERCIAL DAY. Static + Story: 'Today's the day to invest in things that last' — frame the mandir as an inheritable asset. NOT cheap discount messaging. Premium positioning."},
+  {id:"f021",name:"Naraka Chaturdashi / Choti Diwali",date:"2026-11-07",community:["hindu","maharashtrian"],approx:false,significance:"Day 2. Abhyanga snan (oil bath). South India's biggest Diwali day.",mmm_angle:"Reel: pre-dawn oil-bath ritual ending at the mandir for first diyas of Diwali. Emotional, sensory."},
+  {id:"f022",name:"DIWALI / Lakshmi Pujan",date:"2026-11-08",community:["hindu","jain","punjabi","agarwal","maharashtrian"],approx:false,significance:"THE BIGGEST. Lakshmi pujan, fireworks, new year for Gujarati/Marwari business community. Jain Mahavir Nirvan Day.",mmm_angle:"FLAGSHIP CAMPAIGN. Plan 30 days ahead. Reel: a single diya being lit, time-lapse to fully-lit mandir + family aarti. Multiple variations across communities (Punjabi Lakshmi pujan / Agarwal/Marwari chopda pujan / Jain Mahavir Nirvan / Maharashtrian Lakshmi pujan)."},
+  {id:"f023",name:"Govardhan Puja / Annakut",date:"2026-11-09",community:["hindu","punjabi","agarwal"],approx:false,significance:"Krishna lifting Govardhan parvat. Annakut — mountain of food offered. New Year for Gujarati/Marwari (Bestu Varas).",mmm_angle:"Carousel: 'Annakut prashad on a household mandir — what goes where.' Educational + visual."},
+  {id:"f024",name:"Bhai Dooj",date:"2026-11-10",community:["hindu","punjabi","maharashtrian","agarwal"],approx:false,significance:"Sister-brother bond, similar to Raksha Bandhan in spirit. Closes Diwali.",mmm_angle:"Pair this with Raksha Bandhan campaign — same gift-mandir angle for brothers."},
+  {id:"f025",name:"Tulsi Vivah",date:"2026-11-21",community:["hindu","maharashtrian"],approx:true,significance:"Ceremonial marriage of Tulsi to Vishnu. Marks start of wedding season.",mmm_angle:"Story-style content: 'The marriage that opens India's wedding season.' Subtly position MMM as ideal new-home gift."},
+  {id:"f026",name:"Kartiki Ekadashi",date:"2026-11-19",community:["hindu","maharashtrian","temple"],approx:true,significance:"Vishnu wakes from yog-nidra. SECOND Pandharpur Wari (Kartiki). Big in Maharashtra.",mmm_angle:"Pair with Devshayani (f005). 'The 4 months close. Vishnu wakes. Pandharpur calls again.'"},
+  {id:"f027",name:"Guru Nanak Jayanti / Gurpurab",date:"2026-11-24",community:["punjabi","hindu"],approx:true,significance:"Birth of Sikhism's founder. Golden Temple illuminated. Big day for Punjabi households.",mmm_angle:"Respectful Story or Static. 'Sat Sri Akal.' Direct Punjabi audience outreach. Don't push product, just honor the day."},
+  {id:"f028",name:"Dev Deepavali",date:"2026-11-24",community:["hindu","temple"],approx:false,significance:"15 days after Diwali. Varanasi ghats lit with 10 lakh diyas. Devotional peak.",mmm_angle:"Reel: aerial-style edit of Varanasi diyas → transition to home mandir diyas. 'The gods come down to Varanasi. The diyas you light at home are part of that same ocean.'"},
+  // ═══ DECEMBER 2026 - JANUARY 2027 ═══
+  {id:"f029",name:"Lohri",date:"2027-01-13",community:["punjabi"],approx:false,significance:"Bonfire night. Marks end of winter. Punjabi households, especially with newborns and newlyweds.",mmm_angle:"Punjabi audience focus. Story: 'The night the winter ends.' Position MMM mandirs as the warmth-of-home anchor."},
+  {id:"f030",name:"Makar Sankranti / Pongal / Uttarayan",date:"2027-01-14",community:["hindu","maharashtrian","punjabi"],approx:false,significance:"Sun enters Capricorn. Kites in Gujarat, til-gul in Maharashtra, Pongal in Tamil Nadu. Pan-India.",mmm_angle:"Carousel: 'How India honours the same sun, in 6 different ways.' Educational + cultural breadth shows MMM understands all communities."},
+  {id:"f031",name:"Vasant Panchami / Saraswati Puja",date:"2027-02-01",community:["hindu","jain"],approx:true,significance:"Saraswati's day. Worn yellow. Big for students, artists, learning communities.",mmm_angle:"Reel: child's first writing on slate at the mandir. 'The day knowledge begins at home.' Strong for new-parent client base."},
+  {id:"f032",name:"Guru Gobind Singh Jayanti",date:"2027-01-05",community:["punjabi"],approx:true,significance:"Birth of 10th Sikh Guru. Major day for Sikh community.",mmm_angle:"Direct Punjabi audience post. Quiet respect. Quote from Guru's writings on courage works well."},
+  // ═══ FEBRUARY-MARCH 2027 ═══
+  {id:"f033",name:"Maha Shivratri",date:"2027-02-14",community:["hindu","maharashtrian","temple"],approx:true,significance:"Night of Shiva. Fasting + night-long vigil. Mass darshan at Kashi Vishwanath, Mahakaleshwar, Somnath, Trimbakeshwar.",mmm_angle:"Reel: a single Shivlinga in soft lamp light, bilva patra falling. Carousel: 'Why Shiva's home in our home is always simple, never ornate.' Educational on Shiva mandir aesthetic — minimal, white marble, brass."},
+  {id:"f034",name:"Holi / Hutashani Purnima",date:"2027-03-22",community:["hindu","maharashtrian","punjabi"],approx:true,significance:"Day before Holi: Holika Dahan bonfire. Holi: colors.",mmm_angle:"Soft static — gulal-stained hands lighting a diya at the mandir. 'The day color and devotion meet.'"},
+  {id:"f035",name:"Hola Mohalla",date:"2027-03-23",community:["punjabi"],approx:true,significance:"Sikh festival, day after Holi. Martial arts, gatka, langar.",mmm_angle:"Niche but useful Punjabi-audience post. Story-format."},
+  // ═══ MARCH-APRIL 2027 ═══
+  {id:"f036",name:"Gudi Padwa / Ugadi / Cheti Chand",date:"2027-03-18",community:["maharashtrian","hindu"],approx:true,significance:"Marathi New Year (Gudi Padwa). Telugu/Kannada (Ugadi). Sindhi (Cheti Chand). Auspicious for new beginnings.",mmm_angle:"MAHARASHTRIAN NEW YEAR. Carousel: 'What goes on the Gudi — and why.' Reel: family hoisting the Gudi at home, mandir in same frame. Pune-specific cultural anchor."},
+  {id:"f037",name:"Ram Navami",date:"2027-04-15",community:["hindu","maharashtrian"],approx:true,significance:"Lord Ram's birth at noon. Pan-India, especially Ayodhya, Maharashtra.",mmm_angle:"Carousel: 'Ram darbar in 5 of our installations.' Strong visual content opportunity. Tie to Ayodhya Ram Mandir reference."},
+  {id:"f038",name:"Mahavir Jayanti",date:"2027-04-19",community:["jain"],approx:true,significance:"Birth of 24th Tirthankara, Lord Mahavira. Most important Jain day after Paryushan.",mmm_angle:"Respectful, restrained. Static: 'On Mahavir Jayanti, we honour ahimsa, satya, asteya, brahmacharya, aparigraha.' Founder note from Nilesh."},
+  {id:"f039",name:"Hanuman Jayanti",date:"2027-04-22",community:["hindu","maharashtrian"],approx:true,significance:"Birth of Hanuman. Major for Maharashtra (Samartha Ramdas tradition), North India.",mmm_angle:"Reel: dedicated Hanuman corner in a client install. Caption: 'Some clients want only Ram. Some want only Hanuman. Some, both.'"},
+  {id:"f040",name:"Baisakhi / Vaisakhi",date:"2027-04-13",community:["punjabi","hindu"],approx:false,significance:"Punjabi New Year + harvest. Khalsa founding day for Sikhs.",mmm_angle:"Direct Punjabi audience. Static: harvest motifs + mandir. Caption: 'Naya saal, nayi shuruaat.'"},
+  // ═══ MAY 2027 ═══
+  {id:"f041",name:"Akshaya Tritiya",date:"2027-05-09",community:["hindu","jain","agarwal","maharashtrian","punjabi"],approx:false,significance:"NEVER-DIMINISHING DAY. Most auspicious of all for gold, real estate, new beginnings. Pan-India.",mmm_angle:"FLAGSHIP COMMERCIAL DAY. Plan 30 days ahead. Position the mandir as the ultimate 'akshaya' purchase — an heirloom that never diminishes. Multi-post campaign: educational carousel, testimonial reel, founder note, client showcase."},
+];
+function getFestivals(){
+  const f=stg("festivals");
+  if(!f||!Array.isArray(f))return SEED_FESTIVALS;
+  const clean=f.filter(x=>x&&typeof x==="object"&&x.id&&x.name&&x.date);
+  return clean.length?clean:SEED_FESTIVALS;
+}
+function getFestivalStatuses(){
+  // Stored separately from the seed — so admin status changes survive seed updates
+  return stg("festivalStatuses")||{};
+}
+function getFestivalNotes(){
+  return stg("festivalNotes")||{};
+}
+async function setFestivalStatus(id,status){
+  const all=getFestivalStatuses();
+  all[id]=status;
+  sto("festivalStatuses",all);
+  logAct({action:"festival-status",postId:id,note:status,user:user?.name,time:new Date().toISOString()});
+  refreshAfterAction();
+  const ok=await pushToGitHub();
+  toast(ok?`Marked ${status.replace("-"," ")}`:"⚠ Saved locally — sync failed",ok?"ok":"err");
+}
+async function setFestivalNotes(id,notes){
+  const all=getFestivalNotes();
+  if(notes&&notes.trim())all[id]=notes.trim();
+  else delete all[id];
+  sto("festivalNotes",all);
+  await pushToGitHub();
+}
+function daysBetween(dateStr){
+  // Returns whole days from today to dateStr (positive=future, negative=past)
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const target=new Date(y,m-1,d);
+  const now=new Date();
+  now.setHours(0,0,0,0);
+  return Math.round((target-now)/(1000*60*60*24));
+}
+function fmtFestivalDate(dateStr){
+  const [y,m,d]=dateStr.split("-").map(Number);
+  const dt=new Date(y,m-1,d);
+  return dt.toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+}
+
 
 /* ══ v6: POST TEMPLATES ══ */
 const SEED_TEMPLATES=[
@@ -1110,7 +1414,7 @@ async function saveGithubToken(){
 }
 
 function buildSyncPayload(){
-  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs(),media:{},slides:{},brandDNA:null,campaigns:[],knowledge:[],hooks:[],templates:[],requests:[]};
+  const data={statuses:{},edits:{},rejections:{},notes:{},activity:getActs(),media:{},slides:{},brandDNA:null,campaigns:[],knowledge:[],hooks:[],templates:[],requests:[],savedPrompts:[]};
   // v5: brand DNA (single object) and campaigns (array)
   const dna=stg("brandDNA");
   if(dna)data.brandDNA=dna;
@@ -1121,6 +1425,13 @@ function buildSyncPayload(){
   const hk=stg("hooks")||[];if(hk.length)data.hooks=hk;
   const tp=stg("templates")||[];if(tp.length)data.templates=tp;
   const rq=stg("requests")||[];if(rq.length)data.requests=rq;
+  // v7.1: AI Prompt Library
+  const sp=stg("savedPrompts")||[];if(sp.length)data.savedPrompts=sp;
+  // v7.3: festival statuses + notes (only stores user changes; seed data is local)
+  const fst=stg("festivalStatuses");if(fst&&Object.keys(fst).length)data.festivalStatuses=fst;
+  const fnt=stg("festivalNotes");if(fnt&&Object.keys(fnt).length)data.festivalNotes=fnt;
+  // v7.4: posts array (now syncs — supports multiple months created by admin)
+  const sp_=stg("posts");if(sp_&&Array.isArray(sp_)&&sp_.length)data.posts=sp_;
   POSTS.forEach(p=>{
     const st=gs(p.id);
     if(st!=="pending")data.statuses[p.id]=st;
@@ -1160,6 +1471,19 @@ function applySyncPayload(data){
   if(Array.isArray(data.hooks))sto("hooks",data.hooks);
   if(Array.isArray(data.templates))sto("templates",data.templates);
   if(Array.isArray(data.requests))sto("requests",data.requests);
+  // v7.1: AI Prompt Library
+  if(Array.isArray(data.savedPrompts))sto("savedPrompts",data.savedPrompts);
+  // v7.3: festival data
+  if(data.festivalStatuses&&typeof data.festivalStatuses==="object")sto("festivalStatuses",data.festivalStatuses);
+  if(data.festivalNotes&&typeof data.festivalNotes==="object")sto("festivalNotes",data.festivalNotes);
+  // v7.4: posts array sync — accept remote posts, update live POSTS variable
+  if(Array.isArray(data.posts)&&data.posts.length){
+    const clean=data.posts.filter(p=>p&&typeof p==="object"&&p.id&&p.iso&&p.title);
+    if(clean.length){
+      sto("posts",clean);
+      POSTS=clean;
+    }
+  }
   if(data.statuses)Object.keys(data.statuses).forEach(id=>{sto("st-"+id,data.statuses[id]);});
   if(data.edits)Object.keys(data.edits).forEach(id=>{sto("ed-"+id,data.edits[id]);});
   if(data.rejections)Object.keys(data.rejections).forEach(id=>{sto("rn-"+id,data.rejections[id]);});
@@ -1276,7 +1600,7 @@ function rerenderCurrent(){
     return;
   }
   // Pages where re-rendering would wipe what the user is reading — only update sidebar counters
-  const readingPages=["knowledge","hooks","templates","brandDNA","activity","aiStudio"];
+  const readingPages=["knowledge","hooks","templates","brandDNA","activity","aiStudio","calendar","festivals"];
   if(readingPages.includes(curPage)){
     updateCounts();
     return;
@@ -1469,10 +1793,16 @@ function navTo(page,el){
   // to localStorage so it survives navigation. This is a safety net — explicit Save still required to push to GitHub.
   if(curPage==="brandDNA"&&typeof _captureDnaInputs==="function")_captureDnaInputs();
   if(curPage==="aiStudio"&&typeof _captureAiTabInputs==="function")_captureAiTabInputs();
+  // v7.2 FIX C1: close any open dynamic modals (Repurpose, Save Prompt, Edit Campaign, etc.) before changing pages.
+  // Without this, modals orphan as overlays floating on top of the new page until reload.
+  document.querySelectorAll(".cmp-modal-bg").forEach(el=>el.remove());
+  // Also reset the main Review modal if it happens to be open
+  const revBg=document.getElementById("revBg");
+  if(revBg&&revBg.classList.contains("open")){revBg.classList.remove("open");revId=null;}
   curPage=page;
   document.querySelectorAll(".nav-item").forEach(i=>i.classList.remove("active"));
   if(el)el.classList.add("active");
-  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log",campaigns:"Campaigns",brandDNA:"Brand DNA",knowledge:"Knowledge Base",hooks:"Hooks & Scripts",templates:"Post Templates",requests:"Content Requests",aiStudio:"AI Studio"};
+  const titles={all:"All Posts",pending:"Pending",approved:"Approved",revision:"Needs Revision",rejected:"Rejected",published:"Published",activity:"Activity Log",campaigns:"Campaigns",brandDNA:"Brand DNA",knowledge:"Knowledge Base",hooks:"Hooks & Scripts",templates:"Post Templates",requests:"Content Requests",aiStudio:"AI Studio",calendar:"Calendar",festivals:"Festival Planner"};
   document.getElementById("tbTitle").textContent=titles[page]||"Posts";
   if(page==="activity")renderActivity();
   else if(page==="campaigns")renderCampaigns();
@@ -1482,6 +1812,8 @@ function navTo(page,el){
   else if(page==="templates")renderTemplates();
   else if(page==="requests")renderRequests();
   else if(page==="aiStudio")renderAiStudio();
+  else if(page==="calendar")renderCalendar();
+  else if(page==="festivals")renderFestivals();
   else render();
 }
 
@@ -1512,7 +1844,7 @@ function getReviewCounts(){
 function updateCounts(){
   const c={pending:0,approved:0,revision:0,rejected:0,published:0};
   POSTS.forEach(p=>{const s=gs(p.id);c[s]=(c[s]||0)+1;});
-  document.getElementById("nc-all").textContent=27;
+  document.getElementById("nc-all").textContent=POSTS.length;
   [["pend","pending"],["app","approved"],["rev","revision"],["rej","rejected"],["pub","published"]].forEach(([k,v])=>{document.getElementById("nc-"+k).textContent=c[v]||0;});
   // v5: campaigns counter
   const camps=getCampaigns();
@@ -1525,7 +1857,39 @@ function updateCounts(){
     const pendingRq=getRequests().filter(r=>r.status==="pending").length;
     ncR.textContent=pendingRq;
   }
+  // v7.3: festivals counter — shows # upcoming in next 7 days
+  const ncF=document.getElementById("nc-fest");if(ncF){
+    const upcoming7=getFestivals().filter(f=>{const d=daysBetween(f.date);return d>=0&&d<=7;}).length;
+    ncF.textContent=upcoming7;
+    // Highlight if there's anything in next 7 days
+    if(upcoming7>0){ncF.classList.add("am");}else{ncF.classList.remove("am");}
+  }
   return c;
+}
+
+/* v7.1: Quick Stats strip — situational awareness for admin/team.
+   Shows: current week of May, # published, # pending review, # awaiting media upload, next post date. */
+function buildQuickStats(counts){
+  // v7.4: month-agnostic — current month name + current week of that month
+  const today=new Date();
+  const dayOfMonth=today.getDate();
+  const week=Math.ceil((dayOfMonth+new Date(today.getFullYear(),today.getMonth(),1).getDay())/7);
+  const monthShort=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][today.getMonth()];
+  // Next upcoming post (not yet published, not rejected) — sort by iso date so all months work
+  const todayIso=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(dayOfMonth).padStart(2,"0")}`;
+  const upcoming=POSTS
+    .filter(p=>gs(p.id)!=="published"&&gs(p.id)!=="rejected"&&pISO(p)&&pISO(p)>=todayIso)
+    .sort((a,b)=>(pISO(a)||"").localeCompare(pISO(b)||""));
+  const next=upcoming[0];
+  // Posts awaiting media upload (pending + not ready)
+  const awaitingMedia=POSTS.filter(p=>gs(p.id)==="pending"&&!isMediaReady(p)).length;
+  return `<div class="qs-strip">
+    <div class="qs-card qs-week"><div class="qs-lbl">${esc(monthShort)} · Week</div><div class="qs-val">${week}</div><div class="qs-sub">day ${dayOfMonth}</div></div>
+    <div class="qs-card"><div class="qs-lbl">Published</div><div class="qs-val">${counts.published||0}<span class="qs-tot">/${POSTS.length}</span></div><div class="qs-sub">posts live</div></div>
+    <div class="qs-card qs-clickable" onclick="navTo('pending',document.querySelector('.nav-item[onclick*=&quot;pending&quot;]'))"><div class="qs-lbl">Pending review</div><div class="qs-val">${counts.pending||0}</div><div class="qs-sub">click to review</div></div>
+    <div class="qs-card"><div class="qs-lbl">Awaiting upload</div><div class="qs-val">${awaitingMedia}</div><div class="qs-sub">need media</div></div>
+    <div class="qs-card qs-next"><div class="qs-lbl">Next scheduled</div><div class="qs-val qs-val-sm">${next?esc(next.d):"—"}</div><div class="qs-sub">${next?esc((next.title||"").substring(0,32))+((next.title||"").length>32?"…":""):"all done!"}</div></div>
+  </div>`;
 }
 
 /* ══ TODAY ══ */
@@ -1539,6 +1903,25 @@ function getTodayPosts(){
 }
 
 /* ══ RENDER ══ */
+/* v7.2 FIX C3: smart re-render that respects the current page.
+   The bare render() below assumes we're on a post-list page (all/pending/approved/etc).
+   Post action handlers like saveEdits, quickSt, etc. used to call render() directly —
+   but if the user is on Calendar or another view page, that would wipe their context.
+   refreshAfterAction() picks the right re-render function based on curPage. */
+function refreshAfterAction(){
+  if(curPage==="calendar")return renderCalendar();
+  if(curPage==="festivals")return renderFestivals();
+  if(curPage==="aiStudio")return; // AI Studio doesn't display post data; nothing to refresh
+  if(curPage==="brandDNA")return;
+  if(curPage==="knowledge")return;
+  if(curPage==="hooks")return;
+  if(curPage==="templates")return;
+  if(curPage==="requests")return renderRequests();
+  if(curPage==="campaigns")return renderCampaigns();
+  if(curPage==="activity")return renderActivity();
+  return render(); // default: post list pages (all/pending/approved/revision/rejected/published)
+}
+
 function render(){
   const isAdmin=user?.role==="admin";
   const counts=updateCounts();
@@ -1562,6 +1945,9 @@ function render(){
       <div class="tb-info-sub">${todayPosts.map(p=>`${p.type}: ${p.title.substring(0,28)}...`).join(" · ")}</div></div>
     </div>`;
   }
+
+  // v7.1: Quick Stats strip — "Where am I" awareness
+  html+=buildQuickStats(counts);
 
   html+=`<div class="stats-row">
     <div class="sc sc-all" onclick="navTo('all',null)"><div class="sc-n">27</div><div class="sc-l">Total</div></div>
@@ -1588,8 +1974,31 @@ function render(){
   </div>`;
 
   if(!posts.length){html+='<div class="empty-state">No posts match this filter</div>';document.getElementById("mainContent").innerHTML=html;return;}
-  const byW={};posts.forEach(p=>{if(!byW[p.w])byW[p.w]=[];byW[p.w].push(p);});
-  html+=Object.keys(byW).sort().map(w=>`<div class="wgrp"><div class="wlbl">${WLBLS[w]}</div><div class="pgrid">${byW[w].map(p=>renderCard(p,isAdmin)).join("")}</div></div>`).join("");
+  // v7.4: group by month+week, not just week — so multi-month posts get separated cleanly
+  const byMW={};
+  posts.forEach(p=>{
+    const iso=pISO(p);
+    if(!iso){
+      // Fallback bucket for posts without iso
+      const key=`9999-99-W${p.w||0}`;
+      if(!byMW[key])byMW[key]={label:`Week ${p.w||"?"}`,posts:[]};
+      byMW[key].posts.push(p);
+      return;
+    }
+    const [y,m,d]=iso.split("-").map(Number);
+    const monthName=MONTH_NAMES[m-1];
+    // Week within month (1-indexed)
+    const firstDow=new Date(y,m-1,1).getDay();
+    const weekInMonth=Math.ceil((d+firstDow)/7);
+    const key=`${y}-${String(m).padStart(2,"0")}-W${weekInMonth}`;
+    if(!byMW[key]){
+      // Compute a sensible label: e.g., "Jun 2026 · Week 1"
+      const monthShort=monthName.substring(0,3);
+      byMW[key]={label:`${monthShort} ${y} · Week ${weekInMonth}`,posts:[]};
+    }
+    byMW[key].posts.push(p);
+  });
+  html+=Object.keys(byMW).sort().map(k=>`<div class="wgrp"><div class="wlbl">${esc(byMW[k].label)}</div><div class="pgrid">${byMW[k].posts.map(p=>renderCard(p,isAdmin)).join("")}</div></div>`).join("");
   document.getElementById("mainContent").innerHTML=html;
 }
 
@@ -1638,6 +2047,8 @@ function renderCard(p,isAdmin){
   }
   actions+=`<button class="ab ab-copy" onclick="quickCopy(${p.id},this)">Copy</button>`;
   if(m||(effType==="Carousel"&&upCnt))actions+=`<button class="ab ab-dl" onclick="dlMedia(${p.id})">⬇</button>`;
+  // v7.1: Repurpose button — only for posts that have content worth repurposing
+  if(st==="approved"||st==="published")actions+=`<button class="ab ab-rep" onclick="openRepurpose(${p.id})" title="Generate Reel/Static/Story variants of this post">🔄 Repurpose</button>`;
 
   const camp=getCampaignForPost(p.id);
   const campBadge=camp?`<span class="badge-camp">📅 ${esc(camp.name.length>20?camp.name.substring(0,20)+"…":camp.name)}</span>`:"";
@@ -1665,7 +2076,7 @@ async function quickSt(id,st){
   if(st==="approved"&&user?.role!=="admin"){toast("Only Admin can approve","err");return;}
   sto("st-"+id,st);
   logAct({action:st,postId:id,user:user?.name,time:new Date().toISOString()});
-  render();
+  refreshAfterAction();
   toast(ST_LABELS[st],"ok");
   await pushToGitHub();
 }
@@ -1705,7 +2116,7 @@ async function confirmReject(){
   sto("rn-"+rejectTargetId,reason);
   logAct({action:"rejected",postId:rejectTargetId,reason,user:user?.name,time:new Date().toISOString()});
   closeRejOv();if(revId===rejectTargetId)closeModal();
-  render();toast("Rejected — team sees reason automatically","err");
+  refreshAfterAction();toast("Rejected — team sees reason automatically","err");
   await pushToGitHub();
 }
 
@@ -2036,7 +2447,7 @@ function handleUpload(inp,type){
 function resetMedia(){
   localStorage.removeItem("mmm5-md-"+revId);
   buildModalLeft(POSTS.find(x=>x.id===revId),null);
-  render();toast("Reset to template");
+  refreshAfterAction();toast("Reset to template");
   pushToGitHub();
 }
 
@@ -2075,7 +2486,7 @@ async function saveEdits(){
   if(existingEd.slides)ed.slides=existingEd.slides;
   sto("ed-"+revId,ed);
   logAct({action:"edited",postId:revId,user:user?.name,time:new Date().toISOString()});
-  render();toast("Edits saved","ok");
+  refreshAfterAction();toast("Edits saved","ok");
   await pushToGitHub();
 }
 
@@ -2098,7 +2509,7 @@ function onTypeChange(newType){
   // Re-render the modal left side to show the new structure
   curSlide=0;
   buildModalLeft(p,gm(revId));
-  render(); // also refresh the cards behind the modal
+  refreshAfterAction(); // also refresh the cards/page behind the modal
 }
 
 /* v6.3: Add or remove a slide from the carousel. Only works on the current edit. */
@@ -2127,7 +2538,7 @@ async function adjustSlideCount(delta){
   sto("ed-"+revId,ed);
   if(curSlide>=slides.length)curSlide=slides.length-1;
   buildModalLeft(p,gm(revId));
-  render();
+  refreshAfterAction();
   toast(`Now ${slides.length} slides`,"ok");
   await pushToGitHub();
 }
@@ -2137,7 +2548,7 @@ async function modalAct(st){
   saveEdits();
   sto("st-"+revId,st);
   logAct({action:st,postId:revId,user:user?.name,time:new Date().toISOString()});
-  closeModal();render();toast(ST_LABELS[st],"ok");
+  closeModal();refreshAfterAction();toast(ST_LABELS[st],"ok");
   await pushToGitHub();
 }
 async function modalRevision(){
@@ -2145,7 +2556,7 @@ async function modalRevision(){
   if(reason===null)return;
   sto("st-"+revId,"revision");sto("rn-"+revId,reason||"Please review and revise.");
   logAct({action:"revision",postId:revId,user:user?.name,time:new Date().toISOString()});
-  closeModal();render();toast("Sent for revision","warn");
+  closeModal();refreshAfterAction();toast("Sent for revision","warn");
   await pushToGitHub();
 }
 
@@ -2994,6 +3405,93 @@ function openAITool(tool,i){
 }
 
 /* ══════════════════════════════════════════════════════════════
+   v7.1: CONTENT REPURPOSER — convert one post into 3 derivative formats
+   ══════════════════════════════════════════════════════════════ */
+function openRepurpose(postId){
+  const p=POSTS.find(x=>x.id===postId);if(!p)return;
+  const pp=gp(postId);
+  const dna=getBrandDNA();
+  const ed=ge(p.id);
+  const effType=ed.type||p.type;
+  const formats=getRepurposeFormats(effType,pp,dna);
+  const cards=formats.map((f,i)=>{
+    return `<div class="ai-card">
+      <div class="ai-title">${esc(f.title)}</div>
+      <div class="ai-hint">${esc(f.hint)}</div>
+      <textarea class="ai-prompt" id="repOut${i}" rows="9" readonly>${esc(f.text)}</textarea>
+      <div class="ai-actions">
+        <button class="ai-btn ai-copy" onclick="copyRepurposePrompt(${i},this)">📋 Copy</button>
+        <button class="ai-btn ai-chatgpt" onclick="openRepurposeTool('chatgpt',${i})">ChatGPT</button>
+        <button class="ai-btn ai-gemini" onclick="openRepurposeTool('gemini',${i})">Gemini</button>
+        <button class="ai-btn ai-grok" onclick="openRepurposeTool('grok',${i})">Grok</button>
+        <button class="ai-btn ai-claude" onclick="openRepurposeTool('claude',${i})">Claude</button>
+      </div>
+    </div>`;
+  }).join("");
+  const html=`<div class="cmp-modal-bg" id="repurposeModalBg">
+    <div class="cmp-modal" style="max-width:720px;">
+      <div class="cmp-mhd"><b>🔄 Repurpose: ${esc(pp.title.substring(0,50))}${pp.title.length>50?"…":""}</b><button onclick="closeRepurpose()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="ai-intro">
+          <b>Multiply one piece of content into three formats.</b><br>
+          Each prompt below uses the original post's content + Brand DNA. Copy → open in any AI tool → refine → create a new post.
+        </div>
+        ${cards}
+        <div class="ai-foot-note">💡 The strongest repurposing preserves the KEY INSIGHT while changing the format. Don't just shrink/expand — re-think for the new medium.</div>
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-cancel" onclick="closeRepurpose()">Close</button>
+      </div>
+    </div></div>`;
+  mountDynModal(html);
+}
+function closeRepurpose(){const m=document.getElementById("repurposeModalBg");if(m)m.remove();}
+function copyRepurposePrompt(i,btn){
+  const el=document.getElementById("repOut"+i);
+  navigator.clipboard.writeText(el.value).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓ Copied — paste in AI tool";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("ok");},2200);
+  });
+}
+function openRepurposeTool(tool,i){
+  const el=document.getElementById("repOut"+i);
+  navigator.clipboard.writeText(el.value);
+  const urls={chatgpt:"https://chatgpt.com/",gemini:"https://gemini.google.com/app",grok:"https://grok.com/",claude:"https://claude.ai/new"};
+  window.open(urls[tool]||urls.chatgpt,"_blank");
+  toast("Prompt copied — paste it in the AI tool","ok");
+}
+
+function getRepurposeFormats(srcType,pp,dna){
+  const brandCtx=[];
+  if(dna.voice_attributes)brandCtx.push(`Voice: ${(dna.voice_attributes||"").substring(0,200)}`);
+  if(dna.vocab_use)brandCtx.push(`Use words: ${(dna.vocab_use||"").substring(0,120)}`);
+  if(dna.vocab_avoid)brandCtx.push(`Avoid words: ${(dna.vocab_avoid||"").substring(0,120)}`);
+  if(dna.cta_phrases)brandCtx.push(`Approved CTAs: ${dna.cta_phrases}`);
+  const ctxBlock=brandCtx.length?`\n\nBrand context:\n${brandCtx.map(b=>"- "+b).join("\n")}`:"";
+  const srcBlock=`Source post (${srcType}):\nTitle: ${pp.title}\nHook: ${pp.hook||"(none)"}\nCaption: ${pp.caption||"(none)"}\nKey points/Brief: ${pp.brief||"(none)"}\nCTA: ${pp.cta||"(none)"}`;
+  if(srcType==="Carousel"){
+    return [
+      {title:"🎬 Convert to Reel script",hint:"15-30 second reel that captures the carousel's key insight",text:`I have an existing Instagram Carousel post for MakeMyMandir (custom mandir business). I want to repurpose it into a 15-30 second Instagram Reel.\n\n${srcBlock}\n\nPlease create:\n1. A reel script (broken down by seconds with visuals + voiceover or on-screen text)\n2. A new attention-grabbing hook (different from the carousel's hook)\n3. Suggested b-roll shots or visual elements\n4. A caption to go with the reel (shorter than the carousel caption)\n\nKey rule: don't just shrink the carousel — re-think for video. Lead with the SINGLE strongest insight, not all of them.${ctxBlock}`},
+      {title:"🖼 Convert to Static graphic",hint:"Single eye-catching post that summarizes the carousel's main point",text:`I have an existing Instagram Carousel post for MakeMyMandir. I want to repurpose it into a single Static (1 image) post.\n\n${srcBlock}\n\nPlease create:\n1. One bold headline (max 8 words) that captures the carousel's strongest single insight\n2. A 1-2 line supporting subheading\n3. A short caption (max 100 words) that gives just enough context to make the static interesting and drives DMs\n4. A design brief: what visual elements should be on the graphic (layout, key text hierarchy, suggested imagery)\n\nKey rule: a static can only deliver ONE idea. Pick the most viral or shareable insight from the carousel — not the most comprehensive one.${ctxBlock}`},
+      {title:"📱 Convert to Story sequence",hint:"3-5 Stories that tease the carousel and drive saves/DMs",text:`I have an existing Instagram Carousel post for MakeMyMandir. I want to repurpose it into a 3-5 frame Instagram Story sequence.\n\n${srcBlock}\n\nPlease create:\n1. Frame-by-frame breakdown (3-5 frames):\n   - Frame 1: Hook / curiosity gap\n   - Frame 2-4: Tease (don't give it all away)\n   - Last frame: CTA to view the carousel or DM\n2. Sticker/poll suggestions for each frame to drive engagement\n3. Text overlay copy for each frame (short, punchy, story-style)\n\nKey rule: Stories should INVITE people to see the carousel, not duplicate it. Create curiosity gaps that the carousel resolves.${ctxBlock}`}
+    ];
+  }
+  if(srcType==="Reel"){
+    return [
+      {title:"📑 Convert to Carousel breakdown",hint:"Slow down the reel's insights into a multi-slide carousel",text:`I have an existing Instagram Reel for MakeMyMandir. I want to repurpose it into a 6-8 slide Instagram Carousel that expands on the reel's core ideas.\n\n${srcBlock}\n\nPlease create:\n1. A carousel slide-by-slide breakdown:\n   - Slide 1: Hook (different from reel's, but related theme)\n   - Slides 2-6: Expand on the key points the reel only had time to mention\n   - Slide 7: Side-by-side comparison or table if relevant\n   - Final slide: CTA\n2. A caption that ties the carousel back to the reel\n3. Design brief for each slide\n\nKey rule: the carousel should EXPAND, not just replay. Cover the depth the reel had to skip.${ctxBlock}`},
+      {title:"🖼 Convert to Static highlight",hint:"A single shareable graphic featuring the reel's most quotable moment",text:`I have an existing Instagram Reel for MakeMyMandir. I want to repurpose it into a single Static post that highlights the reel's most quotable moment.\n\n${srcBlock}\n\nPlease create:\n1. Identify the one most quotable line or insight from the reel content\n2. Headline (max 10 words) built around that quote\n3. A caption (max 100 words) that contextualizes the quote and drives DMs\n4. Design brief: how to visually present the quote (typography focus, supporting imagery, brand colors)\n5. Hashtags (4-6 relevant)\n\nKey rule: Find the line that someone would screenshot and save. That's what the static features.${ctxBlock}`},
+      {title:"📱 Convert to Story teaser",hint:"Story sequence that teases people to watch the reel",text:`I have an existing Instagram Reel for MakeMyMandir. I want to repurpose it into a 3-frame Instagram Story sequence that drives traffic to the reel.\n\n${srcBlock}\n\nPlease create:\n1. Frame-by-frame breakdown:\n   - Frame 1: Curiosity gap from the reel\n   - Frame 2: One frame from the reel as a teaser (suggest which moment)\n   - Frame 3: "Watch the full reel" CTA with link sticker\n2. Sticker suggestions (poll/question to drive engagement)\n3. Text overlay copy\n\nKey rule: Stories should make people NEED to watch the reel — they shouldn't show the resolution.${ctxBlock}`}
+    ];
+  }
+  return [
+    {title:"📑 Expand to Carousel",hint:"Take the static's single idea and break it into 5-7 slides of depth",text:`I have an existing Instagram Static post for MakeMyMandir. I want to repurpose it into a 5-7 slide Carousel that goes deep on the topic the static introduced.\n\n${srcBlock}\n\nPlease create:\n1. Carousel slide-by-slide breakdown:\n   - Slide 1: A NEW hook (don't reuse the static's headline)\n   - Slides 2-6: Build out the topic with examples, sub-points, comparisons\n   - Final slide: CTA\n2. A new caption (different angle from the static's caption)\n3. Design brief for each slide\n\nKey rule: the carousel should reward people who wanted to know MORE after seeing the static. Don't just rehash — expand.${ctxBlock}`},
+    {title:"🎬 Convert to Reel narration",hint:"Use the static's idea as the basis for a short narrated reel",text:`I have an existing Instagram Static post for MakeMyMandir. I want to repurpose it into a 15-25 second narrated Reel.\n\n${srcBlock}\n\nPlease create:\n1. A reel script with voiceover narration (broken by seconds)\n2. Visual direction: what's on screen during each line (mandir shots, b-roll, text overlays)\n3. A new hook (different from the static's headline)\n4. Music/audio suggestion (mood, energy)\n5. A caption to go with the reel\n\nKey rule: Reels are emotional, not informational. Find the emotional angle of the static's topic.${ctxBlock}`},
+    {title:"📱 Convert to Story sequence",hint:"Tease the static as a quick 2-3 frame Story",text:`I have an existing Instagram Static post for MakeMyMandir. I want to repurpose it into a 2-3 frame Story sequence that drives engagement.\n\n${srcBlock}\n\nPlease create:\n1. Frame-by-frame breakdown (2-3 frames)\n2. Sticker/poll suggestions to drive engagement\n3. Text overlay copy for each frame\n4. CTA frame (drive to DMs or to view the post in feed)\n\nKey rule: Stories are casual. Don't repeat the static's polished tone — make it feel behind-the-scenes / off-the-cuff.${ctxBlock}`}
+  ];
+}
+
+
+/* ══════════════════════════════════════════════════════════════
    v6.8: AI STUDIO — dedicated page with 4 generators (free path)
    1. Image Prompts — for Midjourney/DALL-E/Imagen
    2. Video Prompts — for Runway/Kling/Pika
@@ -3010,6 +3508,7 @@ const AI_STUDIO_TABS=[
   {id:"video",lbl:"🎬 Video Prompts"},
   {id:"caption",lbl:"✍️ Caption Generator"},
   {id:"voice",lbl:"🎤 Voice / Audio"},
+  {id:"library",lbl:"💾 Prompt Library"},
 ];
 
 /* v6.9: capture current tab's input field values into the cache so we can restore them
@@ -3044,6 +3543,7 @@ function renderAiStudio(){
   else if(_aiStudioTab==="video")body=renderAiVideoTab();
   else if(_aiStudioTab==="caption")body=renderAiCaptionTab();
   else if(_aiStudioTab==="voice")body=renderAiVoiceTab();
+  else if(_aiStudioTab==="library")body=renderAiLibraryTab();
   document.getElementById("mainContent").innerHTML=`
     <div class="ais-wrap">
       <div class="ais-intro">
@@ -3257,9 +3757,12 @@ function genAiVoicePrompts(){
 }
 
 /* === Shared: render the 4 generated prompt cards === */
+/* v7.1: temporary store of currently displayed prompts (so the Save button can find them) */
+let _aiCurrentPrompts=[];
 function renderAiPromptCards(prompts,mode){
   const out=document.getElementById("aiOutput");
   if(!out)return;
+  _aiCurrentPrompts=prompts.map(p=>({...p,mode}));  // capture for Save-to-Library
   const cards=prompts.map((pr,i)=>{
     return `<div class="ai-card">
       <div class="ai-title">${esc(pr.title)}</div>
@@ -3274,14 +3777,13 @@ function renderAiPromptCards(prompts,mode){
         ${mode==="image"?'<button class="ai-btn" onclick="openExtTool(\'midjourney\')">Midjourney</button>':""}
         ${mode==="video"?'<button class="ai-btn" onclick="openExtTool(\'runway\')">Runway</button><button class="ai-btn" onclick="openExtTool(\'kling\')">Kling</button>':""}
         ${mode==="voice"?'<button class="ai-btn" onclick="openExtTool(\'elevenlabs\')">ElevenLabs</button><button class="ai-btn" onclick="openExtTool(\'heygen\')">HeyGen</button>':""}
+        <button class="ai-btn ai-save" onclick="openSavePromptDialog(${i})" title="Save this prompt to your library for reuse">💾 Save</button>
       </div>
     </div>`;
   }).join("");
-  const html=`<div class="ais-output-hd">✨ 4 prompts generated. Click <b>Copy</b>, then click your preferred AI tool.</div>${cards}`;
+  const html=`<div class="ais-output-hd">✨ 4 prompts generated. Click <b>Copy</b>, then click your preferred AI tool. Save winners to your <b>💾 Prompt Library</b>.</div>${cards}`;
   out.innerHTML=html;
-  // v6.9 FIX: cache the output HTML on the current tab so switching tabs preserves it
   if(_aiStudioCache[mode]){_aiStudioCache[mode].output=html;}
-  // Also capture current input values to cache
   _captureAiTabInputs();
   setTimeout(()=>out.scrollIntoView({behavior:"smooth",block:"start"}),50);
 }
@@ -3304,6 +3806,636 @@ function openExtTool(tool){
   const urls={midjourney:"https://www.midjourney.com/",runway:"https://runwayml.com/",kling:"https://klingai.com/",elevenlabs:"https://elevenlabs.io/app",heygen:"https://app.heygen.com/"};
   window.open(urls[tool]||"https://www.google.com","_blank");
   toast(`Opening ${tool} — paste your already-copied prompt there`,"info");
+}
+
+/* ══════════════════════════════════════════════════════════════
+   v7.1: CALENDAR VIEW — May 2026 grid showing all posts visually
+   Goal: at-a-glance gaps, clusters, and posting cadence awareness.
+   ══════════════════════════════════════════════════════════════ */
+/* v7.4: Calendar — multi-month aware.
+   _calMonth is "YYYY-MM"; defaults to current month, or month with posts. */
+let _calMonth=null;
+function getDefaultCalMonth(){
+  // Try current month first
+  const now=new Date();
+  const curIso=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+  // If current month has posts, show it
+  const hasPosts=POSTS.some(p=>(p.iso||"").startsWith(curIso));
+  if(hasPosts)return curIso;
+  // Otherwise pick the earliest month that has upcoming posts
+  const todayIso=now.toISOString().substring(0,10);
+  const upcoming=POSTS.filter(p=>p.iso&&p.iso>=todayIso).sort((a,b)=>a.iso.localeCompare(b.iso));
+  if(upcoming.length)return upcoming[0].iso.substring(0,7);
+  // Otherwise pick the latest month that has any posts
+  const sorted=POSTS.slice().sort((a,b)=>(b.iso||"").localeCompare(a.iso||""));
+  if(sorted.length&&sorted[0].iso)return sorted[0].iso.substring(0,7);
+  // Final fallback
+  return curIso;
+}
+function setCalMonth(ym){_calMonth=ym;renderCalendar();}
+function calMonthNav(delta){
+  if(!_calMonth)_calMonth=getDefaultCalMonth();
+  const [y,m]=_calMonth.split("-").map(Number);
+  const dt=new Date(y,m-1+delta,1);
+  _calMonth=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}`;
+  renderCalendar();
+}
+const MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar(){
+  updateCounts();
+  if(!_calMonth)_calMonth=getDefaultCalMonth();
+  const [calY,calM]=_calMonth.split("-").map(Number);
+  const monthIdx=calM-1;
+  const monthName=MONTH_NAMES[monthIdx];
+  const monthYear=`${monthName} ${calY}`;
+  // Group posts by day-of-month for the active calendar month
+  const byDay={};
+  POSTS.forEach(p=>{
+    const iso=pISO(p);
+    if(!iso)return;
+    if(!iso.startsWith(_calMonth+"-"))return;
+    const dn=parseInt(iso.substring(8,10),10);
+    if(!byDay[dn])byDay[dn]=[];
+    byDay[dn].push(p);
+  });
+  const daysInMonth=new Date(calY,calM,0).getDate();
+  const firstDayCol=new Date(calY,monthIdx,1).getDay(); // 0=Sun..6=Sat
+  const totalCells=Math.ceil((firstDayCol+daysInMonth)/7)*7;
+  const today=new Date();
+  const isCurrentMonth=today.getFullYear()===calY&&today.getMonth()===monthIdx;
+  const todayDate=isCurrentMonth?today.getDate():-1;
+  // Build day cells
+  const cells=[];
+  for(let i=0;i<totalCells;i++){
+    const dayNum=i-firstDayCol+1;
+    if(dayNum<1||dayNum>daysInMonth){
+      cells.push(`<div class="cal-cell cal-empty"></div>`);
+      continue;
+    }
+    const posts=byDay[dayNum]||[];
+    const isToday=dayNum===todayDate;
+    const isPast=isCurrentMonth&&dayNum<todayDate;
+    const dayPostsHtml=posts.map(p=>{
+      const st=gs(p.id);
+      const pp=gp(p.id);
+      const icon=(pp.type||p.type)==="Reel"?"🎬":(pp.type||p.type)==="Carousel"?"📑":"🖼";
+      const stColor={pending:"#854F0B",approved:"#0F6E56",rejected:"#A32D2D",revision:"#854F0B",published:"#5D3FD3"}[st]||"#6B5B52";
+      const stBg={pending:"#FEF5E7",approved:"#E6F5F0",rejected:"#FDF0F0",revision:"#FEF5E7",published:"#EFEBFC"}[st]||"#F5F0EB";
+      const stLetter={pending:"P",approved:"A",rejected:"R",revision:"V",published:"✓"}[st]||"";
+      const title=pp.title||p.title||"";
+      const shortTitle=title.length>34?title.substring(0,34)+"…":title;
+      return `<div class="cal-post" style="background:${stBg};border-left-color:${stColor};" onclick="event.stopPropagation();openReview(${p.id})" title="${esc(title)} · ${esc(st)}">
+        <span class="cal-post-time">${esc(p.time||"")}</span>
+        <span class="cal-post-icon">${icon}</span>
+        <span class="cal-post-title">${esc(shortTitle)}</span>
+        <span class="cal-post-st" style="color:${stColor};">${stLetter}</span>
+      </div>`;
+    }).join("");
+    const cls=["cal-cell"];
+    if(isToday)cls.push("cal-today");
+    if(isPast)cls.push("cal-past");
+    if(!posts.length)cls.push("cal-noposts");
+    cells.push(`<div class="${cls.join(" ")}">
+      <div class="cal-date">${dayNum}${isToday?' <span class="cal-today-badge">TODAY</span>':''}</div>
+      ${posts.length?dayPostsHtml:'<div class="cal-empty-day">No posts</div>'}
+    </div>`);
+  }
+  // Legend
+  const legend=`<div class="cal-legend">
+    <span class="cal-leg"><span class="cal-leg-dot" style="background:#854F0B;"></span> P = Pending</span>
+    <span class="cal-leg"><span class="cal-leg-dot" style="background:#0F6E56;"></span> A = Approved</span>
+    <span class="cal-leg"><span class="cal-leg-dot" style="background:#5D3FD3;"></span> ✓ = Published</span>
+    <span class="cal-leg"><span class="cal-leg-dot" style="background:#854F0B;"></span> V = Revision</span>
+    <span class="cal-leg"><span class="cal-leg-dot" style="background:#A32D2D;"></span> R = Rejected</span>
+    <span class="cal-leg-spacer"></span>
+    <span class="cal-leg-icon">🎬 Reel · 📑 Carousel · 🖼 Static</span>
+  </div>`;
+  // Stats
+  const monthPostCount=Object.values(byDay).reduce((a,b)=>a+b.length,0);
+  const daysWithPosts=Object.keys(byDay).length;
+  const emptyDays=daysInMonth-daysWithPosts;
+  // Compute next month (for "Create Next Month" button label)
+  const nextDt=new Date(calY,monthIdx+1,1);
+  const nextMonthLbl=`${MONTH_NAMES[nextDt.getMonth()]} ${nextDt.getFullYear()}`;
+  const nextMonthIso=`${nextDt.getFullYear()}-${String(nextDt.getMonth()+1).padStart(2,"0")}`;
+  // Check if next month already exists
+  const nextMonthExists=POSTS.some(p=>(p.iso||"").startsWith(nextMonthIso+"-"));
+  const isAdmin=user?.role==="admin";
+  // Month nav
+  const navHtml=`<div class="cal-monthnav">
+    <button class="cal-navbtn" onclick="calMonthNav(-1)" title="Previous month">‹ Prev</button>
+    <button class="cal-navbtn cal-navbtn-today" onclick="setCalMonth(getDefaultCalMonth())" title="Jump to current month">Today</button>
+    <button class="cal-navbtn" onclick="calMonthNav(1)" title="Next month">Next ›</button>
+  </div>`;
+  // Create-next-month button (admin only)
+  const createBtnHtml=isAdmin&&!nextMonthExists?`<button class="cal-createbtn" onclick="openCreateMonthModal('${esc(nextMonthIso)}')">📅 Create ${esc(nextMonthLbl)} Calendar</button>`:"";
+  document.getElementById("mainContent").innerHTML=`<div class="cal-wrap">
+    <div class="cal-header">
+      <div>
+        <h2 class="cal-title">${esc(monthYear)}</h2>
+        <div class="cal-subtitle">${monthPostCount} posts across ${daysWithPosts} days · ${emptyDays} empty days · click any post to review</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        ${navHtml}
+        ${createBtnHtml}
+      </div>
+    </div>
+    ${legend}
+    <div class="cal-weekhdr">
+      <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+    </div>
+    <div class="cal-grid">${cells.join("")}</div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   v7.4: CREATE NEXT MONTH'S CALENDAR
+   Admin generates a new month's worth of post slots in one click.
+   - 27 posts distributed across the month (skip Tue/Thu light days)
+   - 9 Reels / 11 Carousels / 7 Static
+   - Festival-tied posts pre-seeded from Festival Planner
+   - All posts start as "Pending" with placeholder title — team fills details later
+   ══════════════════════════════════════════════════════════════ */
+function openCreateMonthModal(targetMonthIso){
+  if(user?.role!=="admin"){toast("Only admin can create months","err");return;}
+  const [y,m]=targetMonthIso.split("-").map(Number);
+  const monthName=MONTH_NAMES[m-1];
+  const monthLbl=`${monthName} ${y}`;
+  // Find festivals in that month from Festival Planner
+  const festsInMonth=getFestivals().filter(f=>f.date&&f.date.startsWith(targetMonthIso+"-")).sort((a,b)=>a.date.localeCompare(b.date));
+  const festListHtml=festsInMonth.length?festsInMonth.map(f=>{
+    const day=parseInt(f.date.substring(8,10),10);
+    return `<li><b>${esc(monthName)} ${day}</b> · ${esc(f.name)}</li>`;
+  }).join(""):`<li style="color:var(--mid);font-style:italic;">No festivals in ${esc(monthLbl)} (from Festival Planner)</li>`;
+  const html=`<div class="cmp-modal-bg" id="createMonthBg">
+    <div class="cmp-modal" style="max-width:580px;">
+      <div class="cmp-mhd"><b>📅 Create ${esc(monthLbl)} Calendar</b><button onclick="closeCreateMonth()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="cm-intro">
+          This will generate <b>27 post slots</b> across ${esc(monthLbl)} — distributed Mon/Wed/Fri/Sat/Sun (skipping the lighter Tue/Thu days). Mix: <b>9 Reels · 11 Carousels · 7 Static</b>.
+        </div>
+        <div class="cm-section">
+          <div class="cm-section-hd">🪔 Festival posts that will be auto-created (${festsInMonth.length})</div>
+          <ul class="cm-fest-list">${festListHtml}</ul>
+          <div class="cm-section-hint">These are from your Festival Planner. Each gets a Pending post with the festival's content angle pre-filled in the brief.</div>
+        </div>
+        <div class="cm-section">
+          <div class="cm-section-hd">📋 What happens after</div>
+          <ul class="cm-info-list">
+            <li>All ${esc(monthLbl)} posts appear in <b>Pending</b> for your team to work on</li>
+            <li>Festival posts come pre-filled with title + brief — team adds caption/media</li>
+            <li>Non-festival slots are blank ("[Plan content]") — admin/team fill them</li>
+            <li>You can edit titles, dates, types at any time on each post</li>
+          </ul>
+        </div>
+        <div class="cm-section cm-warn">
+          ⚠ <b>One-way action.</b> This creates new posts that sync to your team's devices. You can edit individual posts later, but there's no undo for the bulk creation.
+        </div>
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-cancel" onclick="closeCreateMonth()">Cancel</button>
+        <button class="cmp-save" onclick="confirmCreateMonth('${esc(targetMonthIso)}')">📅 Generate ${esc(monthLbl)} Calendar</button>
+      </div>
+    </div></div>`;
+  mountDynModal(html);
+}
+function closeCreateMonth(){const m=document.getElementById("createMonthBg");if(m)m.remove();}
+
+async function confirmCreateMonth(targetMonthIso){
+  const [y,m]=targetMonthIso.split("-").map(Number);
+  const monthIdx=m-1;
+  const monthName=MONTH_NAMES[monthIdx];
+  const daysInMonth=new Date(y,m,0).getDate();
+  // Find festivals in target month
+  const festsInMonth=getFestivals().filter(f=>f.date&&f.date.startsWith(targetMonthIso+"-")).sort((a,b)=>a.date.localeCompare(b.date));
+  // Reserve festival dates
+  const usedDates=new Set();
+  const festsToCreate=festsInMonth.map(f=>{
+    const day=parseInt(f.date.substring(8,10),10);
+    usedDates.add(day);
+    return {day,fest:f};
+  });
+  // Target: 27 total slots. Distribute non-festival slots evenly across the month.
+  const targetCount=27;
+  const remainingSlotsNeeded=Math.max(0,targetCount-festsToCreate.length);
+  // Build pool of all candidate dates (not festivals, not Sundays — Sundays are last resort)
+  const nonSunday=[];
+  const sundayPool=[];
+  for(let d=1;d<=daysInMonth;d++){
+    if(usedDates.has(d))continue;
+    const dt=new Date(y,monthIdx,d);
+    if(dt.getDay()===0)sundayPool.push(d); // Sun
+    else nonSunday.push(d);
+  }
+  // Pick (remainingSlotsNeeded) dates, prefer non-Sunday, evenly spaced
+  const selected=[];
+  if(remainingSlotsNeeded>=nonSunday.length){
+    // Take all non-Sundays + fill rest from Sundays
+    selected.push(...nonSunday);
+    const needFromSundays=remainingSlotsNeeded-nonSunday.length;
+    if(needFromSundays>0){
+      // Evenly pick from Sundays
+      const step=sundayPool.length/needFromSundays;
+      for(let i=0;i<needFromSundays&&i<sundayPool.length;i++){
+        selected.push(sundayPool[Math.floor(i*step)]);
+      }
+    }
+  } else {
+    // Evenly pick from non-Sundays
+    const step=nonSunday.length/remainingSlotsNeeded;
+    for(let i=0;i<remainingSlotsNeeded;i++){
+      selected.push(nonSunday[Math.floor(i*step)]);
+    }
+  }
+  // Combine festival days + selected non-festival days, sorted
+  const allDays=[...festsToCreate.map(f=>f.day),...selected].sort((a,b)=>a-b);
+  // Type rotation: 9 Reels, 11 Carousels, 7 Static — interleaved for variety
+  const interleaved=[];
+  let r=0,c=0,s=0;
+  while(r<9||c<11||s<7){
+    if(c<11){interleaved.push("Carousel");c++;}
+    if(r<9){interleaved.push("Reel");r++;}
+    if(s<7){interleaved.push("Static");s++;}
+  }
+  // Now build posts
+  const maxId=POSTS.reduce((mx,p)=>Math.max(mx,p.id||0),0);
+  const newPosts=[];
+  let typeIdx=0;
+  allDays.forEach(day=>{
+    const dt=new Date(y,monthIdx,day);
+    const dayLbl=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][dt.getDay()];
+    const fest=festsToCreate.find(f=>f.day===day);
+    const iso=`${y}-${String(m).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    const dShort=`${monthName.substring(0,3)} ${day}`;
+    // Determine type — festivals get specific types based on content fit
+    let postType;
+    if(fest){
+      const fname=fest.fest.name.toLowerCase();
+      if(fname.includes("jayanti")||fname.includes("purnima")||fname.includes("samvatsari")){
+        postType="Static";
+      } else if(fname.match(/diwali|holi|navratri|janmashtami|ganesh chaturthi|akshaya|rath yatra/i)){
+        postType="Reel";
+      } else {
+        postType="Carousel";
+      }
+    } else {
+      postType=interleaved[typeIdx%interleaved.length];
+      typeIdx++;
+    }
+    // Default time
+    const time=postType==="Static"?"8:00 AM":postType==="Reel"?"7:30 PM":dt.getDay()===6||dt.getDay()===0?"10:00 AM":"7:00 PM";
+    // Week within month (for grouping in All Posts view)
+    const week=Math.ceil((day+new Date(y,monthIdx,1).getDay())/7);
+    // Build the post
+    const post={
+      id:maxId+newPosts.length+1,
+      w:week,
+      d:dShort,
+      iso:iso,
+      day:dayLbl,
+      type:postType,
+      plat:"IG+FB",
+      time:time,
+      title:fest?`${fest.fest.name} — ${postType.toLowerCase()} post`:"[Plan content]",
+      hook:fest?(fest.fest.significance||"").substring(0,140):"",
+      caption:"",
+      brief:fest?(fest.fest.mmm_angle||"Festival post — see Festival Planner for context."):"[Add brief — what should this post communicate?]",
+      cta:fest?"DM us":"",
+      slides:postType==="Carousel"?["Slide 1","Slide 2","Slide 3","Slide 4","Slide 5"]:null,
+    };
+    newPosts.push(post);
+  });
+  // Save: append to POSTS, push to GitHub
+  addPostsToStorage(newPosts);
+  logAct({action:"month-created",note:`${monthName} ${y} — ${newPosts.length} posts (${festsToCreate.length} festival posts)`,user:user?.name,time:new Date().toISOString()});
+  const ok=await pushToGitHub();
+  closeCreateMonth();
+  // Navigate to the new month on Calendar
+  _calMonth=targetMonthIso;
+  renderCalendar();
+  toast(ok?`✓ ${monthName} ${y} created — ${newPosts.length} post slots, ${festsToCreate.length} festival-tied`:`⚠ ${monthName} created locally — sync failed`,ok?"ok":"err");
+}
+
+/* ══════════════════════════════════════════════════════════════
+   v7.3: FESTIVAL PLANNER — see what's coming, plan what to post.
+   For a remote team where festivals get missed without a tracker.
+   Pre-seeded with ~40 entries (May 2026 → May 2027) across
+   Hindu, Jain, Agarwal, Maharashtrian, Punjabi communities +
+   famous temple events. Status + notes are user-editable and synced.
+   ══════════════════════════════════════════════════════════════ */
+let _festFilter="all";        // "all" | community key | "thisweek" | "thismonth"
+let _festShowPast=false;
+
+function renderFestivals(){
+  updateCounts();
+  const all=getFestivals();
+  const statuses=getFestivalStatuses();
+  const notes=getFestivalNotes();
+  // Sort by date ascending
+  const sorted=[...all].sort((a,b)=>a.date.localeCompare(b.date));
+  // Split into upcoming / past based on today
+  const upcoming=sorted.filter(f=>daysBetween(f.date)>=0);
+  const past=sorted.filter(f=>daysBetween(f.date)<0);
+  // Apply community filter
+  let visible=_festShowPast?past.slice().reverse():upcoming;
+  if(_festFilter==="thisweek")visible=visible.filter(f=>{const d=daysBetween(f.date);return d>=0&&d<=7;});
+  else if(_festFilter==="thismonth")visible=visible.filter(f=>{const d=daysBetween(f.date);return d>=0&&d<=31;});
+  else if(_festFilter!=="all")visible=visible.filter(f=>(f.community||[]).includes(_festFilter));
+  // This-week + this-month callouts
+  const thisWeek=upcoming.filter(f=>{const d=daysBetween(f.date);return d>=0&&d<=7;});
+  const thisMonth=upcoming.filter(f=>{const d=daysBetween(f.date);return d>=0&&d<=31;});
+  // Build community filter chips
+  const communityCounts={all:upcoming.length};
+  Object.keys(FESTIVAL_COMMUNITIES).forEach(c=>{communityCounts[c]=0;});
+  upcoming.forEach(f=>(f.community||[]).forEach(c=>{if(communityCounts[c]!==undefined)communityCounts[c]++;}));
+  const chip=(id,lbl,extraColor)=>{
+    const cnt=id==="all"?communityCounts.all:(communityCounts[id]||0);
+    const colorStyle=extraColor?` style="border-left:3px solid ${extraColor};padding-left:9px;"`:"";
+    return `<button class="lib-chip${_festFilter===id?" on":""}" onclick="setFestFilter('${id}')"${colorStyle}>${lbl} <span class="lib-chip-n">${cnt}</span></button>`;
+  };
+  const chips=`
+    ${chip("all","All upcoming")}
+    ${chip("thisweek","🔥 This week")}
+    ${chip("thismonth","📅 This month")}
+    <span class="fest-chip-sep"></span>
+    ${Object.entries(FESTIVAL_COMMUNITIES).map(([k,v])=>chip(k,v.label,v.color)).join("")}
+  `;
+  // Callout strip for THIS WEEK
+  let calloutHtml="";
+  if(thisWeek.length){
+    calloutHtml=`<div class="fest-callout fest-callout-fire">
+      <div class="fest-callout-hd">🔥 THIS WEEK — ${thisWeek.length} festival${thisWeek.length>1?"s":""} coming up</div>
+      <div class="fest-callout-body">${thisWeek.map(f=>{
+        const days=daysBetween(f.date);
+        const dayLbl=days===0?"TODAY":days===1?"TOMORROW":`in ${days} days`;
+        return `<span class="fest-callout-item"><b>${esc(f.name)}</b> · ${esc(dayLbl)}</span>`;
+      }).join(" · ")}</div>
+    </div>`;
+  } else if(thisMonth.length){
+    // Only show "this month" callout if "this week" is empty
+    calloutHtml=`<div class="fest-callout fest-callout-info">
+      <div class="fest-callout-hd">📅 THIS MONTH — ${thisMonth.length} festival${thisMonth.length>1?"s":""} coming up</div>
+      <div class="fest-callout-body">${thisMonth.slice(0,5).map(f=>{
+        const days=daysBetween(f.date);
+        return `<span class="fest-callout-item"><b>${esc(f.name)}</b> · in ${days} days</span>`;
+      }).join(" · ")}${thisMonth.length>5?` · <span style="color:var(--mid);">and ${thisMonth.length-5} more</span>`:""}</div>
+    </div>`;
+  }
+  // Festival cards
+  const cards=visible.map(f=>renderFestivalCard(f,statuses[f.id]||"not-planned",notes[f.id]||"")).join("");
+  const emptyState=visible.length?"":`<div class="lib-empty-small">
+    ${_festShowPast?"No past festivals match this filter.":_festFilter==="thisweek"?"No festivals in the next 7 days. Take a breather.":_festFilter==="thismonth"?"No festivals in the next 31 days.":"No upcoming festivals match this filter."}
+  </div>`;
+  document.getElementById("mainContent").innerHTML=`<div class="fest-wrap">
+    <div class="fest-header">
+      <div>
+        <h2 class="fest-title">🪔 Festival Planner</h2>
+        <div class="fest-subtitle">${upcoming.length} upcoming festivals across 5 communities · plan content ahead so nothing gets missed</div>
+      </div>
+      <div class="fest-toggle">
+        <button class="lib-chip${!_festShowPast?" on":""}" onclick="toggleFestPast(false)">Upcoming (${upcoming.length})</button>
+        <button class="lib-chip${_festShowPast?" on":""}" onclick="toggleFestPast(true)">Past (${past.length})</button>
+      </div>
+    </div>
+    ${calloutHtml}
+    <div class="fest-chips">${chips}</div>
+    <div class="fest-list">${cards}${emptyState}</div>
+  </div>`;
+}
+
+function renderFestivalCard(f,status,notes){
+  const days=daysBetween(f.date);
+  const isPast=days<0;
+  const dateStr=fmtFestivalDate(f.date);
+  // Days-left badge
+  let daysBadge="";
+  if(days===0)daysBadge=`<span class="fest-days fest-days-today">TODAY</span>`;
+  else if(days===1)daysBadge=`<span class="fest-days fest-days-tomorrow">TOMORROW</span>`;
+  else if(days>0&&days<=7)daysBadge=`<span class="fest-days fest-days-week">${days} days</span>`;
+  else if(days>0&&days<=14)daysBadge=`<span class="fest-days fest-days-soon">${days} days</span>`;
+  else if(days>0)daysBadge=`<span class="fest-days fest-days-far">${days} days</span>`;
+  else daysBadge=`<span class="fest-days fest-days-past">${Math.abs(days)} days ago</span>`;
+  // Community badges
+  const commBadges=(f.community||[]).map(c=>{
+    const info=FESTIVAL_COMMUNITIES[c]||{label:c,color:"#666",bg:"#eee"};
+    return `<span class="fest-comm" style="background:${info.bg};color:${info.color};">${esc(info.label)}</span>`;
+  }).join("");
+  // Status pill
+  const statusInfo={
+    "not-planned":{lbl:"🔴 Not planned",color:"#A32D2D",bg:"#FDF0F0"},
+    "planning":   {lbl:"🟡 Planning",   color:"#854F0B",bg:"#FEF5E7"},
+    "ready":      {lbl:"🟢 Posts ready",color:"#0F6E56",bg:"#E6F5F0"},
+    "published":  {lbl:"✓ Published",   color:"#5D3FD3",bg:"#EFEBFC"},
+  };
+  const st=statusInfo[status]||statusInfo["not-planned"];
+  // Status dropdown
+  const statusDropdown=`<select class="fest-status-sel" onchange="setFestivalStatus('${f.id}',this.value)" style="background:${st.bg};color:${st.color};border-color:${st.color};">
+    ${Object.entries(statusInfo).map(([k,v])=>`<option value="${k}"${status===k?" selected":""}>${v.lbl}</option>`).join("")}
+  </select>`;
+  // Approx-date warning
+  const approxWarn=f.approx?`<span class="fest-approx" title="Lunar date — verify against panchang 1-2 weeks before posting">⚠ verify date</span>`:"";
+  const notesEsc=esc(notes||"");
+  return `<div class="fest-card${isPast?" fest-past":""}">
+    <div class="fest-card-row">
+      <div class="fest-card-left">
+        <div class="fest-card-name">${esc(f.name)} ${approxWarn}</div>
+        <div class="fest-card-date">${esc(dateStr)} · ${daysBadge}</div>
+        <div class="fest-card-badges">${commBadges}</div>
+      </div>
+      <div class="fest-card-right">
+        ${statusDropdown}
+      </div>
+    </div>
+    <div class="fest-card-sig"><b>Significance:</b> ${esc(f.significance||"")}</div>
+    <div class="fest-card-angle"><b>📝 MMM content angle:</b> ${esc(f.mmm_angle||"")}</div>
+    <div class="fest-card-notes-row">
+      <textarea class="fest-card-notes" placeholder="Your planning notes — assigned to whom, post types, deadlines, links..." onblur="setFestivalNotes('${f.id}',this.value)">${notesEsc}</textarea>
+    </div>
+  </div>`;
+}
+
+function setFestFilter(id){
+  _festFilter=id;
+  renderFestivals();
+}
+function toggleFestPast(showPast){
+  _festShowPast=showPast;
+  _festFilter="all"; // reset filter when toggling
+  renderFestivals();
+}
+
+/* ══════════════════════════════════════════════════════════════
+   v7.1: AI PROMPT LIBRARY — save, organise, reuse winning AI prompts
+   "Treat AI like an intern" — Vaibhav Sisinty's framework requires
+   saving the briefs that consistently produce great output.
+   ══════════════════════════════════════════════════════════════ */
+function getSavedPrompts(){
+  const arr=stg("savedPrompts");
+  if(!Array.isArray(arr))return [];
+  return arr.filter(p=>p&&p.id&&p.name&&p.text);
+}
+
+/* Save dialog — triggered by 💾 Save button on a generated prompt card */
+function openSavePromptDialog(idx){
+  const pr=_aiCurrentPrompts[idx];
+  if(!pr){toast("Prompt no longer available — regenerate first","err");return;}
+  const html=`<div class="cmp-modal-bg" id="savePromptBg">
+    <div class="cmp-modal" style="max-width:540px;">
+      <div class="cmp-mhd"><b>💾 Save to Prompt Library</b><button onclick="closeSavePrompt()" class="cmp-mclose">×</button></div>
+      <div class="cmp-mbody">
+        <div class="cmp-field"><label>Name (so you can find it later)</label>
+          <input class="cmp-i" id="spName" placeholder="e.g. Vastu carousel hook · Educational caption · Festival reel direction" maxlength="120" value="${esc(pr.title)}">
+        </div>
+        <div class="cmp-field"><label>Tags <span style="color:var(--mid);font-weight:400;">(optional, comma-separated)</span></label>
+          <input class="cmp-i" id="spTags" placeholder="e.g. corian, festive, hook, comparison">
+        </div>
+        <div class="cmp-field"><label>Type</label>
+          <div style="font-size:12px;color:var(--mid);padding:8px 12px;background:var(--light);border-radius:6px;">
+            <b>${esc(pr.mode||"prompt")}</b> · ${esc(pr.title)}
+          </div>
+        </div>
+        <div class="cmp-field"><label>Prompt content (preview)</label>
+          <textarea class="cmp-i" readonly rows="6" style="font-size:11.5px;">${esc(pr.text)}</textarea>
+        </div>
+      </div>
+      <div class="cmp-mfoot">
+        <button class="cmp-cancel" onclick="closeSavePrompt()">Cancel</button>
+        <button class="cmp-save" onclick="saveSavedPrompt()">💾 Save to Library</button>
+      </div>
+    </div></div>`;
+  mountDynModal(html);
+  setTimeout(()=>document.getElementById("spName")?.focus(),100);
+}
+function closeSavePrompt(){const m=document.getElementById("savePromptBg");if(m)m.remove();}
+
+async function saveSavedPrompt(){
+  const idx=_aiCurrentPrompts.findIndex(p=>p);  // first non-null (we'll get exact from dialog)
+  // Actually we need to know which prompt was being saved. Track via the dialog showing the prompt.
+  // Cleanest: when dialog opens, store the source prompt on the dialog
+  const nameEl=document.getElementById("spName");
+  const tagsEl=document.getElementById("spTags");
+  if(!nameEl)return;
+  const name=nameEl.value.trim();
+  if(!name){toast("Please give the prompt a name","err");return;}
+  // Find the matching prompt from _aiCurrentPrompts by title (since we pre-filled name with title)
+  // For safety, use the textarea content as the source of truth
+  const previewArea=document.querySelector("#savePromptBg textarea");
+  if(!previewArea){toast("Could not find prompt content","err");return;}
+  const text=previewArea.value;
+  // Recover the mode from the badge in the dialog
+  const modeBadge=document.querySelector("#savePromptBg .cmp-field b");
+  const mode=modeBadge?modeBadge.textContent:"prompt";
+  // Find the original prompt's title (from _aiCurrentPrompts)
+  const match=_aiCurrentPrompts.find(p=>p&&p.text===text);
+  const sourceTitle=match?match.title:name;
+  const tags=tagsEl.value.split(",").map(t=>t.trim()).filter(Boolean);
+  const all=getSavedPrompts();
+  // Check for duplicate name
+  if(all.find(p=>p.name.toLowerCase()===name.toLowerCase())){
+    if(!confirm(`A prompt named "${name}" already exists. Save anyway with a new entry?`))return;
+  }
+  const entry={id:uid(),name,mode,title:sourceTitle,text,tags,created_at:new Date().toISOString(),created_by:user?.name||"unknown"};
+  all.unshift(entry);
+  sto("savedPrompts",all);
+  const ok=await pushToGitHub();
+  closeSavePrompt();
+  toast(ok?`✓ Saved to Library: ${name}`:"⚠ Saved locally — sync failed",ok?"ok":"err");
+}
+
+/* Library tab render */
+let _libFilter="all";
+let _libSearch="";
+function renderAiLibraryTab(){
+  const all=getSavedPrompts();
+  if(!all.length){
+    return `<div class="lib-empty">
+      <div style="font-size:48px;margin-bottom:10px;">💾</div>
+      <h3 style="margin:0 0 8px;font-family:Georgia,serif;color:var(--dark);">Your Prompt Library is empty</h3>
+      <p style="font-size:13px;color:var(--mid);max-width:480px;margin:0 auto 18px;line-height:1.6;">Generate prompts in any tab, then click <b>💾 Save</b> on the ones that produce great results. Over time you'll build a library of winning briefs that work reliably — Vaibhav Sisinty's "treat AI like an intern" framework in action.</p>
+      <p style="font-size:11px;color:var(--mid);">Why this matters: re-generating the same kind of prompt from scratch every time is wasted effort. The point is to save the ones that work and reuse them.</p>
+    </div>`;
+  }
+  // Filter by mode
+  let filtered=all;
+  if(_libFilter!=="all")filtered=filtered.filter(p=>p.mode===_libFilter);
+  if(_libSearch){
+    const q=_libSearch.toLowerCase();
+    filtered=filtered.filter(p=>p.name.toLowerCase().includes(q)||(p.tags||[]).some(t=>t.toLowerCase().includes(q))||p.text.toLowerCase().includes(q));
+  }
+  // Mode counts for filter chips
+  const modeCounts={all:all.length,image:0,video:0,caption:0,voice:0};
+  all.forEach(p=>{if(modeCounts[p.mode]!==undefined)modeCounts[p.mode]++;});
+  const chip=(id,lbl)=>`<button class="lib-chip${_libFilter===id?" on":""}" onclick="setLibFilter('${id}')">${lbl} <span class="lib-chip-n">${modeCounts[id]||0}</span></button>`;
+  const cards=filtered.map(p=>{
+    const tagsHtml=(p.tags||[]).length?`<div class="lib-tags">${p.tags.map(t=>`<span class="lib-tag">${esc(t)}</span>`).join("")}</div>`:"";
+    return `<div class="lib-card">
+      <div class="lib-card-hd">
+        <div class="lib-card-name">${esc(p.name)}</div>
+        <span class="lib-mode lib-mode-${esc(p.mode||"")}">${esc(p.mode||"prompt")}</span>
+      </div>
+      <div class="lib-card-meta">Saved ${esc(relTime(p.created_at))}${p.created_by?" · by "+esc(p.created_by):""}</div>
+      ${tagsHtml}
+      <textarea class="lib-card-text" readonly rows="4">${esc(p.text)}</textarea>
+      <div class="lib-card-actions">
+        <button class="ai-btn ai-copy" onclick="copySavedPrompt('${p.id}',this)">📋 Copy</button>
+        <button class="ai-btn ai-chatgpt" onclick="useSavedPrompt('${p.id}','chatgpt')">ChatGPT</button>
+        <button class="ai-btn ai-gemini" onclick="useSavedPrompt('${p.id}','gemini')">Gemini</button>
+        <button class="ai-btn ai-claude" onclick="useSavedPrompt('${p.id}','claude')">Claude</button>
+        <button class="ai-btn ai-del" onclick="deleteSavedPrompt('${p.id}')" title="Delete">🗑</button>
+      </div>
+    </div>`;
+  }).join("");
+  return `<div class="lib-wrap">
+    <div class="lib-toolbar">
+      <input class="lib-search" id="libSearch" placeholder="🔍 Search saved prompts by name, tag, or content" value="${esc(_libSearch)}" oninput="setLibSearch(this.value)">
+      <div class="lib-filters">
+        ${chip("all","All")}
+        ${chip("image","🖼 Image")}
+        ${chip("video","🎬 Video")}
+        ${chip("caption","✍️ Caption")}
+        ${chip("voice","🎤 Voice")}
+      </div>
+    </div>
+    ${filtered.length?`<div class="lib-grid">${cards}</div>`:`<div class="lib-empty-small">No prompts match. Try a different filter or search.</div>`}
+  </div>`;
+}
+function setLibFilter(id){_libFilter=id;renderAiStudio();}
+function setLibSearch(v){_libSearch=v;
+  // Re-render but preserve focus + caret in the search box
+  const before=document.activeElement?.id;
+  const caret=document.activeElement?.selectionStart||0;
+  renderAiStudio();
+  if(before==="libSearch"){
+    const el=document.getElementById("libSearch");
+    if(el){el.focus();el.setSelectionRange(caret,caret);}
+  }
+}
+function copySavedPrompt(id,btn){
+  const p=getSavedPrompts().find(x=>x.id===id);
+  if(!p)return;
+  navigator.clipboard.writeText(p.text).then(()=>{
+    const orig=btn.innerHTML;btn.innerHTML="✓ Copied";btn.classList.add("ok");
+    setTimeout(()=>{btn.innerHTML=orig;btn.classList.remove("ok");},2000);
+  });
+}
+function useSavedPrompt(id,tool){
+  const p=getSavedPrompts().find(x=>x.id===id);
+  if(!p)return;
+  navigator.clipboard.writeText(p.text);
+  const urls={chatgpt:"https://chatgpt.com/",gemini:"https://gemini.google.com/app",grok:"https://grok.com/",claude:"https://claude.ai/new"};
+  window.open(urls[tool]||urls.chatgpt,"_blank");
+  toast(`Prompt copied — paste in ${tool}`,"ok");
+}
+async function deleteSavedPrompt(id){
+  const p=getSavedPrompts().find(x=>x.id===id);
+  if(!p)return;
+  if(!confirm(`Delete saved prompt "${p.name}"? This cannot be undone.`))return;
+  const all=getSavedPrompts().filter(x=>x.id!==id);
+  sto("savedPrompts",all);
+  const ok=await pushToGitHub();
+  renderAiStudio();
+  toast(ok?"Prompt deleted":"⚠ Deleted locally — sync failed",ok?"ok":"err");
 }
 
 
