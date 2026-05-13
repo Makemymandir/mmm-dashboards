@@ -140,4 +140,4 @@ async function createProject(){
 function formatDate(iso){if(!iso)return '';try{var d=new Date(iso);if(isNaN(d.getTime()))return '';return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return '';}}
 function escapeHtml(str){if(str===null||str===undefined)return '';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
 function toast(msg,type){type=type||'success';var ex=document.querySelector('.toast');if(ex)ex.remove();var t=document.createElement('div');t.className='toast toast-'+type;t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.style.opacity='0';t.style.transition='opacity 0.3s';setTimeout(function(){t.remove();},300);},2500);}
-This is the same code but compressed — much smaller, well under 400KB limit.
+
