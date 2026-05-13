@@ -136,6 +136,14 @@
       "brief": "",
       "cta": ""
     },
+    "13": {
+      "title": "MORESHWAR 30/5/2025",
+      "type": "Static",
+      "hook": "A mandir that stores everything — and shows nothing.",
+      "caption": "Full mandir setup inside a furniture piece. Doors open for prayers. Doors closed for guests.\n\nStarting at ₹65,000. DM us.\n\n#CabinetMandir #HiddenMandir #ApartmentLiving #makemymandir",
+      "brief": "Two-shot: closed cabinet → open reveal. Price: From ₹65,000.",
+      "cta": "DM to see cabinet mandir options"
+    },
     "14": {
       "type": "Carousel",
       "slides": [
@@ -158,6 +166,12 @@
   "rejections": {},
   "notes": {},
   "activity": [
+    {
+      "action": "edited",
+      "postId": 13,
+      "user": "Team Member",
+      "time": "2026-05-13T06:37:14.951Z"
+    },
     {
       "action": "edited",
       "postId": 10,
