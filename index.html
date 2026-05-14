@@ -558,9 +558,8 @@ function submitBrief(){
   .then(function(r){console.log('[MMM] Email '+(r.success?'sent ✓':'failed'));})
   .catch(function(e){console.warn('[MMM] Email error:',e);});
 
- // Auto-create lead in costing system (silent, background)
-  createLeadInSystem();
 
+  createLeadInSystem();
   go(14);
 }
 
@@ -570,26 +569,25 @@ function createLeadInSystem() {
       action: 'create_lead',
       api_key: 'MMM_CFG_2026',
       lead: {
-        client_name:  D.name        || '',
-        contact:      D.wa          || '',
-        email:        D.email       || '',
-        location:     D.city        || '',
-        framework:    D.framework   || '',
-        width_ft:     parseFloat(D.w) || '',
-        depth_ft:     parseFloat(D.d) || '',
-        height_ft:    parseFloat(D.h) || '',
-        space:        D.space       || '',
-        vastu:        D.vastu       || '',
-        style:        D.style       || '',
-        material:     D.material    || '',
-        budget:       D.budget      || '',
-        timeline:     D.timeline    || '',
-        deities:      (Array.isArray(D.deities) ? D.deities.join(', ') : D.deities) || '',
-        rituals:      (Array.isArray(D.rituals) ? D.rituals.join(', ') : D.rituals) || '',
-        features:     (Array.isArray(D.features) ? D.features.join(', ') : D.features) || ''
+        client_name: D.name || '',
+        contact: D.wa || '',
+        email: D.email || '',
+        location: D.city || '',
+        framework: D.framework || '',
+        width_ft: parseFloat(D.w) || '',
+        depth_ft: parseFloat(D.d) || '',
+        height_ft: parseFloat(D.h) || '',
+        space: D.space || '',
+        vastu: D.vastu || '',
+        style: D.style || '',
+        material: D.material || '',
+        budget: D.budget || '',
+        timeline: D.timeline || '',
+        deities: (Array.isArray(D.deities) ? D.deities.join(', ') : D.deities) || '',
+        rituals: (Array.isArray(D.rituals) ? D.rituals.join(', ') : D.rituals) || '',
+        features: (Array.isArray(D.features) ? D.features.join(', ') : D.features) || ''
       }
     };
-
     fetch('https://script.google.com/macros/s/AKfycbyyXCFwN88cxOB-FvApMANc-oA2O45ZMk7WLLBOCRHIkyBwhtu_8IZMPFoAJ-wljOA1/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -606,9 +604,9 @@ function createLeadInSystem() {
     .catch(function(e) {
       console.warn('[MMM] Lead API error:', e);
     });
-  } catch (e) {
+  } catch(e) {
     console.warn('[MMM] createLeadInSystem error:', e);
-}
+  }
 }
 
 function restart(){
