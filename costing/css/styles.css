@@ -1380,3 +1380,211 @@ tr:active .status-Rejected {
   color: #C62828 !important;
   border: none !important;
 }
+
+/* ============================================
+   DESIGN BRIEF — internal edit form
+   ============================================ */
+.brief-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--orange);
+  font-weight: 700;
+  margin: 26px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--grey-light);
+}
+.brief-section-title:first-of-type { margin-top: 8px; }
+
+.db-hint {
+  color: var(--grey);
+  font-weight: 400;
+  font-size: 0.78rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.db-status-select {
+  padding: 8px 12px;
+  border: 1.5px solid var(--orange);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--orange);
+  font-weight: 600;
+  background: var(--white);
+  cursor: pointer;
+}
+
+.brief-toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.brief-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--grey-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.brief-toggle:hover { border-color: var(--orange); }
+.brief-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.brief-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.brief-photo {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--grey-light);
+}
+.brief-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.brief-photo-del {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.brief-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--grey-light);
+}
+
+@media (max-width: 600px) {
+  .brief-toggle-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   DESIGN BRIEF — client read-only view
+   ============================================ */
+.client-brief {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.cb-header {
+  background: linear-gradient(135deg, #E87722, #C5651C);
+  padding: 32px 28px;
+  text-align: center;
+  color: #fff;
+}
+.cb-logo {
+  height: 44px;
+  width: auto;
+  margin-bottom: 12px;
+  filter: brightness(0) invert(1);
+}
+.cb-title { font-size: 1.5rem; font-weight: 700; }
+.cb-sub {
+  font-size: 0.92rem;
+  opacity: 0.9;
+  margin-top: 4px;
+}
+.cb-status {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.cb-body { padding: 24px 28px; }
+.cb-section { margin-bottom: 24px; }
+.cb-section:last-child { margin-bottom: 0; }
+.cb-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--orange);
+  font-weight: 700;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--grey-light);
+}
+.cb-row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #F4F4F4;
+}
+.cb-row:last-child { border-bottom: none; }
+.cb-label {
+  flex: 0 0 150px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--grey);
+  font-weight: 600;
+}
+.cb-value {
+  flex: 1;
+  font-size: 0.92rem;
+  color: var(--dark);
+}
+.cb-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.cb-gallery img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--grey-light);
+}
+.cb-empty {
+  text-align: center;
+  color: var(--grey);
+  padding: 40px 20px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.cb-foot {
+  background: var(--orange-light);
+  padding: 18px 28px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--grey);
+  line-height: 1.6;
+}
+@media (max-width: 600px) {
+  .cb-label { flex-basis: 110px; }
+  .cb-gallery img { width: 110px; height: 110px; }
+}

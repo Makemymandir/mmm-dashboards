@@ -7,6 +7,9 @@ let isEditMode     = false;
 let activeTab      = 'details';
 let roughEstimates = [];
 let quotations     = [];
+let currentBrief   = null;   // Design Brief record (null = not loaded yet)
+let briefPhotos    = [];     // uploaded site photos as base64 data URLs
+let isClientView   = false;  // true when opened via ?brief=client
 
 const STAGE_CONFIG = {
   'Inquiry':           { color: '#757575', bg: '#F5F5F5',  phase: 'DISCOVER' },
@@ -30,17 +33,41 @@ function getStage(status) {
   return STAGE_CONFIG[status] || { color: '#757575', bg: '#F5F5F5', phase: 'OTHER' };
 }
 
+// ─── Design Brief config ───────────────────────────────
+const BRIEF_STATUSES = ['Not Started', 'In Progress', 'Submitted to Client', 'Client Confirmed'];
+
+const BRIEF_STATUS_COLORS = {
+  'Not Started':         { color: '#757575', bg: '#F5F5F5' },
+  'In Progress':         { color: '#E65100', bg: '#FFF3E0' },
+  'Submitted to Client': { color: '#1565C0', bg: '#E3F2FD' },
+  'Client Confirmed':    { color: '#2E7D32', bg: '#E8F5E9' }
+};
+
+const BRIEF_STYLE_OPTIONS = [
+  'Traditional Temple', 'South Indian', 'Modern Minimal',
+  'Classical Carved', 'Contemporary Fusion', 'Rajasthani/Jain', 'Not sure'
+];
+
 document.addEventListener('DOMContentLoaded', async function() {
+  const params    = new URLSearchParams(window.location.search);
+  const projectId = params.get('id');
+  const initTab   = params.get('tab');
+  const briefMode = params.get('brief');
+
+  // Client-facing read-only Design Brief — shareable link, no login required.
+  if (briefMode === 'client') {
+    isClientView = true;
+    if (!projectId) { showClientError('No project specified in the link.'); return; }
+    await loadClientBrief(projectId);
+    return;
+  }
+
   if (!api.requireLogin()) return;
   const user = api.getCurrentUser();
   document.getElementById('userName').textContent = user.displayName;
   document.getElementById('userRole').textContent = user.role;
 
-  const params    = new URLSearchParams(window.location.search);
-  const projectId = params.get('id');
-  const initTab   = params.get('tab');
-
-  if (initTab && ['details','rough','quotations'].includes(initTab)) {
+  if (initTab && ['details','brief','rough','quotations'].includes(initTab)) {
     activeTab = initTab;
   }
 
@@ -80,6 +107,8 @@ async function loadProject(projectId) {
     console.error(err);
     if (!currentProject) showError('Connection error. Please refresh.');
   }
+
+  if (currentProject) loadDesignBrief();
 }
 
 async function loadRoughEstimates() {
@@ -232,11 +261,13 @@ function render() {
 
     <div class="tabs">
       <button class="tab ${activeTab==='details'    ?'tab-active':''}" data-tab="details"    onclick="switchTab('details')">Project Details</button>
+      <button class="tab ${activeTab==='brief'      ?'tab-active':''}" data-tab="brief"      onclick="switchTab('brief')">Design Brief</button>
       <button class="tab ${activeTab==='rough'      ?'tab-active':''}" data-tab="rough"      onclick="switchTab('rough')">Rough Estimates</button>
       <button class="tab ${activeTab==='quotations' ?'tab-active':''}" data-tab="quotations" onclick="switchTab('quotations')">Final Quotations</button>
     </div>
 
     <div id="tabDetails"    class="tab-content ${activeTab==='details'    ?'tab-content-active':''}">${renderDetailsTab()}</div>
+    <div id="tabBrief"      class="tab-content ${activeTab==='brief'      ?'tab-content-active':''}">${renderBriefTab()}</div>
     <div id="tabRough"      class="tab-content ${activeTab==='rough'      ?'tab-content-active':''}">
       <div id="roughListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
     </div>
@@ -251,11 +282,11 @@ function switchTab(name) {
   document.querySelectorAll('.tab').forEach(function(b) {
     b.classList.toggle('tab-active', b.dataset.tab === name);
   });
-  ['tabDetails','tabRough','tabQuotations'].forEach(function(id) {
+  ['tabDetails','tabBrief','tabRough','tabQuotations'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('tab-content-active');
   });
-  var map = { details:'tabDetails', rough:'tabRough', quotations:'tabQuotations' };
+  var map = { details:'tabDetails', brief:'tabBrief', rough:'tabRough', quotations:'tabQuotations' };
   var el  = document.getElementById(map[name]);
   if (el) el.classList.add('tab-content-active');
   if (name === 'rough')      loadRoughEstimates();
@@ -293,6 +324,8 @@ function renderDetailsTab() {
         <button class="btn-secondary" onclick="enterEditMode()"
           style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">Edit</button>
       </div>
+
+      <div id="briefStatusStrip">${renderBriefStatusStrip()}</div>
 
       <div style="padding:24px 28px 0;">
         <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);font-weight:700;margin-bottom:12px;">Client Information</div>
@@ -344,6 +377,424 @@ function renderDetailsTab() {
       </div>
     </div>
   `;
+}
+
+// ─────────────────────────────────────────
+// DESIGN BRIEF — status strip on Details tab
+// ─────────────────────────────────────────
+function renderBriefStatusStrip() {
+  var status = (currentBrief && currentBrief.status) ? currentBrief.status : 'Not Started';
+  var bs = BRIEF_STATUS_COLORS[status] || BRIEF_STATUS_COLORS['Not Started'];
+  return `
+    <div style="margin:16px 28px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+                background:${bs.bg};border-radius:10px;padding:10px 14px;">
+      <span style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.6px;color:var(--grey);font-weight:700;">Design Brief</span>
+      <span style="background:#fff;color:${bs.color};border:1px solid ${bs.color};
+                   padding:2px 10px;border-radius:10px;font-size:0.8rem;font-weight:700;">${escapeHtml(status)}</span>
+      <button class="btn-text" style="margin-left:auto;" onclick="switchTab('brief')">Open Design Brief →</button>
+    </div>
+  `;
+}
+
+// ─────────────────────────────────────────
+// DESIGN BRIEF — internal edit form (Brief tab)
+// ─────────────────────────────────────────
+function renderBriefTab() {
+  var inner = (currentBrief === null)
+    ? '<div style="padding:40px;text-align:center;color:var(--grey);">Loading design brief…</div>'
+    : renderBriefForm();
+  return '<div id="briefContainer">' + inner + '</div>';
+}
+
+function briefToggle(id, label, checkedAttr) {
+  return '<label class="brief-toggle"><input type="checkbox" id="' + id + '" ' + checkedAttr + '>'
+    + '<span>' + escapeHtml(label) + '</span></label>';
+}
+
+function renderPhotoThumbsHtml() {
+  if (!briefPhotos || briefPhotos.length === 0) {
+    return '<div class="db-hint" style="padding:4px 0;">No photos uploaded yet.</div>';
+  }
+  return briefPhotos.map(function(src, i) {
+    return '<div class="brief-photo"><img src="' + src + '" alt="Site photo ' + (i + 1) + '">'
+      + '<button type="button" class="brief-photo-del" title="Remove" onclick="removeBriefPhoto(' + i + ')">✕</button></div>';
+  }).join('');
+}
+
+function renderBriefForm() {
+  const p = currentProject || {};
+  const b = currentBrief || {};
+  function val(k) { return (b[k] !== undefined && b[k] !== null) ? b[k] : ''; }
+  function chkAttr(k) { return String(val(k)).toLowerCase() === 'yes' ? 'checked' : ''; }
+
+  // Confirmed measurements default to the configurator dimensions as a starting point.
+  const cw = val('confirmed_width')  !== '' ? val('confirmed_width')  : (p.width_ft  || '');
+  const cd = val('confirmed_depth')  !== '' ? val('confirmed_depth')  : (p.depth_ft  || '');
+  const ch = val('confirmed_height') !== '' ? val('confirmed_height') : (p.height_ft || '');
+  const status = val('status') || 'Not Started';
+
+  const statusOpts = BRIEF_STATUSES.map(function(s) {
+    return '<option value="' + escapeAttr(s) + '" ' + (status === s ? 'selected' : '') + '>' + escapeHtml(s) + '</option>';
+  }).join('');
+  const styleOpts = BRIEF_STYLE_OPTIONS.map(function(s) {
+    return '<option value="' + escapeAttr(s) + '" ' + (val('style_confirmed') === s ? 'selected' : '') + '>' + escapeHtml(s) + '</option>';
+  }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-header">
+        <h3>Design Brief</h3>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <select id="db_status" class="db-status-select">${statusOpts}</select>
+          <button class="btn-secondary" onclick="shareBrief()">Share with Client</button>
+          <button class="btn-primary" id="briefSaveBtn" onclick="saveDesignBrief()">Save Brief</button>
+        </div>
+      </div>
+
+      <div class="brief-section-title">1 · Confirmed Measurements</div>
+      <div class="edit-form-grid">
+        <div class="form-group"><label>Confirmed Width (ft)</label><input type="number" step="0.25" id="db_confirmed_width" value="${escapeAttr(cw)}"></div>
+        <div class="form-group"><label>Confirmed Depth (ft)</label><input type="number" step="0.25" id="db_confirmed_depth" value="${escapeAttr(cd)}"></div>
+        <div class="form-group"><label>Confirmed Height (ft)</label><input type="number" step="0.25" id="db_confirmed_height" value="${escapeAttr(ch)}"></div>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Space Constraints <span class="db-hint">beams, pipes, door swing, etc.</span></label>
+        <textarea id="db_space_constraints" rows="3">${escapeHtml(val('space_constraints'))}</textarea>
+      </div>
+
+      <div class="brief-section-title">2 · Deity Requirements</div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Deity Names</label>
+        <input type="text" id="db_deity_names" value="${escapeAttr(val('deity_names') !== '' ? val('deity_names') : (p.deities || ''))}">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Murti Sizes <span class="db-hint">height × width for each deity</span></label>
+        <textarea id="db_murti_sizes" rows="3" placeholder="e.g. Ganesh — 12in × 8in&#10;Lakshmi — 10in × 7in">${escapeHtml(val('murti_sizes'))}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Photo Frame Sizes</label>
+        <textarea id="db_photo_frame_sizes" rows="2">${escapeHtml(val('photo_frame_sizes'))}</textarea>
+      </div>
+
+      <div class="brief-section-title">3 · Design Preferences</div>
+      <div class="edit-form-grid">
+        <div class="form-group"><label>Style Confirmed</label>
+          <select id="db_style_confirmed"><option value="">— Select —</option>${styleOpts}</select>
+        </div>
+        <div class="form-group"><label>Colour Preference</label><input type="text" id="db_colour_preference" value="${escapeAttr(val('colour_preference'))}"></div>
+        <div class="form-group"><label>Wood Finish Preference</label><input type="text" id="db_wood_finish" value="${escapeAttr(val('wood_finish'))}"></div>
+      </div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Reference Image Links <span class="db-hint">Pinterest, Google Drive links</span></label>
+        <textarea id="db_reference_links" rows="3">${escapeHtml(val('reference_links'))}</textarea>
+      </div>
+
+      <div class="brief-section-title">4 · Special Requirements</div>
+      <div class="brief-toggle-grid">
+        ${briefToggle('db_j_hook',            'J Hook / Hanging Bell',     chkAttr('j_hook'))}
+        ${briefToggle('db_pocket_doors',      'Pocket Doors',              chkAttr('pocket_doors'))}
+        ${briefToggle('db_akhand_jyot',       'Akhand Jyot Provision',     chkAttr('akhand_jyot'))}
+        ${briefToggle('db_electrical_points', 'Electrical Points Needed',  chkAttr('electrical_points'))}
+      </div>
+      <div class="form-group" style="margin-top:12px;margin-bottom:12px;">
+        <label>Storage Requirements</label>
+        <textarea id="db_storage_requirements" rows="2">${escapeHtml(val('storage_requirements'))}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Jain-Specific Requirements</label>
+        <textarea id="db_jain_requirements" rows="2">${escapeHtml(val('jain_requirements'))}</textarea>
+      </div>
+
+      <div class="brief-section-title">5 · Production Notes</div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Special Factory Instructions</label>
+        <textarea id="db_factory_instructions" rows="3">${escapeHtml(val('factory_instructions'))}</textarea>
+      </div>
+      <div class="form-group">
+        <label>Any Client Constraints</label>
+        <textarea id="db_client_constraints" rows="2">${escapeHtml(val('client_constraints'))}</textarea>
+      </div>
+
+      <div class="brief-section-title">6 · Site Photos</div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Upload Photos <span class="db-hint">resized &amp; compressed automatically — for many photos use the links field below</span></label>
+        <input type="file" id="db_photo_input" accept="image/*" multiple onchange="handleBriefPhotos(this)">
+      </div>
+      <div id="briefPhotoThumbs" class="brief-photos">${renderPhotoThumbsHtml()}</div>
+      <div class="form-group" style="margin-top:12px;">
+        <label>Site Photo Links <span class="db-hint">Google Drive links</span></label>
+        <textarea id="db_site_photo_links" rows="3">${escapeHtml(val('site_photo_links'))}</textarea>
+      </div>
+
+      <div class="brief-footer">
+        <button class="btn-secondary" onclick="shareBrief()">Share with Client</button>
+        <button class="btn-primary" onclick="saveDesignBrief()">Save Brief</button>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Photo upload (client-side resize + compress → base64) ───
+// Google Sheets caps a cell at 50,000 chars, so each photo is shrunk and
+// compressed to fit; overflow is steered to the Site Photo Links field.
+function handleBriefPhotos(input) {
+  var files = Array.prototype.slice.call(input.files || []);
+  files.forEach(function(file) {
+    if (!file.type || file.type.indexOf('image/') !== 0) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var max = 700, w = img.width, h = img.height;
+        if (w > max || h > max) {
+          if (w >= h) { h = Math.round(h * max / w); w = max; }
+          else        { w = Math.round(w * max / h); h = max; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+
+        var q = 0.7, dataUrl = canvas.toDataURL('image/jpeg', q);
+        while (dataUrl.length > 40000 && q > 0.3) {
+          q -= 0.1;
+          dataUrl = canvas.toDataURL('image/jpeg', q);
+        }
+        if (dataUrl.length > 45000) {
+          toast('That photo is too large — please use Site Photo Links instead', 'error');
+          return;
+        }
+        if (JSON.stringify(briefPhotos.concat([dataUrl])).length > 46000) {
+          toast('Photo limit reached — add the rest via Site Photo Links', 'error');
+          return;
+        }
+        briefPhotos.push(dataUrl);
+        renderBriefPhotoThumbs();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderBriefPhotoThumbs() {
+  var c = document.getElementById('briefPhotoThumbs');
+  if (c) c.innerHTML = renderPhotoThumbsHtml();
+}
+
+function removeBriefPhoto(i) {
+  briefPhotos.splice(i, 1);
+  renderBriefPhotoThumbs();
+}
+
+function parsePhotos(raw) {
+  if (!raw) return [];
+  try {
+    var a = JSON.parse(raw);
+    return Array.isArray(a) ? a : [];
+  } catch (e) { return []; }
+}
+
+// ─── Load / save / share ───
+async function loadDesignBrief() {
+  if (!currentProject) return;
+  try {
+    var result = await api.call('get_design_brief', { project_id: currentProject.project_id });
+    currentBrief = (result && result.ok && result.brief) ? result.brief : {};
+  } catch (err) {
+    console.error('loadDesignBrief failed:', err);
+    currentBrief = {};
+  }
+  briefPhotos = parsePhotos(currentBrief.site_photos);
+
+  var bc = document.getElementById('briefContainer');
+  if (bc) bc.innerHTML = renderBriefForm();
+  var ss = document.getElementById('briefStatusStrip');
+  if (ss) ss.innerHTML = renderBriefStatusStrip();
+}
+
+async function saveDesignBrief() {
+  if (!currentProject) return;
+  var btn = document.getElementById('briefSaveBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+
+  function v(id)   { var el = document.getElementById(id); return el ? String(el.value).trim() : ''; }
+  function chk(id) { var el = document.getElementById(id); return (el && el.checked) ? 'Yes' : 'No'; }
+
+  var photosJson = JSON.stringify(briefPhotos);
+  if (photosJson.length > 48000) {
+    toast('Too many photos to save — use Site Photo Links for the rest', 'error');
+    if (btn) { btn.disabled = false; btn.textContent = 'Save Brief'; }
+    return;
+  }
+
+  var brief = {
+    project_id:           currentProject.project_id,
+    status:               v('db_status') || 'In Progress',
+    confirmed_width:      v('db_confirmed_width'),
+    confirmed_depth:      v('db_confirmed_depth'),
+    confirmed_height:     v('db_confirmed_height'),
+    space_constraints:    v('db_space_constraints'),
+    deity_names:          v('db_deity_names'),
+    murti_sizes:          v('db_murti_sizes'),
+    photo_frame_sizes:    v('db_photo_frame_sizes'),
+    style_confirmed:      v('db_style_confirmed'),
+    colour_preference:    v('db_colour_preference'),
+    wood_finish:          v('db_wood_finish'),
+    reference_links:      v('db_reference_links'),
+    j_hook:               chk('db_j_hook'),
+    pocket_doors:         chk('db_pocket_doors'),
+    akhand_jyot:          chk('db_akhand_jyot'),
+    electrical_points:    chk('db_electrical_points'),
+    storage_requirements: v('db_storage_requirements'),
+    jain_requirements:    v('db_jain_requirements'),
+    factory_instructions: v('db_factory_instructions'),
+    client_constraints:   v('db_client_constraints'),
+    site_photo_links:     v('db_site_photo_links'),
+    site_photos:          photosJson,
+    updated_by:           (api.getCurrentUser() || {}).displayName || ''
+  };
+
+  try {
+    var result = await api.call('save_design_brief', { brief: brief });
+    if (result && result.ok) {
+      currentBrief = result.brief || brief;
+      briefPhotos  = parsePhotos(currentBrief.site_photos);
+      var ss = document.getElementById('briefStatusStrip');
+      if (ss) ss.innerHTML = renderBriefStatusStrip();
+      toast('Brief saved', 'success');
+    } else {
+      toast((result && result.error) || 'Failed to save brief', 'error');
+    }
+  } catch (err) {
+    console.error(err);
+    toast('Connection error', 'error');
+  }
+  if (btn) { btn.disabled = false; btn.textContent = 'Save Brief'; }
+}
+
+function shareBrief() {
+  if (!currentProject) return;
+  var url = window.location.origin + window.location.pathname
+    + '?id=' + encodeURIComponent(currentProject.project_id) + '&brief=client';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url)
+      .then(function() { toast('Link copied', 'success'); })
+      .catch(function() { window.prompt('Copy this client link:', url); });
+  } else {
+    window.prompt('Copy this client link:', url);
+  }
+}
+
+// ─────────────────────────────────────────
+// DESIGN BRIEF — client read-only view (no login)
+// ─────────────────────────────────────────
+async function loadClientBrief(projectId) {
+  document.title = 'Your Design Brief — Make My Mandir';
+  var tb = document.querySelector('.topbar'); if (tb) tb.style.display = 'none';
+  var bl = document.querySelector('.back-link');
+  if (bl && bl.parentElement) bl.parentElement.style.display = 'none';
+
+  var container = document.getElementById('projectContent');
+  container.innerHTML = '<div style="padding:80px;text-align:center;">'
+    + '<div style="font-size:2.5rem;">🛕</div>'
+    + '<div style="color:var(--grey);margin-top:12px;">Loading your design brief…</div></div>';
+
+  try {
+    var result = await api.call('get_design_brief', { project_id: projectId, client_view: true });
+    if (!result || !result.ok) {
+      showClientError((result && result.error) || 'Design brief not found for this link.');
+      return;
+    }
+    currentBrief = result.brief || {};
+    container.innerHTML = renderClientBrief(result.project || {}, currentBrief);
+  } catch (err) {
+    console.error(err);
+    showClientError('Could not load the design brief. Please check your link and try again.');
+  }
+}
+
+function renderClientBrief(project, brief) {
+  project = project || {};
+  brief   = brief   || {};
+  var photos = parsePhotos(brief.site_photos);
+
+  function row(label, value) {
+    if (value === undefined || value === null || String(value).trim() === '') return '';
+    return '<div class="cb-row"><span class="cb-label">' + escapeHtml(label) + '</span>'
+      + '<span class="cb-value">' + escapeHtml(String(value)).replace(/\n/g, '<br>') + '</span></div>';
+  }
+  function ynRow(label, v) {
+    var s = String(v || '').toLowerCase();
+    if (s !== 'yes' && s !== 'no') return '';
+    return row(label, s === 'yes' ? 'Yes' : 'No');
+  }
+  function sec(title, inner) {
+    if (!inner || inner.trim() === '') return '';
+    return '<div class="cb-section"><div class="cb-section-title">' + escapeHtml(title) + '</div>' + inner + '</div>';
+  }
+
+  var dims = [brief.confirmed_width, brief.confirmed_depth, brief.confirmed_height]
+    .filter(function(x) { return x !== '' && x !== null && x !== undefined; });
+  var dimStr = dims.length === 3 ? dims.join(' × ') + ' ft' : '';
+
+  var body =
+    sec('Confirmed Measurements',
+      row('Dimensions (W × D × H)', dimStr) + row('Space Constraints', brief.space_constraints)) +
+    sec('Deity Requirements',
+      row('Deities', brief.deity_names) + row('Murti Sizes', brief.murti_sizes)
+      + row('Photo Frame Sizes', brief.photo_frame_sizes)) +
+    sec('Design Preferences',
+      row('Style', brief.style_confirmed) + row('Colour Preference', brief.colour_preference)
+      + row('Wood Finish', brief.wood_finish) + row('Reference Images', brief.reference_links)) +
+    sec('Special Requirements',
+      ynRow('J Hook / Hanging Bell', brief.j_hook) + ynRow('Pocket Doors', brief.pocket_doors)
+      + ynRow('Akhand Jyot Provision', brief.akhand_jyot) + ynRow('Electrical Points', brief.electrical_points)
+      + row('Storage Requirements', brief.storage_requirements)
+      + row('Jain-Specific Requirements', brief.jain_requirements)) +
+    sec('Notes', row('Client Constraints', brief.client_constraints));
+
+  var gallery = '';
+  if (photos.length) {
+    gallery = '<div class="cb-gallery">' + photos.map(function(src) {
+      return '<img src="' + src + '" alt="Site photo">';
+    }).join('') + '</div>';
+  }
+  body += sec('Site Photos', gallery + row('Photo Links', brief.site_photo_links));
+
+  var bs = BRIEF_STATUS_COLORS[brief.status] || BRIEF_STATUS_COLORS['Not Started'];
+  var hasContent = body.trim() !== '';
+  var subParts = [];
+  if (project.client_name) subParts.push(escapeHtml(project.client_name));
+  if (project.framework)   subParts.push(escapeHtml(project.framework));
+
+  return `
+    <div class="client-brief">
+      <div class="cb-header">
+        <img src="assets/logo.png" alt="Make My Mandir" class="cb-logo">
+        <div class="cb-title">Your Design Brief</div>
+        <div class="cb-sub">${subParts.join(' · ')}</div>
+        <span class="cb-status" style="background:${bs.bg};color:${bs.color};">${escapeHtml(brief.status || 'Not Started')}</span>
+      </div>
+      <div class="cb-body">
+        ${hasContent ? body : '<div class="cb-empty">Your design brief is being prepared by our team.<br>We will share the full details with you shortly. 🙏</div>'}
+      </div>
+      <div class="cb-foot">
+        <strong>Make My Mandir</strong> · Crafted just for you<br>
+        Questions? WhatsApp us at +91 77679 62441
+      </div>
+    </div>
+  `;
+}
+
+function showClientError(msg) {
+  document.getElementById('projectContent').innerHTML =
+    '<div class="client-brief">'
+    + '<div class="cb-header"><img src="assets/logo.png" alt="Make My Mandir" class="cb-logo">'
+    + '<div class="cb-title">Design Brief</div></div>'
+    + '<div class="cb-body"><div class="cb-empty">' + escapeHtml(msg) + '</div></div>'
+    + '<div class="cb-foot"><strong>Make My Mandir</strong><br>WhatsApp us at +91 77679 62441</div>'
+    + '</div>';
 }
 
 function bRow(icon, label, value, rawHtml) {
