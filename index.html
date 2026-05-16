@@ -83,6 +83,11 @@ textarea:focus{border-color:var(--orange);}
 .row{display:flex;gap:8px;}
 .step{display:none;}
 .step.active{display:block;}
+.sec-eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--orange);margin-bottom:6px;}
+.sec-head{margin-bottom:22px;}
+.qh{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--brown);line-height:1.25;margin-bottom:3px;}
+.qh-sub{font-size:12.5px;color:var(--gray);margin-bottom:14px;}
+.sec-divider{height:1px;background:var(--border);margin:26px 0;}
 @media(max-width:480px){
   .grid2{grid-template-columns:1fr;}
   .dim-row{grid-template-columns:1fr 1fr 1fr;}
@@ -97,8 +102,8 @@ textarea:focus{border-color:var(--orange);}
   <div class="card">
     <!-- PROGRESS -->
     <div class="prog-wrap hidden" id="prog">
-      <div class="prog-meta"><span class="left" id="prog-text">Step 1 of 13</span><span class="right" id="prog-pct">8%</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:8%"></div></div>
+      <div class="prog-meta"><span class="left" id="prog-text">Section 1 of 4</span><span class="right" id="prog-pct">25%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:25%"></div></div>
     </div>
 
     <!-- STEP 0: WELCOME -->
@@ -113,10 +118,13 @@ textarea:focus{border-color:var(--orange);}
       </div>
     </div>
 
-    <!-- STEP 1: CONTACT -->
+    <!-- SECTION 1: ABOUT YOU -->
     <div class="step" id="s1">
-      <h2>First, a quick hello — who are you?</h2>
-      <p class="subtitle">So we can reach you for the free consultation.</p>
+      <div class="sec-head">
+        <div class="sec-eyebrow">Section 1 of 4</div>
+        <h2>About You</h2>
+        <p class="subtitle">So we can reach you for the free consultation.</p>
+      </div>
       <div class="field"><label class="label">👤 Your Name</label><input class="input" id="f-name" placeholder="Full name" oninput="chk1()"></div>
       <div class="field"><label class="label">📱 WhatsApp Number</label>
         <div class="row"><div class="prefix">+91</div><input class="input" id="f-wa" placeholder="10-digit number" maxlength="10" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'').slice(0,10);chk1()"></div>
@@ -127,12 +135,19 @@ textarea:focus{border-color:var(--orange);}
       <div class="nav"><button class="btn-back" onclick="go(0)">← Back</button><button class="btn-primary" id="next1" onclick="go(2)" disabled>Continue →</button></div>
     </div>
 
-    <!-- STEP 2: DEITIES -->
+    <!-- SECTION 2: YOUR WORSHIP -->
     <div class="step" id="s2">
-      <h2>Who will you be worshipping?</h2>
-      <p class="subtitle">This helps us size the shelves correctly.</p>
+      <div class="sec-head">
+        <div class="sec-eyebrow">Section 2 of 4</div>
+        <h2>Your Worship</h2>
+        <p class="subtitle">Tell us how you worship — we'll design around your rituals.</p>
+      </div>
+
+      <!-- Deities -->
+      <div class="qh">Who will you be worshipping?</div>
+      <div class="qh-sub">This helps us size the shelves correctly.</div>
       <label class="label">How many murtis or photos?</label>
-      <div class="grid4" style="margin-bottom:24px;" id="deity-count">
+      <div class="grid4" style="margin-bottom:20px;" id="deity-count">
         <button class="opt" onclick="selOne('deity-count',this);chk2()"><div class="tick">✓</div><div class="opt-title">1</div></button>
         <button class="opt" onclick="selOne('deity-count',this);chk2()"><div class="tick">✓</div><div class="opt-title">2–3</div></button>
         <button class="opt" onclick="selOne('deity-count',this);chk2()"><div class="tick">✓</div><div class="opt-title">4–6</div></button>
@@ -154,53 +169,50 @@ textarea:focus{border-color:var(--orange);}
         <button class="pill" onclick="togPill(this);chk2()">Family Kuldevta</button>
         <button class="pill" onclick="togPill(this);chk2()">Other</button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(1)">← Back</button><button class="btn-primary" id="next2" onclick="go(3)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 3: RITUALS -->
-    <div class="step" id="s3">
-      <h2>Which rituals do you perform?</h2>
-      <p class="subtitle">We'll design around your actual rituals.</p>
-      <div class="grid2" style="margin-bottom:20px;" id="ritual-list">
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🔥 Daily aarti</div><div class="opt-desc">Morning and/or evening</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🕯️ Akhand jyot</div><div class="opt-desc">Continuous lamp</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🪔 Diya / agarbatti</div><div class="opt-desc">Simple daily lighting</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">💧 Abhishek</div><div class="opt-desc">Bathing the murti</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🍱 Bhog / naivedyam</div><div class="opt-desc">Food offering</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🔥 Havan / homa</div><div class="opt-desc">Fire rituals</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">📖 Reading scriptures</div><div class="opt-desc">Gita, Granth Sahib, etc.</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🎵 Bhajan / kirtan</div><div class="opt-desc">Group singing</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🔔 Bell / shankh</div><div class="opt-desc">Ghanti or conch</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">✨ Festival-only setup</div><div class="opt-desc">Mainly during festivals</div></button>
-        <button class="opt" onclick="togOpt(this);chk3()"><div class="tick">✓</div><div class="opt-title">🌸 Minimal rituals</div><div class="opt-desc">Just a sacred space</div></button>
+      <div class="sec-divider"></div>
+
+      <!-- Rituals -->
+      <div class="qh">Which rituals do you perform?</div>
+      <div class="qh-sub">We'll design around your actual rituals.</div>
+      <div class="grid2" style="margin-bottom:16px;" id="ritual-list">
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🔥 Daily aarti</div><div class="opt-desc">Morning and/or evening</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🕯️ Akhand jyot</div><div class="opt-desc">Continuous lamp</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🪔 Diya / agarbatti</div><div class="opt-desc">Simple daily lighting</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">💧 Abhishek</div><div class="opt-desc">Bathing the murti</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🍱 Bhog / naivedyam</div><div class="opt-desc">Food offering</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🔥 Havan / homa</div><div class="opt-desc">Fire rituals</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">📖 Reading scriptures</div><div class="opt-desc">Gita, Granth Sahib, etc.</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🎵 Bhajan / kirtan</div><div class="opt-desc">Group singing</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🔔 Bell / shankh</div><div class="opt-desc">Ghanti or conch</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">✨ Festival-only setup</div><div class="opt-desc">Mainly during festivals</div></button>
+        <button class="opt" onclick="togOpt(this);chk2()"><div class="tick">✓</div><div class="opt-title">🌸 Minimal rituals</div><div class="opt-desc">Just a sacred space</div></button>
       </div>
       <div class="field"><label class="label">Anything specific? <span class="muted">(optional)</span></label><textarea id="f-ritual-note" rows="2" placeholder="e.g. Jain rituals, parkash ceremony, specific Kuldevta rituals..."></textarea></div>
-      <div class="nav"><button class="btn-back" onclick="go(2)">← Back</button><button class="btn-primary" id="next3" onclick="go(4)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 4: SPACE -->
-    <div class="step" id="s4">
-      <h2>Where will your mandir live?</h2>
-      <p class="subtitle">This helps us understand the setting.</p>
+      <div class="sec-divider"></div>
+
+      <!-- Space -->
+      <div class="qh">Where will your mandir live?</div>
+      <div class="qh-sub">This helps us understand the setting.</div>
       <div class="grid2" id="space-list">
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">🛕 Dedicated Pooja Room</div><div class="opt-desc">A separate room for worship</div></button>
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">🏠 Living Room Corner</div><div class="opt-desc">A respected spot in the main area</div></button>
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">🛏️ Bedroom</div><div class="opt-desc">Master or spare bedroom</div></button>
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">🍳 Kitchen / Dining</div><div class="opt-desc">Near the cooking or dining area</div></button>
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">💼 Office / Showroom</div><div class="opt-desc">Commercial or workplace setup</div></button>
-        <button class="opt" onclick="selOne('space-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">🏡 Bungalow Entrance</div><div class="opt-desc">Grand entry or dedicated hall</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">🛕 Dedicated Pooja Room</div><div class="opt-desc">A separate room for worship</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">🏠 Living Room Corner</div><div class="opt-desc">A respected spot in the main area</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">🛏️ Bedroom</div><div class="opt-desc">Master or spare bedroom</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">🍳 Kitchen / Dining</div><div class="opt-desc">Near the cooking or dining area</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">💼 Office / Showroom</div><div class="opt-desc">Commercial or workplace setup</div></button>
+        <button class="opt" onclick="selOne('space-list',this);chk2()"><div class="tick">✓</div><div class="opt-title">🏡 Bungalow Entrance</div><div class="opt-desc">Grand entry or dedicated hall</div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(3)">← Back</button><button class="btn-primary" id="next4" onclick="go(5)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 5: VASTU -->
-    <div class="step" id="s5">
-      <h2>Do you follow Vastu placement?</h2>
-      <p class="subtitle">We'll incorporate this into the design.</p>
-      <div class="grid3" id="vastu-list" style="margin-bottom:24px;">
-        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk5()"><div class="tick">✓</div><div class="opt-title">Yes, strictly</div></button>
-        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk5()"><div class="tick">✓</div><div class="opt-title">Somewhat</div></button>
-        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk5()"><div class="tick">✓</div><div class="opt-title">Not really</div></button>
+      <div class="sec-divider"></div>
+
+      <!-- Vastu -->
+      <div class="qh">Do you follow Vastu placement?</div>
+      <div class="qh-sub">We'll incorporate this into the design.</div>
+      <div class="grid3" id="vastu-list" style="margin-bottom:16px;">
+        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk2()"><div class="tick">✓</div><div class="opt-title">Yes, strictly</div></button>
+        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk2()"><div class="tick">✓</div><div class="opt-title">Somewhat</div></button>
+        <button class="opt" onclick="selOne('vastu-list',this);showDir();chk2()"><div class="tick">✓</div><div class="opt-title">Not really</div></button>
       </div>
       <div id="dir-wrap" class="hidden">
         <label class="label">🧭 Which direction will the mandir face?</label>
@@ -212,14 +224,20 @@ textarea:focus{border-color:var(--orange);}
           <button class="pill" onclick="selPill('dir-list',this)">Not sure — please advise</button>
         </div>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(4)">← Back</button><button class="btn-primary" id="next5" onclick="go(6)" disabled>Continue →</button></div>
+      <div class="nav"><button class="btn-back" onclick="go(1)">← Back</button><button class="btn-primary" id="next2" onclick="go(3)" disabled>Continue →</button></div>
     </div>
 
-    <!-- STEP 6: FRAMEWORK -->
-    <div class="step" id="s6">
-      <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--orange);margin-bottom:6px;">Our Signature Design Frameworks</div>
-      <h2>Which one speaks to you?</h2>
-      <p class="subtitle">Every mandir we build fits into one of these six frameworks.</p>
+    <!-- SECTION 3: YOUR MANDIR -->
+    <div class="step" id="s3">
+      <div class="sec-head">
+        <div class="sec-eyebrow">Section 3 of 4</div>
+        <h2>Your Mandir</h2>
+        <p class="subtitle">Now the design itself — framework, size, style, and finish.</p>
+      </div>
+
+      <!-- Framework -->
+      <div class="qh">Which framework speaks to you?</div>
+      <div class="qh-sub">Every mandir we build fits into one of these six signature frameworks.</div>
       <div id="fw-list" style="display:flex;flex-direction:column;gap:10px;">
         <button class="opt" onclick="selFw(this,'Sinhasan',2,1.5,2,5000)"><div class="tick">✓</div><div class="fw-row"><div class="fw-icon">🪑</div><div class="fw-body"><div class="fw-name">Sinhasan <span class="fw-sub">(Focused Grace)</span></div><div class="fw-sol"><strong>The Solution:</strong> A majestic throne for your deity — for those who already have a dedicated platform.</div><div class="fw-fit"><strong>Spatial Fit:</strong> Table-tops, wall-niches, or existing marble platforms.</div></div></div></button>
         <button class="opt" onclick="selFw(this,'Wall & Floor Mounted',2.5,1,3.5,5000)"><div class="tick">✓</div><div class="fw-row"><div class="fw-icon">🏠</div><div class="fw-body"><div class="fw-name">Wall & Floor Mounted <span class="fw-sub">(Urban Efficiency)</span></div><div class="fw-sol"><strong>The Solution:</strong> A floating or grounded unit that fits modern corridor or living room layouts.</div><div class="fw-fit"><strong>Spatial Fit:</strong> Ideal for 2BHK/3BHK apartments where floor space is optimised.</div></div></div></button>
@@ -228,57 +246,53 @@ textarea:focus{border-color:var(--orange);}
         <button class="opt" onclick="selFw(this,'Cabinet with Doors',3,2,6,7500)"><div class="tick">✓</div><div class="fw-row"><div class="fw-icon">🔐</div><div class="fw-body"><div class="fw-name">Cabinet with Doors <span class="fw-sub">(The Private Sanctum)</span></div><div class="fw-sol"><strong>The Solution:</strong> For families who prefer traditional privacy (Parda) or need to protect the inner sanctum.</div><div class="fw-fit"><strong>Spatial Fit:</strong> Multi-functional rooms or homes following traditional closing rituals.</div></div></div></button>
         <button class="opt" onclick="selFw(this,'Mandir Room',6,6,8,10000)"><div class="tick">✓</div><div class="fw-row"><div class="fw-icon">🛕</div><div class="fw-body"><div class="fw-name">Mandir Room <span class="fw-sub">(The Immersive Sanctuary)</span></div><div class="fw-sol"><strong>The Solution:</strong> A complete architectural takeover — walls, ceiling, lighting, and floor designed as one.</div><div class="fw-fit"><strong>Spatial Fit:</strong> Dedicated puja rooms in bungalows or luxury penthouses.</div></div></div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(5)">← Back</button><button class="btn-primary" id="next6" onclick="go(7)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 7: DIMENSIONS -->
-    <div class="step" id="s7">
-      <h2>What dimensions are you thinking?</h2>
-      <p class="subtitle">Rough is fine — we'll measure exactly during the site visit.</p>
+      <div class="sec-divider"></div>
+
+      <!-- Dimensions -->
+      <div class="qh">What dimensions are you thinking?</div>
+      <div class="qh-sub">Rough is fine — we'll measure exactly during the site visit.</div>
       <div class="info-box" id="dim-hint">📐 Select a framework first to get suggested dimensions.</div>
       <div class="dim-row">
-        <div><label class="label" style="text-align:center;display:block;">Width</label><div class="dim-wrap"><input class="dim-input" id="f-w" type="number" step="0.5" min="0" placeholder="0" oninput="chk7()"><span class="dim-unit">ft</span></div></div>
-        <div><label class="label" style="text-align:center;display:block;">Depth</label><div class="dim-wrap"><input class="dim-input" id="f-d" type="number" step="0.5" min="0" placeholder="0" oninput="chk7()"><span class="dim-unit">ft</span></div></div>
-        <div><label class="label" style="text-align:center;display:block;">Height</label><div class="dim-wrap"><input class="dim-input" id="f-h" type="number" step="0.5" min="0" placeholder="0" oninput="chk7()"><span class="dim-unit">ft</span></div></div>
+        <div><label class="label" style="text-align:center;display:block;">Width</label><div class="dim-wrap"><input class="dim-input" id="f-w" type="number" step="0.5" min="0" placeholder="0" oninput="chk3()"><span class="dim-unit">ft</span></div></div>
+        <div><label class="label" style="text-align:center;display:block;">Depth</label><div class="dim-wrap"><input class="dim-input" id="f-d" type="number" step="0.5" min="0" placeholder="0" oninput="chk3()"><span class="dim-unit">ft</span></div></div>
+        <div><label class="label" style="text-align:center;display:block;">Height</label><div class="dim-wrap"><input class="dim-input" id="f-h" type="number" step="0.5" min="0" placeholder="0" oninput="chk3()"><span class="dim-unit">ft</span></div></div>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(6)">← Back</button><button class="btn-primary" id="next7" onclick="go(8)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 8: STYLE -->
-    <div class="step" id="s8">
-      <h2>What style speaks to you?</h2>
-      <p class="subtitle">Which feels most like your home's character?</p>
+      <div class="sec-divider"></div>
+
+      <!-- Style -->
+      <div class="qh">What style speaks to you?</div>
+      <div class="qh-sub">Which feels most like your home's character?</div>
       <div id="style-list" style="display:flex;flex-direction:column;gap:8px;">
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">🛕 Traditional Temple</div><div class="opt-desc">Shikhar, kalash, classical forms</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">🏯 South Indian Gopuram</div><div class="opt-desc">Stepped pyramidal tower, Dravidian style</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">◻️ Modern Minimal</div><div class="opt-desc">Clean lines, subtle ornamentation</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">🌸 Classical Carved</div><div class="opt-desc">Intricate jaali, ornate hand-carving</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">✨ Contemporary Fusion</div><div class="opt-desc">Modern silhouette with traditional motifs</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">🏰 Rajasthani / Jain</div><div class="opt-desc">Arched jharokha, delicate spires</div></button>
-        <button class="opt" onclick="selOne('style-list',this);chk8()"><div class="tick">✓</div><div class="opt-title">💬 Not sure — help me decide</div><div class="opt-desc">We'll guide you through reference designs</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">🛕 Traditional Temple</div><div class="opt-desc">Shikhar, kalash, classical forms</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">🏯 South Indian Gopuram</div><div class="opt-desc">Stepped pyramidal tower, Dravidian style</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">◻️ Modern Minimal</div><div class="opt-desc">Clean lines, subtle ornamentation</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">🌸 Classical Carved</div><div class="opt-desc">Intricate jaali, ornate hand-carving</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">✨ Contemporary Fusion</div><div class="opt-desc">Modern silhouette with traditional motifs</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">🏰 Rajasthani / Jain</div><div class="opt-desc">Arched jharokha, delicate spires</div></button>
+        <button class="opt" onclick="selOne('style-list',this);chk3()"><div class="tick">✓</div><div class="opt-title">💬 Not sure — help me decide</div><div class="opt-desc">We'll guide you through reference designs</div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(7)">← Back</button><button class="btn-primary" id="next8" onclick="go(9)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 9: MATERIAL -->
-    <div class="step" id="s9">
-      <h2>Which material feels right?</h2>
-      <p class="subtitle">Each has a different character and investment level.</p>
+      <div class="sec-divider"></div>
+
+      <!-- Material -->
+      <div class="qh">Which material feels right?</div>
+      <div class="qh-sub">Each has a different character and investment level.</div>
       <div id="mat-list" style="display:flex;flex-direction:column;gap:10px;">
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#E8E8FF;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Acrylic + Prelam <span class="badge">₹</span></div><div class="opt-desc">Glossy acrylic on laminated base — affordable premium finish</div></div></div></button>
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#FFE8E8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">HDHMR + Duco <span class="badge">₹₹</span></div><div class="opt-desc">Engineered board with high-gloss automotive paint</div></div></div></button>
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#FFE8C8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Solid Wood <span class="badge">₹₹₹</span></div><div class="opt-desc">Natural teak, sheesham, or sagwan — warm, heirloom</div></div></div></button>
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#E8F8FF;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Solid Surface <span class="badge">₹₹₹</span></div><div class="opt-desc">Seamless composite — modern, stain-resistant</div></div></div></button>
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#F8F8F8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Marble <span class="badge">₹₹₹₹</span></div><div class="opt-desc">Makrana, Vietnam, or Statuario — timeless, sacred, generational</div></div></div></button>
-        <button class="opt" onclick="selOne('mat-list',this);chk9()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#F5F5E8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Real Silver <span class="badge">★</span></div><div class="opt-desc">Sterling silver finish — ultimate luxury (custom pricing)</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#E8E8FF;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Acrylic + Prelam <span class="badge">₹</span></div><div class="opt-desc">Glossy acrylic on laminated base — affordable premium finish</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#FFE8E8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">HDHMR + Duco <span class="badge">₹₹</span></div><div class="opt-desc">Engineered board with high-gloss automotive paint</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#FFE8C8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Solid Wood <span class="badge">₹₹₹</span></div><div class="opt-desc">Natural teak, sheesham, or sagwan — warm, heirloom</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#E8F8FF;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Solid Surface <span class="badge">₹₹₹</span></div><div class="opt-desc">Seamless composite — modern, stain-resistant</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#F8F8F8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Marble <span class="badge">₹₹₹₹</span></div><div class="opt-desc">Makrana, Vietnam, or Statuario — timeless, sacred, generational</div></div></div></button>
+        <button class="opt" onclick="selOne('mat-list',this);chk3()"><div class="tick">✓</div><div style="display:flex;gap:12px;align-items:center;"><div style="width:44px;height:44px;border-radius:8px;background:#F5F5E8;border:1px solid var(--border);flex-shrink:0;"></div><div><div class="opt-title">Real Silver <span class="badge">★</span></div><div class="opt-desc">Sterling silver finish — ultimate luxury (custom pricing)</div></div></div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(8)">← Back</button><button class="btn-primary" id="next9" onclick="go(10)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 10: FEATURES -->
-    <div class="step" id="s10">
-      <h2>Which features would you like?</h2>
-      <p class="subtitle">Select whatever interests you — we'll refine on call.</p>
+      <div class="sec-divider"></div>
+
+      <!-- Features -->
+      <div class="qh">Which features would you like?</div>
+      <div class="qh-sub">Select whatever interests you — we'll refine on call. (Optional)</div>
       <div class="grid2" id="feat-list">
         <button class="opt" onclick="togOpt(this)"><div class="tick">✓</div><div class="opt-title">📦 Storage Drawers</div><div class="opt-desc">For pooja items, oils, books</div></button>
         <button class="opt" onclick="togOpt(this)"><div class="tick">✓</div><div class="opt-title">💡 Built-in Lighting</div><div class="opt-desc">Warm LED spotlights on murtis</div></button>
@@ -289,47 +303,53 @@ textarea:focus{border-color:var(--orange);}
         <button class="opt" onclick="togOpt(this)"><div class="tick">✓</div><div class="opt-title">🎨 Carved Backdrop</div><div class="opt-desc">Mural or relief work</div></button>
         <button class="opt" onclick="togOpt(this)"><div class="tick">✓</div><div class="opt-title">🪜 Raised Platform</div><div class="opt-desc">Elevated base with steps</div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(9)">← Back</button><button class="btn-primary" onclick="go(11)">Continue →</button></div>
+      <div class="nav"><button class="btn-back" onclick="go(2)">← Back</button><button class="btn-primary" id="next3" onclick="go(4)" disabled>Continue →</button></div>
     </div>
 
-    <!-- STEP 11: BUDGET -->
-    <div class="step" id="s11">
-      <h2>What's your comfortable budget?</h2>
-      <p class="subtitle">Honest numbers help us design something you'll love.</p>
+    <!-- SECTION 4: PLANNING -->
+    <div class="step" id="s4">
+      <div class="sec-head">
+        <div class="sec-eyebrow">Section 4 of 4</div>
+        <h2>Planning</h2>
+        <p class="subtitle">Last step — let's talk budget and timeline.</p>
+      </div>
+
+      <!-- Budget -->
+      <div class="qh">What's your comfortable budget?</div>
+      <div class="qh-sub">Honest numbers help us design something you'll love.</div>
       <div id="budget-list" style="display:flex;flex-direction:column;gap:8px;">
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">Under ₹1 Lakh</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">₹1 – 2 Lakh</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">₹2 – 5 Lakh</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">₹5 – 10 Lakh</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">₹10 – 25 Lakh</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">₹25 Lakh and above</div></button>
-        <button class="opt" onclick="selOne('budget-list',this);chk11()"><div class="tick">✓</div><div class="opt-title">Flexible — share all options</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">Under ₹1 Lakh</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">₹1 – 2 Lakh</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">₹2 – 5 Lakh</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">₹5 – 10 Lakh</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">₹10 – 25 Lakh</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">₹25 Lakh and above</div></button>
+        <button class="opt" onclick="selOne('budget-list',this);chk4()"><div class="tick">✓</div><div class="opt-title">Flexible — share all options</div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(10)">← Back</button><button class="btn-primary" id="next11" onclick="go(12)" disabled>Continue →</button></div>
-    </div>
 
-    <!-- STEP 12: TIMELINE -->
-    <div class="step" id="s12">
-      <h2>When would you like it delivered?</h2>
-      <p class="subtitle">Helps us prioritise and plan production.</p>
+      <div class="sec-divider"></div>
+
+      <!-- Timeline -->
+      <div class="qh">When would you like it delivered?</div>
+      <div class="qh-sub">Helps us prioritise and plan production.</div>
       <div class="grid2" id="time-list">
-        <button class="opt" onclick="selOne('time-list',this);chk12()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">⚡</div><div class="opt-title">ASAP</div><div class="opt-desc">Within 30 days</div></button>
-        <button class="opt" onclick="selOne('time-list',this);chk12()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">📅</div><div class="opt-title">1 – 2 months</div><div class="opt-desc">Upcoming festival or event</div></button>
-        <button class="opt" onclick="selOne('time-list',this);chk12()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">🏠</div><div class="opt-title">3 – 6 months</div><div class="opt-desc">New home or renovation</div></button>
-        <button class="opt" onclick="selOne('time-list',this);chk12()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">🔍</div><div class="opt-title">Just exploring</div><div class="opt-desc">Gathering ideas for now</div></button>
+        <button class="opt" onclick="selOne('time-list',this);chk4()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">⚡</div><div class="opt-title">ASAP</div><div class="opt-desc">Within 30 days</div></button>
+        <button class="opt" onclick="selOne('time-list',this);chk4()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">📅</div><div class="opt-title">1 – 2 months</div><div class="opt-desc">Upcoming festival or event</div></button>
+        <button class="opt" onclick="selOne('time-list',this);chk4()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">🏠</div><div class="opt-title">3 – 6 months</div><div class="opt-desc">New home or renovation</div></button>
+        <button class="opt" onclick="selOne('time-list',this);chk4()"><div class="tick">✓</div><div style="font-size:20px;margin-bottom:6px;">🔍</div><div class="opt-title">Just exploring</div><div class="opt-desc">Gathering ideas for now</div></button>
       </div>
-      <div class="nav"><button class="btn-back" onclick="go(11)">← Back</button><button class="btn-primary" id="next12" onclick="go(13)" disabled>Review My Brief →</button></div>
+      <div class="nav"><button class="btn-back" onclick="go(3)">← Back</button><button class="btn-primary" id="next4" onclick="go(5)" disabled>Review My Brief →</button></div>
     </div>
 
-    <!-- STEP 13: REVIEW -->
-    <div class="step" id="s13">
+    <!-- REVIEW -->
+    <div class="step" id="s5">
       <h2>Your Design Brief</h2>
       <p class="subtitle">Please review before we send it to our team.</p>
       <div id="review-box" style="border-radius:12px;padding:16px;background:var(--bg);border:1px solid var(--border);margin-bottom:24px;"></div>
-      <div class="nav"><button class="btn-back" onclick="go(12)">← Back</button><button class="btn-primary" onclick="submitBrief()">Submit to Team →</button></div>
+      <div class="nav"><button class="btn-back" onclick="go(4)">← Back</button><button class="btn-primary" onclick="submitBrief()">Submit to Team →</button></div>
     </div>
 
-    <!-- STEP 14: SUCCESS -->
+    <!-- SUCCESS -->
     <div class="step" id="s14">
       <div class="center" style="margin-bottom:24px;">
         <div class="success-icon">✅</div>
@@ -398,15 +418,16 @@ function go(n){
   document.querySelectorAll('.step').forEach(function(s){s.classList.remove('active');});
   document.getElementById('s'+n).classList.add('active');
   var prog=document.getElementById('prog');
-  if(n===0||n===14){prog.classList.add('hidden');}
-  else{
+  if(n>=1&&n<=4){
     prog.classList.remove('hidden');
-    var pct=Math.round(n/13*100);
-    document.getElementById('prog-text').textContent='Step '+n+' of 13';
+    var pct=Math.round(n/4*100);
+    document.getElementById('prog-text').textContent='Section '+n+' of 4';
     document.getElementById('prog-pct').textContent=pct+'%';
     document.getElementById('prog-fill').style.width=pct+'%';
+  } else {
+    prog.classList.add('hidden');
   }
-  if(n===13) buildReview();
+  if(n===5) buildReview();
   window.scrollTo(0,0);
 }
 
@@ -421,23 +442,15 @@ function selPill(grpId, btn){
   btn.classList.add('sel');
 }
 
+/* SECTION 1 — About You */
 function chk1(){
   var ok=document.getElementById('f-name').value.trim()&&
     document.getElementById('f-wa').value.length===10&&
     document.getElementById('f-city').value.trim();
   document.getElementById('next1').disabled=!ok;
 }
-function chk2(){
-  var ok=document.querySelector('#deity-count .opt.sel')&&
-    document.querySelector('#deity-list .pill.sel');
-  document.getElementById('next2').disabled=!ok;
-}
-function chk3(){
-  document.getElementById('next3').disabled=!document.querySelector('#ritual-list .opt.sel');
-}
-function chk4(){
-  document.getElementById('next4').disabled=!document.querySelector('#space-list .opt.sel');
-}
+
+/* SECTION 2 — Your Worship */
 function showDir(){
   var v=document.querySelector('#vastu-list .opt.sel');
   if(v&&v.querySelector('.opt-title').textContent.trim()!=='Not really'){
@@ -445,10 +458,17 @@ function showDir(){
   } else {
     document.getElementById('dir-wrap').classList.add('hidden');
   }
-  chk5();
 }
-function chk5(){document.getElementById('next5').disabled=!document.querySelector('#vastu-list .opt.sel');}
+function chk2(){
+  var ok=document.querySelector('#deity-count .opt.sel')&&
+    document.querySelector('#deity-list .pill.sel')&&
+    document.querySelector('#ritual-list .opt.sel')&&
+    document.querySelector('#space-list .opt.sel')&&
+    document.querySelector('#vastu-list .opt.sel');
+  document.getElementById('next2').disabled=!ok;
+}
 
+/* SECTION 3 — Your Mandir */
 function selFw(btn,name,w,d,h,fee){
   document.getElementById('fw-list').querySelectorAll('.opt').forEach(function(b){b.classList.remove('sel');});
   btn.classList.add('sel');
@@ -457,19 +477,24 @@ function selFw(btn,name,w,d,h,fee){
   document.getElementById('f-d').value=d;
   document.getElementById('f-h').value=h;
   document.getElementById('dim-hint').textContent='📐 Typical '+name+': '+w+' × '+d+' × '+h+' ft — adjust as needed.';
-  document.getElementById('next6').disabled=false;
-  chk7();
+  chk3();
 }
-function chk7(){
-  var ok=parseFloat(document.getElementById('f-w').value)>0&&
+function chk3(){
+  var ok=D.framework&&
+    parseFloat(document.getElementById('f-w').value)>0&&
     parseFloat(document.getElementById('f-d').value)>0&&
-    parseFloat(document.getElementById('f-h').value)>0;
-  document.getElementById('next7').disabled=!ok;
+    parseFloat(document.getElementById('f-h').value)>0&&
+    document.querySelector('#style-list .opt.sel')&&
+    document.querySelector('#mat-list .opt.sel');
+  document.getElementById('next3').disabled=!ok;
 }
-function chk8(){document.getElementById('next8').disabled=!document.querySelector('#style-list .opt.sel');}
-function chk9(){document.getElementById('next9').disabled=!document.querySelector('#mat-list .opt.sel');}
-function chk11(){document.getElementById('next11').disabled=!document.querySelector('#budget-list .opt.sel');}
-function chk12(){document.getElementById('next12').disabled=!document.querySelector('#time-list .opt.sel');}
+
+/* SECTION 4 — Planning */
+function chk4(){
+  var ok=document.querySelector('#budget-list .opt.sel')&&
+    document.querySelector('#time-list .opt.sel');
+  document.getElementById('next4').disabled=!ok;
+}
 
 function getSelText(id){
   var el=document.querySelector('#'+id+' .opt.sel, #'+id+' .pill.sel');
