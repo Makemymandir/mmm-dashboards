@@ -711,7 +711,6 @@ tr:active .status-Rejected {
   overflow-y: auto;
   margin: 0 auto;
 }
-}
 
 .modal {
   background: var(--white);
@@ -802,9 +801,10 @@ tr:active .status-Rejected {
   .topbar-title {
     display: none;
   }
-   .modal {
+  .modal {
     max-width: 100%;
     margin: 10px;
+  }
 }
 
 .form-group textarea {
