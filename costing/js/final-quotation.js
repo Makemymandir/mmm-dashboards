@@ -542,9 +542,9 @@ async function submitAddLine() {
     if (!description) { errorEl.textContent = 'Please enter a description.'; errorEl.style.display = 'block'; return; }
   }
 
-  if (qty <= 0) { errorEl.textContent = 'Qty must be greater than 0.'; errorEl.style.display = 'block'; return; }
-  var requiresRate = section === 'material' || !!MASTER_KEYS[section];
-  if (requiresRate && rate <= 0) { errorEl.textContent = 'Please enter a rate greater than 0.'; errorEl.style.display = 'block'; return; }
+  if (qty < 0) { errorEl.textContent = 'Qty cannot be negative.'; errorEl.style.display = 'block'; return; }
+  // Rate must be > 0 for ALL sections, including labour and logistics.
+  if (rate <= 0) { errorEl.textContent = 'Rate must be greater than 0'; errorEl.style.display = 'block'; return; }
 
   btn.disabled = true; btn.textContent = 'Adding...';
 
