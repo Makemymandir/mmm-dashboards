@@ -10,6 +10,7 @@ let quotations     = [];
 let currentBrief   = null;   // Design Brief record (null = not loaded yet)
 let briefPhotos    = [];     // uploaded site photos as base64 data URLs
 let isClientView   = false;  // true when opened via ?brief=client
+let briefOpenSections = [true, false, false, false, false, false]; // accordion state — section 1 open
 
 const STAGE_CONFIG = {
   'Inquiry':           { color: '#757575', bg: '#F5F5F5',  phase: 'DISCOVER' },
@@ -421,6 +422,34 @@ function renderPhotoThumbsHtml() {
   }).join('');
 }
 
+// Renders one collapsible accordion section. `idx` is 0-based; open state is
+// tracked in briefOpenSections so it survives a form re-render after Save.
+function briefSection(idx, title, summary, bodyHtml) {
+  var open = !!briefOpenSections[idx];
+  return ''
+    + '<div class="brief-acc' + (open ? ' brief-acc-open' : '') + '" id="briefSection' + idx + '">'
+    +   '<button type="button" class="brief-acc-header" onclick="toggleBriefSection(' + idx + ')">'
+    +     '<span class="brief-acc-num">' + (idx + 1) + '</span>'
+    +     '<span class="brief-acc-title">' + escapeHtml(title) + '</span>'
+    +     '<span class="brief-acc-summary">' + escapeHtml(summary) + '</span>'
+    +     '<span class="brief-acc-chevron">▾</span>'
+    +   '</button>'
+    +   '<div class="brief-acc-body">' + bodyHtml + '</div>'
+    + '</div>';
+}
+
+function toggleBriefSection(idx) {
+  briefOpenSections[idx] = !briefOpenSections[idx];
+  var el = document.getElementById('briefSection' + idx);
+  if (el) el.classList.toggle('brief-acc-open', briefOpenSections[idx]);
+}
+
+// Collapses whitespace and clips long text for the collapsed summary line.
+function briefSummaryLine(s) {
+  s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
+  return s.length > 50 ? s.slice(0, 50) + '…' : s;
+}
+
 function renderBriefForm() {
   const p = currentProject || {};
   const b = currentBrief || {};
@@ -440,6 +469,107 @@ function renderBriefForm() {
     return '<option value="' + escapeAttr(s) + '" ' + (val('style_confirmed') === s ? 'selected' : '') + '>' + escapeHtml(s) + '</option>';
   }).join('');
 
+  const deityNames = val('deity_names') !== '' ? val('deity_names') : (p.deities || '');
+
+  // ─── Collapsed summary lines ───
+  const sum1 = (cw !== '' && cd !== '' && ch !== '')
+    ? (cw + 'ft × ' + cd + 'ft × ' + ch + 'ft')
+    : 'Not filled';
+  const sum2 = deityNames ? briefSummaryLine(deityNames) : 'Not filled';
+  const prefBits = [val('style_confirmed'), val('colour_preference'), val('wood_finish')]
+    .filter(function(x) { return x !== '' && x != null; });
+  const sum3 = prefBits.length ? briefSummaryLine(prefBits.join(' · ')) : 'Not filled';
+  const specialKeys = ['j_hook', 'pocket_doors', 'akhand_jyot', 'electrical_points'];
+  const enabledCount = specialKeys.filter(function(k) {
+    return String(val(k)).toLowerCase() === 'yes';
+  }).length;
+  const specialNotes = val('storage_requirements') !== '' || val('jain_requirements') !== '';
+  const sum4 = (enabledCount || specialNotes)
+    ? (enabledCount + ' of 4 enabled' + (specialNotes ? ' · notes added' : ''))
+    : 'Not filled';
+  const sum5 = (val('factory_instructions') !== '' || val('client_constraints') !== '')
+    ? 'Filled' : 'Not filled';
+  const photoCount = (briefPhotos || []).length;
+  const sum6parts = [];
+  if (photoCount) sum6parts.push(photoCount + (photoCount === 1 ? ' photo' : ' photos'));
+  if (val('site_photo_links') !== '') sum6parts.push('links added');
+  const sum6 = sum6parts.length ? sum6parts.join(' · ') : 'Not filled';
+
+  const body1 = `
+        <div class="edit-form-grid">
+          <div class="form-group"><label>Confirmed Width (ft)</label><input type="number" step="0.25" id="db_confirmed_width" value="${escapeAttr(cw)}"></div>
+          <div class="form-group"><label>Confirmed Depth (ft)</label><input type="number" step="0.25" id="db_confirmed_depth" value="${escapeAttr(cd)}"></div>
+          <div class="form-group"><label>Confirmed Height (ft)</label><input type="number" step="0.25" id="db_confirmed_height" value="${escapeAttr(ch)}"></div>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label>Space Constraints <span class="db-hint">beams, pipes, door swing, etc.</span></label>
+          <textarea id="db_space_constraints" rows="3">${escapeHtml(val('space_constraints'))}</textarea>
+        </div>`;
+
+  const body2 = `
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Deity Names</label>
+          <input type="text" id="db_deity_names" value="${escapeAttr(deityNames)}">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Murti Sizes <span class="db-hint">height × width for each deity</span></label>
+          <textarea id="db_murti_sizes" rows="3" placeholder="e.g. Ganesh — 12in × 8in&#10;Lakshmi — 10in × 7in">${escapeHtml(val('murti_sizes'))}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Photo Frame Sizes</label>
+          <textarea id="db_photo_frame_sizes" rows="2">${escapeHtml(val('photo_frame_sizes'))}</textarea>
+        </div>`;
+
+  const body3 = `
+        <div class="edit-form-grid">
+          <div class="form-group"><label>Style Confirmed</label>
+            <select id="db_style_confirmed"><option value="">— Select —</option>${styleOpts}</select>
+          </div>
+          <div class="form-group"><label>Colour Preference</label><input type="text" id="db_colour_preference" value="${escapeAttr(val('colour_preference'))}"></div>
+          <div class="form-group"><label>Wood Finish Preference</label><input type="text" id="db_wood_finish" value="${escapeAttr(val('wood_finish'))}"></div>
+        </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label>Reference Image Links <span class="db-hint">Pinterest, Google Drive links</span></label>
+          <textarea id="db_reference_links" rows="3">${escapeHtml(val('reference_links'))}</textarea>
+        </div>`;
+
+  const body4 = `
+        <div class="brief-toggle-grid">
+          ${briefToggle('db_j_hook',            'J Hook / Hanging Bell',     chkAttr('j_hook'))}
+          ${briefToggle('db_pocket_doors',      'Pocket Doors',              chkAttr('pocket_doors'))}
+          ${briefToggle('db_akhand_jyot',       'Akhand Jyot Provision',     chkAttr('akhand_jyot'))}
+          ${briefToggle('db_electrical_points', 'Electrical Points Needed',  chkAttr('electrical_points'))}
+        </div>
+        <div class="form-group" style="margin-top:12px;margin-bottom:12px;">
+          <label>Storage Requirements</label>
+          <textarea id="db_storage_requirements" rows="2">${escapeHtml(val('storage_requirements'))}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Jain-Specific Requirements</label>
+          <textarea id="db_jain_requirements" rows="2">${escapeHtml(val('jain_requirements'))}</textarea>
+        </div>`;
+
+  const body5 = `
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Special Factory Instructions</label>
+          <textarea id="db_factory_instructions" rows="3">${escapeHtml(val('factory_instructions'))}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Any Client Constraints</label>
+          <textarea id="db_client_constraints" rows="2">${escapeHtml(val('client_constraints'))}</textarea>
+        </div>`;
+
+  const body6 = `
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Upload Photos <span class="db-hint">resized &amp; compressed automatically — for many photos use the links field below</span></label>
+          <input type="file" id="db_photo_input" accept="image/*" multiple onchange="handleBriefPhotos(this)">
+        </div>
+        <div id="briefPhotoThumbs" class="brief-photos">${renderPhotoThumbsHtml()}</div>
+        <div class="form-group" style="margin-top:12px;">
+          <label>Site Photo Links <span class="db-hint">Google Drive links</span></label>
+          <textarea id="db_site_photo_links" rows="3">${escapeHtml(val('site_photo_links'))}</textarea>
+        </div>`;
+
   return `
     <div class="card">
       <div class="card-header">
@@ -451,79 +581,13 @@ function renderBriefForm() {
         </div>
       </div>
 
-      <div class="brief-section-title">1 · Confirmed Measurements</div>
-      <div class="edit-form-grid">
-        <div class="form-group"><label>Confirmed Width (ft)</label><input type="number" step="0.25" id="db_confirmed_width" value="${escapeAttr(cw)}"></div>
-        <div class="form-group"><label>Confirmed Depth (ft)</label><input type="number" step="0.25" id="db_confirmed_depth" value="${escapeAttr(cd)}"></div>
-        <div class="form-group"><label>Confirmed Height (ft)</label><input type="number" step="0.25" id="db_confirmed_height" value="${escapeAttr(ch)}"></div>
-      </div>
-      <div class="form-group" style="margin-top:12px;">
-        <label>Space Constraints <span class="db-hint">beams, pipes, door swing, etc.</span></label>
-        <textarea id="db_space_constraints" rows="3">${escapeHtml(val('space_constraints'))}</textarea>
-      </div>
-
-      <div class="brief-section-title">2 · Deity Requirements</div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label>Deity Names</label>
-        <input type="text" id="db_deity_names" value="${escapeAttr(val('deity_names') !== '' ? val('deity_names') : (p.deities || ''))}">
-      </div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label>Murti Sizes <span class="db-hint">height × width for each deity</span></label>
-        <textarea id="db_murti_sizes" rows="3" placeholder="e.g. Ganesh — 12in × 8in&#10;Lakshmi — 10in × 7in">${escapeHtml(val('murti_sizes'))}</textarea>
-      </div>
-      <div class="form-group">
-        <label>Photo Frame Sizes</label>
-        <textarea id="db_photo_frame_sizes" rows="2">${escapeHtml(val('photo_frame_sizes'))}</textarea>
-      </div>
-
-      <div class="brief-section-title">3 · Design Preferences</div>
-      <div class="edit-form-grid">
-        <div class="form-group"><label>Style Confirmed</label>
-          <select id="db_style_confirmed"><option value="">— Select —</option>${styleOpts}</select>
-        </div>
-        <div class="form-group"><label>Colour Preference</label><input type="text" id="db_colour_preference" value="${escapeAttr(val('colour_preference'))}"></div>
-        <div class="form-group"><label>Wood Finish Preference</label><input type="text" id="db_wood_finish" value="${escapeAttr(val('wood_finish'))}"></div>
-      </div>
-      <div class="form-group" style="margin-top:12px;">
-        <label>Reference Image Links <span class="db-hint">Pinterest, Google Drive links</span></label>
-        <textarea id="db_reference_links" rows="3">${escapeHtml(val('reference_links'))}</textarea>
-      </div>
-
-      <div class="brief-section-title">4 · Special Requirements</div>
-      <div class="brief-toggle-grid">
-        ${briefToggle('db_j_hook',            'J Hook / Hanging Bell',     chkAttr('j_hook'))}
-        ${briefToggle('db_pocket_doors',      'Pocket Doors',              chkAttr('pocket_doors'))}
-        ${briefToggle('db_akhand_jyot',       'Akhand Jyot Provision',     chkAttr('akhand_jyot'))}
-        ${briefToggle('db_electrical_points', 'Electrical Points Needed',  chkAttr('electrical_points'))}
-      </div>
-      <div class="form-group" style="margin-top:12px;margin-bottom:12px;">
-        <label>Storage Requirements</label>
-        <textarea id="db_storage_requirements" rows="2">${escapeHtml(val('storage_requirements'))}</textarea>
-      </div>
-      <div class="form-group">
-        <label>Jain-Specific Requirements</label>
-        <textarea id="db_jain_requirements" rows="2">${escapeHtml(val('jain_requirements'))}</textarea>
-      </div>
-
-      <div class="brief-section-title">5 · Production Notes</div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label>Special Factory Instructions</label>
-        <textarea id="db_factory_instructions" rows="3">${escapeHtml(val('factory_instructions'))}</textarea>
-      </div>
-      <div class="form-group">
-        <label>Any Client Constraints</label>
-        <textarea id="db_client_constraints" rows="2">${escapeHtml(val('client_constraints'))}</textarea>
-      </div>
-
-      <div class="brief-section-title">6 · Site Photos</div>
-      <div class="form-group" style="margin-bottom:12px;">
-        <label>Upload Photos <span class="db-hint">resized &amp; compressed automatically — for many photos use the links field below</span></label>
-        <input type="file" id="db_photo_input" accept="image/*" multiple onchange="handleBriefPhotos(this)">
-      </div>
-      <div id="briefPhotoThumbs" class="brief-photos">${renderPhotoThumbsHtml()}</div>
-      <div class="form-group" style="margin-top:12px;">
-        <label>Site Photo Links <span class="db-hint">Google Drive links</span></label>
-        <textarea id="db_site_photo_links" rows="3">${escapeHtml(val('site_photo_links'))}</textarea>
+      <div class="brief-accordion">
+        ${briefSection(0, 'Measurements & Space', sum1, body1)}
+        ${briefSection(1, 'Deity Requirements',   sum2, body2)}
+        ${briefSection(2, 'Design Preferences',   sum3, body3)}
+        ${briefSection(3, 'Special Requirements', sum4, body4)}
+        ${briefSection(4, 'Production Notes',     sum5, body5)}
+        ${briefSection(5, 'Site Photos',          sum6, body6)}
       </div>
 
       <div class="brief-footer">

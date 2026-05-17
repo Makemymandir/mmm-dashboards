@@ -1396,6 +1396,69 @@ tr:active .status-Rejected {
 }
 .brief-section-title:first-of-type { margin-top: 8px; }
 
+/* ─── Collapsible accordion sections ─── */
+.brief-accordion { margin-top: 8px; }
+.brief-acc {
+  border: 1.5px solid var(--grey-light);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.brief-acc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--grey-bg);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.brief-acc-header:hover { background: #F1EEEA; }
+.brief-acc-num {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: var(--white);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.brief-acc-title {
+  flex: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--dark);
+}
+.brief-acc-summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  color: var(--grey);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.brief-acc-chevron {
+  flex: none;
+  color: var(--grey);
+  font-size: 0.95rem;
+  transition: transform 0.2s ease;
+}
+.brief-acc-open .brief-acc-chevron { transform: rotate(180deg); }
+.brief-acc-body {
+  display: none;
+  padding: 16px;
+  border-top: 1px solid var(--grey-light);
+}
+.brief-acc-open .brief-acc-body { display: block; }
+
 .db-hint {
   color: var(--grey);
   font-weight: 400;
