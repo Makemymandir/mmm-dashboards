@@ -10,7 +10,7 @@ let quotations     = [];
 let currentBrief   = null;   // Design Brief record (null = not loaded yet)
 let briefPhotos    = [];     // uploaded site photos as base64 data URLs
 let isClientView   = false;  // true when opened via ?brief=client
-let briefOpenSections = [true, false, false, false, false, false]; // accordion state — section 1 open
+let briefNavExpanded = false; // sidebar: Design Brief sub-items expanded?
 
 const STAGE_CONFIG = {
   'Inquiry':           { color: '#757575', bg: '#F5F5F5',  phase: 'DISCOVER' },
@@ -223,66 +223,103 @@ function showError(msg) {
 }
 
 function render() {
-  const p     = currentProject;
-  const stage = getStage(p.status);
+  if (activeTab === 'brief') briefNavExpanded = true;
 
   document.getElementById('projectContent').innerHTML = `
-    <div class="project-header">
-      <div class="project-header-left">
-        <div class="project-id-large">${escapeHtml(p.project_id)}</div>
-        <h1 class="project-client-name">${escapeHtml(p.client_name)}</h1>
-        <div class="project-meta">${escapeHtml(p.location || '—')} · Created ${formatDate(p.created_at)} by ${escapeHtml(p.created_by || '—')}</div>
+    <button class="psb-hamburger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i> Menu</button>
+    <div class="psb-overlay" id="psbOverlay" onclick="closeSidebar()"></div>
+    <div class="project-layout">
+      <aside class="project-sidebar" id="projectSidebar">${renderSidebarInner()}</aside>
+      <div class="project-main">
+        <div id="tabDetails"    class="tab-content ${activeTab==='details'    ?'tab-content-active':''}">${renderDetailsTab()}</div>
+        <div id="tabBrief"      class="tab-content ${activeTab==='brief'      ?'tab-content-active':''}">${renderBriefTab()}</div>
+        <div id="tabRough"      class="tab-content ${activeTab==='rough'      ?'tab-content-active':''}">
+          <div id="roughListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
+        </div>
+        <div id="tabQuotations" class="tab-content ${activeTab==='quotations' ?'tab-content-active':''}">
+          <div id="quotationsListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
+        </div>
       </div>
-      <div class="project-header-right">
-        <select class="status-select" id="statusSelect" onchange="changeStatus(this.value)"
-          style="border-color:${stage.color};color:${stage.color};font-weight:600;">
-          <optgroup label="── DISCOVER">
-            <option value="Inquiry"           ${p.status==='Inquiry'           ?'selected':''}>Inquiry</option>
-            <option value="Consultation Done" ${p.status==='Consultation Done' ?'selected':''}>Consultation Done</option>
-            <option value="Design Fee Paid"   ${p.status==='Design Fee Paid'   ?'selected':''}>Design Fee Paid</option>
-          </optgroup>
-          <optgroup label="── DESIGN">
-            <option value="2D Design"         ${p.status==='2D Design'         ?'selected':''}>2D Design</option>
-            <option value="3D Design"         ${p.status==='3D Design'         ?'selected':''}>3D Design</option>
-            <option value="Design Approved"   ${p.status==='Design Approved'   ?'selected':''}>Design Approved</option>
-          </optgroup>
-          <optgroup label="── DELIVER">
-            <option value="In Production"     ${p.status==='In Production'     ?'selected':''}>In Production</option>
-            <option value="Dispatched"        ${p.status==='Dispatched'        ?'selected':''}>Dispatched</option>
-            <option value="Installed"         ${p.status==='Installed'         ?'selected':''}>Installed</option>
-            <option value="Closed"            ${p.status==='Closed'            ?'selected':''}>Closed</option>
-          </optgroup>
-          <optgroup label="── OTHER">
-            <option value="On Hold"           ${p.status==='On Hold'           ?'selected':''}>On Hold</option>
-            <option value="Lost"              ${p.status==='Lost'              ?'selected':''}>Lost</option>
-          </optgroup>
-        </select>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab ${activeTab==='details'    ?'tab-active':''}" data-tab="details"    onclick="switchTab('details')">Project Details</button>
-      <button class="tab ${activeTab==='brief'      ?'tab-active':''}" data-tab="brief"      onclick="switchTab('brief')">Design Brief</button>
-      <button class="tab ${activeTab==='rough'      ?'tab-active':''}" data-tab="rough"      onclick="switchTab('rough')">Rough Estimates</button>
-      <button class="tab ${activeTab==='quotations' ?'tab-active':''}" data-tab="quotations" onclick="switchTab('quotations')">Final Quotations</button>
-    </div>
-
-    <div id="tabDetails"    class="tab-content ${activeTab==='details'    ?'tab-content-active':''}">${renderDetailsTab()}</div>
-    <div id="tabBrief"      class="tab-content ${activeTab==='brief'      ?'tab-content-active':''}">${renderBriefTab()}</div>
-    <div id="tabRough"      class="tab-content ${activeTab==='rough'      ?'tab-content-active':''}">
-      <div id="roughListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
-    </div>
-    <div id="tabQuotations" class="tab-content ${activeTab==='quotations' ?'tab-content-active':''}">
-      <div id="quotationsListContainer"><div style="padding:40px;text-align:center;color:var(--grey);">Loading...</div></div>
     </div>
   `;
 }
 
+// Builds the left sidebar: project identity, stage selector and navigation.
+function renderSidebarInner() {
+  const p = currentProject || {};
+  const stage = getStage(p.status);
+  const sel = function(v) { return p.status === v ? 'selected' : ''; };
+
+  const statusSelect = `
+    <select class="psb-status" id="statusSelect" onchange="changeStatus(this.value)"
+      style="border-color:${stage.color};color:${stage.color};">
+      <optgroup label="── DISCOVER">
+        <option value="Inquiry"           ${sel('Inquiry')}>Inquiry</option>
+        <option value="Consultation Done" ${sel('Consultation Done')}>Consultation Done</option>
+        <option value="Design Fee Paid"   ${sel('Design Fee Paid')}>Design Fee Paid</option>
+      </optgroup>
+      <optgroup label="── DESIGN">
+        <option value="2D Design"         ${sel('2D Design')}>2D Design</option>
+        <option value="3D Design"         ${sel('3D Design')}>3D Design</option>
+        <option value="Design Approved"   ${sel('Design Approved')}>Design Approved</option>
+      </optgroup>
+      <optgroup label="── DELIVER">
+        <option value="In Production"     ${sel('In Production')}>In Production</option>
+        <option value="Dispatched"        ${sel('Dispatched')}>Dispatched</option>
+        <option value="Installed"         ${sel('Installed')}>Installed</option>
+        <option value="Closed"            ${sel('Closed')}>Closed</option>
+      </optgroup>
+      <optgroup label="── OTHER">
+        <option value="On Hold"           ${sel('On Hold')}>On Hold</option>
+        <option value="Lost"              ${sel('Lost')}>Lost</option>
+      </optgroup>
+    </select>`;
+
+  const subLabels = ['Measurements & Space', 'Deity Requirements', 'Design Preferences',
+                     'Special Requirements', 'Production Notes', 'Site Photos'];
+  const subs = subLabels.map(function(label, i) {
+    var done = briefSectionFilled(i);
+    return '<button type="button" class="psb-sub" onclick="gotoBriefSection(' + i + ')">'
+      + '<span class="psb-sub-dot"></span>'
+      + '<span class="psb-sub-label">' + escapeHtml(label) + '</span>'
+      + (done ? '<i class="ti ti-circle-check-filled psb-check"></i>' : '')
+      + '</button>';
+  }).join('');
+
+  return `
+    <div class="psb-head">
+      <div class="psb-pid">${escapeHtml(p.project_id || '')}</div>
+      <div class="psb-client">${escapeHtml(p.client_name || '')}</div>
+      ${statusSelect}
+    </div>
+    <nav class="psb-nav">
+      <button type="button" class="psb-item ${activeTab==='details'?'psb-item-active':''}" onclick="switchTab('details')">
+        <i class="ti ti-file-description"></i><span>Project Details</span>
+      </button>
+      <button type="button" class="psb-item ${activeTab==='brief'?'psb-item-active':''}" onclick="clickBriefNav()">
+        <i class="ti ti-clipboard"></i><span>Design Brief</span>
+        <i class="ti ti-chevron-down psb-caret ${briefNavExpanded?'psb-caret-open':''}"></i>
+      </button>
+      <div class="psb-subs ${briefNavExpanded?'psb-subs-open':''}">${subs}</div>
+      <button type="button" class="psb-item ${activeTab==='rough'?'psb-item-active':''}" onclick="switchTab('rough')">
+        <i class="ti ti-calculator"></i><span>Rough Estimates</span>
+      </button>
+      <button type="button" class="psb-item ${activeTab==='quotations'?'psb-item-active':''}" onclick="switchTab('quotations')">
+        <i class="ti ti-receipt"></i><span>Final Quotations</span>
+      </button>
+    </nav>
+  `;
+}
+
+function updateSidebar() {
+  var sb = document.getElementById('projectSidebar');
+  if (sb) sb.innerHTML = renderSidebarInner();
+}
+
 function switchTab(name) {
   activeTab = name;
-  document.querySelectorAll('.tab').forEach(function(b) {
-    b.classList.toggle('tab-active', b.dataset.tab === name);
-  });
+  if (name === 'brief') briefNavExpanded = true;
+  updateSidebar();
   ['tabDetails','tabBrief','tabRough','tabQuotations'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('tab-content-active');
@@ -292,10 +329,41 @@ function switchTab(name) {
   if (el) el.classList.add('tab-content-active');
   if (name === 'rough')      loadRoughEstimates();
   if (name === 'quotations') loadQuotations();
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Design Brief nav item: toggles the sub-item dropdown, or opens the tab.
+function clickBriefNav() {
+  if (activeTab === 'brief') {
+    briefNavExpanded = !briefNavExpanded;
+    updateSidebar();
+  } else {
+    switchTab('brief');
+  }
+}
+
+function gotoBriefSection(idx) {
+  if (activeTab !== 'brief') switchTab('brief');
+  closeSidebar();
   setTimeout(function() {
-    var t = document.querySelector('.tabs');
-    if (t) t.scrollIntoView({ behavior:'smooth', block:'start' });
-  }, 100);
+    var el = document.getElementById('briefSec' + idx);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+}
+
+function toggleSidebar() {
+  var sb = document.getElementById('projectSidebar');
+  var ov = document.getElementById('psbOverlay');
+  var open = sb ? sb.classList.toggle('psb-open') : false;
+  if (ov) ov.classList.toggle('psb-overlay-show', open);
+}
+
+function closeSidebar() {
+  var sb = document.getElementById('projectSidebar');
+  var ov = document.getElementById('psbOverlay');
+  if (sb) sb.classList.remove('psb-open');
+  if (ov) ov.classList.remove('psb-overlay-show');
 }
 
 function renderDetailsTab() {
@@ -407,9 +475,29 @@ function renderBriefTab() {
   return '<div id="briefContainer">' + inner + '</div>';
 }
 
-function briefToggle(id, label, checkedAttr) {
-  return '<label class="brief-toggle"><input type="checkbox" id="' + id + '" ' + checkedAttr + '>'
-    + '<span>' + escapeHtml(label) + '</span></label>';
+// A yes/no toggle pair backed by a hidden checkbox so saveDesignBrief() can
+// still read it via the existing chk() helper.
+function briefYN(id, label, on) {
+  return '<div class="brief-yn">'
+    + '<input type="checkbox" id="' + id + '" class="brief-yn-input"' + (on ? ' checked' : '') + '>'
+    + '<span class="brief-yn-label">' + escapeHtml(label) + '</span>'
+    + '<div class="brief-yn-btns">'
+    +   '<button type="button" class="yn-btn yn-yes' + (on ? ' active' : '') + '" onclick="setYN(\'' + id + '\',true)">Yes</button>'
+    +   '<button type="button" class="yn-btn yn-no'  + (on ? '' : ' active') + '" onclick="setYN(\'' + id + '\',false)">No</button>'
+    + '</div></div>';
+}
+
+function setYN(id, on) {
+  var cb = document.getElementById(id);
+  if (!cb) return;
+  cb.checked = on;
+  var wrap = cb.closest('.brief-yn');
+  if (wrap) {
+    var yes = wrap.querySelector('.yn-yes');
+    var no  = wrap.querySelector('.yn-no');
+    if (yes) yes.classList.toggle('active', on);
+    if (no)  no.classList.toggle('active', !on);
+  }
 }
 
 function renderPhotoThumbsHtml() {
@@ -422,39 +510,37 @@ function renderPhotoThumbsHtml() {
   }).join('');
 }
 
-// Renders one collapsible accordion section. `idx` is 0-based; open state is
-// tracked in briefOpenSections so it survives a form re-render after Save.
-function briefSection(idx, title, summary, bodyHtml) {
-  var open = !!briefOpenSections[idx];
-  return ''
-    + '<div class="brief-acc' + (open ? ' brief-acc-open' : '') + '" id="briefSection' + idx + '">'
-    +   '<button type="button" class="brief-acc-header" onclick="toggleBriefSection(' + idx + ')">'
-    +     '<span class="brief-acc-num">' + (idx + 1) + '</span>'
-    +     '<span class="brief-acc-title">' + escapeHtml(title) + '</span>'
-    +     '<span class="brief-acc-summary">' + escapeHtml(summary) + '</span>'
-    +     '<span class="brief-acc-chevron">▾</span>'
-    +   '</button>'
-    +   '<div class="brief-acc-body">' + bodyHtml + '</div>'
-    + '</div>';
+// True when a Design Brief section has at least one field filled in —
+// drives the green checkmark on the sidebar sub-items.
+function briefSectionFilled(idx) {
+  var b = currentBrief || {};
+  function f(k)   { return b[k] !== undefined && b[k] !== null && String(b[k]).trim() !== ''; }
+  function yes(k) { return String(b[k] || '').toLowerCase() === 'yes'; }
+  switch (idx) {
+    case 0: return f('confirmed_width') || f('confirmed_depth') || f('confirmed_height') || f('space_constraints');
+    case 1: return f('deity_names') || f('murti_sizes') || f('photo_frame_sizes');
+    case 2: return f('style_confirmed') || f('colour_preference') || f('wood_finish') || f('reference_links');
+    case 3: return yes('j_hook') || yes('pocket_doors') || yes('akhand_jyot') || yes('electrical_points')
+                 || f('storage_requirements') || f('jain_requirements');
+    case 4: return f('factory_instructions') || f('client_constraints');
+    case 5: return (briefPhotos && briefPhotos.length > 0) || f('site_photo_links');
+    default: return false;
+  }
 }
 
-function toggleBriefSection(idx) {
-  briefOpenSections[idx] = !briefOpenSections[idx];
-  var el = document.getElementById('briefSection' + idx);
-  if (el) el.classList.toggle('brief-acc-open', briefOpenSections[idx]);
-}
-
-// Collapses whitespace and clips long text for the collapsed summary line.
-function briefSummaryLine(s) {
-  s = String(s == null ? '' : s).replace(/\s+/g, ' ').trim();
-  return s.length > 50 ? s.slice(0, 50) + '…' : s;
+// Renders one Design Brief section as a stacked card with a numbered badge.
+function briefCard(idx, title, bodyHtml) {
+  return '<div class="card brief-card" id="briefSec' + idx + '">'
+    + '<div class="brief-card-head"><span class="brief-num">' + (idx + 1) + '</span>'
+    + '<h3>' + escapeHtml(title) + '</h3></div>'
+    + '<div class="brief-card-body">' + bodyHtml + '</div></div>';
 }
 
 function renderBriefForm() {
   const p = currentProject || {};
   const b = currentBrief || {};
   function val(k) { return (b[k] !== undefined && b[k] !== null) ? b[k] : ''; }
-  function chkAttr(k) { return String(val(k)).toLowerCase() === 'yes' ? 'checked' : ''; }
+  function isYes(k) { return String(val(k)).toLowerCase() === 'yes'; }
 
   // Confirmed measurements default to the configurator dimensions as a starting point.
   const cw = val('confirmed_width')  !== '' ? val('confirmed_width')  : (p.width_ft  || '');
@@ -470,30 +556,6 @@ function renderBriefForm() {
   }).join('');
 
   const deityNames = val('deity_names') !== '' ? val('deity_names') : (p.deities || '');
-
-  // ─── Collapsed summary lines ───
-  const sum1 = (cw !== '' && cd !== '' && ch !== '')
-    ? (cw + 'ft × ' + cd + 'ft × ' + ch + 'ft')
-    : 'Not filled';
-  const sum2 = deityNames ? briefSummaryLine(deityNames) : 'Not filled';
-  const prefBits = [val('style_confirmed'), val('colour_preference'), val('wood_finish')]
-    .filter(function(x) { return x !== '' && x != null; });
-  const sum3 = prefBits.length ? briefSummaryLine(prefBits.join(' · ')) : 'Not filled';
-  const specialKeys = ['j_hook', 'pocket_doors', 'akhand_jyot', 'electrical_points'];
-  const enabledCount = specialKeys.filter(function(k) {
-    return String(val(k)).toLowerCase() === 'yes';
-  }).length;
-  const specialNotes = val('storage_requirements') !== '' || val('jain_requirements') !== '';
-  const sum4 = (enabledCount || specialNotes)
-    ? (enabledCount + ' of 4 enabled' + (specialNotes ? ' · notes added' : ''))
-    : 'Not filled';
-  const sum5 = (val('factory_instructions') !== '' || val('client_constraints') !== '')
-    ? 'Filled' : 'Not filled';
-  const photoCount = (briefPhotos || []).length;
-  const sum6parts = [];
-  if (photoCount) sum6parts.push(photoCount + (photoCount === 1 ? ' photo' : ' photos'));
-  if (val('site_photo_links') !== '') sum6parts.push('links added');
-  const sum6 = sum6parts.length ? sum6parts.join(' · ') : 'Not filled';
 
   const body1 = `
         <div class="edit-form-grid">
@@ -534,13 +596,11 @@ function renderBriefForm() {
         </div>`;
 
   const body4 = `
-        <div class="brief-toggle-grid">
-          ${briefToggle('db_j_hook',            'J Hook / Hanging Bell',     chkAttr('j_hook'))}
-          ${briefToggle('db_pocket_doors',      'Pocket Doors',              chkAttr('pocket_doors'))}
-          ${briefToggle('db_akhand_jyot',       'Akhand Jyot Provision',     chkAttr('akhand_jyot'))}
-          ${briefToggle('db_electrical_points', 'Electrical Points Needed',  chkAttr('electrical_points'))}
-        </div>
-        <div class="form-group" style="margin-top:12px;margin-bottom:12px;">
+        ${briefYN('db_j_hook',            'J Hook / Hanging Bell',    isYes('j_hook'))}
+        ${briefYN('db_pocket_doors',      'Pocket Doors',             isYes('pocket_doors'))}
+        ${briefYN('db_akhand_jyot',       'Akhand Jyot Provision',    isYes('akhand_jyot'))}
+        ${briefYN('db_electrical_points', 'Electrical Points Needed', isYes('electrical_points'))}
+        <div class="form-group" style="margin-top:16px;margin-bottom:12px;">
           <label>Storage Requirements</label>
           <textarea id="db_storage_requirements" rows="2">${escapeHtml(val('storage_requirements'))}</textarea>
         </div>
@@ -571,29 +631,23 @@ function renderBriefForm() {
         </div>`;
 
   return `
-    <div class="card">
-      <div class="card-header">
-        <h3>Design Brief</h3>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <select id="db_status" class="db-status-select">${statusOpts}</select>
-          <button class="btn-secondary" onclick="shareBrief()">Share with Client</button>
-          <button class="btn-primary" id="briefSaveBtn" onclick="saveDesignBrief()">Save Brief</button>
-        </div>
+    <div class="brief-toolbar">
+      <div class="brief-toolbar-status">
+        <label>Brief Status</label>
+        <select id="db_status" class="db-status-select">${statusOpts}</select>
       </div>
-
-      <div class="brief-accordion">
-        ${briefSection(0, 'Measurements & Space', sum1, body1)}
-        ${briefSection(1, 'Deity Requirements',   sum2, body2)}
-        ${briefSection(2, 'Design Preferences',   sum3, body3)}
-        ${briefSection(3, 'Special Requirements', sum4, body4)}
-        ${briefSection(4, 'Production Notes',     sum5, body5)}
-        ${briefSection(5, 'Site Photos',          sum6, body6)}
-      </div>
-
-      <div class="brief-footer">
+      <div class="brief-toolbar-actions">
         <button class="btn-secondary" onclick="shareBrief()">Share with Client</button>
-        <button class="btn-primary" onclick="saveDesignBrief()">Save Brief</button>
+        <button class="btn-primary" id="briefSaveBtn" onclick="saveDesignBrief()">Save Brief</button>
       </div>
+    </div>
+    <div class="brief-sections">
+      ${briefCard(0, 'Measurements & Space', body1)}
+      ${briefCard(1, 'Deity Requirements',   body2)}
+      ${briefCard(2, 'Design Preferences',   body3)}
+      ${briefCard(3, 'Special Requirements', body4)}
+      ${briefCard(4, 'Production Notes',     body5)}
+      ${briefCard(5, 'Site Photos',          body6)}
     </div>
   `;
 }
@@ -675,6 +729,7 @@ async function loadDesignBrief() {
   if (bc) bc.innerHTML = renderBriefForm();
   var ss = document.getElementById('briefStatusStrip');
   if (ss) ss.innerHTML = renderBriefStatusStrip();
+  updateSidebar();
 }
 
 async function saveDesignBrief() {
@@ -726,6 +781,7 @@ async function saveDesignBrief() {
       briefPhotos  = parsePhotos(currentBrief.site_photos);
       var ss = document.getElementById('briefStatusStrip');
       if (ss) ss.innerHTML = renderBriefStatusStrip();
+      updateSidebar();
       toast('Brief saved', 'success');
     } else {
       toast((result && result.error) || 'Failed to save brief', 'error');

@@ -1384,80 +1384,219 @@ tr:active .status-Rejected {
 /* ============================================
    DESIGN BRIEF — internal edit form
    ============================================ */
-.brief-section-title {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--orange);
-  font-weight: 700;
-  margin: 26px 0 14px;
-  padding-bottom: 6px;
+/* ─── Project page: left sidebar layout ─── */
+.project-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+.project-sidebar {
+  width: 220px;
+  flex: none;
+  position: sticky;
+  top: 73px;            /* clears the 57px sticky topbar */
+  max-height: calc(100vh - 89px);
+  overflow-y: auto;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.project-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.psb-head {
+  padding: 18px 18px 14px;
   border-bottom: 1px solid var(--grey-light);
 }
-.brief-section-title:first-of-type { margin-top: 8px; }
-
-/* ─── Collapsible accordion sections ─── */
-.brief-accordion { margin-top: 8px; }
-.brief-acc {
+.psb-pid {
+  font-family: 'Courier New', monospace;
+  color: var(--orange);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+.psb-client {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 2px 0 12px;
+  line-height: 1.3;
+}
+.psb-status {
+  width: 100%;
+  padding: 7px 10px;
   border: 1.5px solid var(--grey-light);
   border-radius: var(--radius-sm);
-  margin-bottom: 10px;
-  overflow: hidden;
+  background: var(--white);
+  font-size: 0.82rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
 }
-.brief-acc-header {
+.psb-status:focus { outline: none; border-color: var(--orange); }
+
+.psb-nav { padding: 8px 0; }
+.psb-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 13px 16px;
-  background: var(--grey-bg);
+  padding: 11px 18px;
+  background: none;
+  border: none;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--grey);
+  text-align: left;
+}
+.psb-item i { font-size: 1.15rem; flex: none; }
+.psb-item span { flex: 1; }
+.psb-item:hover { background: var(--orange-light); color: var(--dark); }
+.psb-item-active {
+  border-left-color: var(--orange);
+  color: var(--orange);
+  font-weight: 700;
+  background: var(--orange-light);
+}
+.psb-caret {
+  font-size: 0.95rem !important;
+  transition: transform 0.2s ease;
+}
+.psb-caret-open { transform: rotate(180deg); }
+
+.psb-subs {
+  display: none;
+  padding: 2px 0 6px;
+  background: #FCFAF8;
+}
+.psb-subs-open { display: block; }
+.psb-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 18px 8px 40px;
+  background: none;
   border: none;
   cursor: pointer;
   font-family: inherit;
+  font-size: 0.82rem;
+  color: var(--grey);
   text-align: left;
 }
-.brief-acc-header:hover { background: #F1EEEA; }
-.brief-acc-num {
+.psb-sub:hover { color: var(--orange); }
+.psb-sub-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--grey-light);
   flex: none;
-  width: 24px;
-  height: 24px;
+}
+.psb-sub-label { flex: 1; }
+.psb-check { color: var(--success); font-size: 1rem; flex: none; }
+
+.psb-hamburger {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  background: var(--white);
+  border: 1.5px solid var(--grey-light);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--dark);
+  cursor: pointer;
+}
+.psb-hamburger i { font-size: 1.2rem; }
+.psb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 90;
+}
+.psb-overlay-show { display: block; }
+
+/* ============================================
+   DESIGN BRIEF — section cards
+   ============================================ */
+.brief-toolbar {
+  position: sticky;
+  top: 57px;            /* sits just below the sticky topbar */
+  z-index: 20;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.brief-toolbar-status {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.brief-toolbar-status label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--grey);
+  font-weight: 700;
+}
+.brief-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.brief-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.brief-card {
+  padding: 0;
+  overflow: hidden;
+  scroll-margin-top: 152px;   /* clears topbar + sticky brief toolbar */
+}
+.brief-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--orange-light);
+  border-bottom: 1px solid #F0E6DC;
+}
+.brief-card-head h3 {
+  font-size: 1.05rem;
+  color: var(--dark);
+}
+.brief-num {
+  flex: none;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: var(--orange);
   color: var(--white);
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.brief-acc-title {
-  flex: none;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--dark);
-}
-.brief-acc-summary {
-  flex: 1;
-  min-width: 0;
-  font-size: 0.82rem;
-  color: var(--grey);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.brief-acc-chevron {
-  flex: none;
-  color: var(--grey);
-  font-size: 0.95rem;
-  transition: transform 0.2s ease;
-}
-.brief-acc-open .brief-acc-chevron { transform: rotate(180deg); }
-.brief-acc-body {
-  display: none;
-  padding: 16px;
-  border-top: 1px solid var(--grey-light);
-}
-.brief-acc-open .brief-acc-body { display: block; }
+.brief-card-body { padding: 24px; }
 
 .db-hint {
   color: var(--grey);
@@ -1479,27 +1618,41 @@ tr:active .status-Rejected {
   cursor: pointer;
 }
 
-.brief-toggle-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.brief-toggle {
+/* yes/no toggle buttons */
+.brief-yn {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px 14px;
   border: 1.5px solid var(--grey-light);
   border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: 0.9rem;
+  margin-bottom: 10px;
 }
-.brief-toggle:hover { border-color: var(--orange); }
-.brief-toggle input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--orange);
+.brief-yn-input { display: none; }
+.brief-yn-label { flex: 1; font-size: 0.9rem; }
+.brief-yn-btns { display: flex; flex: none; }
+.yn-btn {
+  padding: 6px 18px;
+  border: 1.5px solid var(--grey-light);
+  background: var(--white);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--grey);
   cursor: pointer;
+}
+.yn-btn.yn-yes { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.yn-btn.yn-no  { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; margin-left: -1.5px; }
+.yn-btn:hover { border-color: var(--orange); }
+.yn-btn.yn-yes.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: var(--white);
+}
+.yn-btn.yn-no.active {
+  background: var(--grey);
+  border-color: var(--grey);
+  color: var(--white);
 }
 
 .brief-photos {
@@ -1536,17 +1689,21 @@ tr:active .status-Rejected {
   line-height: 1;
 }
 
-.brief-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 26px;
-  padding-top: 20px;
-  border-top: 1px solid var(--grey-light);
-}
-
-@media (max-width: 600px) {
-  .brief-toggle-grid { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  .project-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .project-sidebar.psb-open { transform: translateX(0); }
+  .psb-hamburger { display: inline-flex; }
 }
 
 /* ============================================
