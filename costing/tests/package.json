@@ -1,0 +1,14 @@
+{
+  "name": "mmm-costing-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end test for the MMM Costing Section 7 quotation builder.",
+  "scripts": {
+    "test": "node e2e-quotation.mjs",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}
